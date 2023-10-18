@@ -7,3 +7,7 @@
 ### 1017
 * ERD 설계
 ![Alt text](image.png)
+
+### 1018
+* ERD 설계 완료
+![Alt text](image-1.png)
