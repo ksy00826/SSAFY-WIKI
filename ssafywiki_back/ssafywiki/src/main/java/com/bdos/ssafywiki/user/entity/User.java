@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.data.jpa.repository.Temporal;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -25,37 +26,37 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(name = "user_email")
+    @Column(name = "user_email", nullable = false)
     private String email;
 
-    @Column(name = "user_password")
+    @Column(name = "user_password", nullable = false)
     private String password;
 
-    @Column(name = "user_name")
+    @Column(name = "user_name", nullable = false)
     private String name;
 
-    @Column(name = "user_nickname")
+    @Column(name = "user_nickname", nullable = false)
     private String nickname;
 
-    @Column(name = "user_role")
+    @Column(name = "user_role", nullable = false)
     private String role;
 
     @Column(name = "user_number")
     private String number;
 
-    @Column(name = "user_campus")
+    @Column(name = "user_campus", nullable = false)
     private String campus;
 
     @CreationTimestamp
-    @Column(name = "user_created_at")
+    @Column(name = "user_created_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "user_modified_at")
+    @Column(name = "user_modified_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime modifiedAt;
 
-    @Column(name = "user_blocked_at")
-    private Timestamp blockedAt;
+    @Column(name = "user_blocked_at", columnDefinition = "TIMESTAMP")
+    private LocalDateTime blockedAt;
 
     @Column
     private String refreshToken;
