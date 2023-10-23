@@ -46,11 +46,11 @@ public class Revision {
     @JoinColumn(name="rev_origin_id")
     private Revision origin;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rev_comment_id")
     private Comment comment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "rev_content_id")
     private Content content;
 }
