@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,18 +31,23 @@ public class Document {
     private boolean isDeleted;
 
     @CreationTimestamp
-    @Column(name = "docs_created_at")
+    @Column(name = "docs_created_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "docs_modified_at")
+    @Column(name = "docs_modified_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime modifiedAt;
 
     //self join
     @Column(name = "docs_parent_id")
     private Long parentId;
 
+    //자식에서 부모를 참조
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "docs_parent_id", referencedColumnName = "docs_id", insertable = false, updatable = false)
     private Document parent;
+
+    //부모에서 자식을 참조
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent")
+    private List<Document> children;
 }
