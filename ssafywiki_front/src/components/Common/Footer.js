@@ -1,11 +1,14 @@
 import { Button } from "antd";
 
-export const Footer = () => {
+import Logoimg from "assets/img/logo.png";
+
+export const MyFooter = () => {
   return (
     <div>
-      <Button type="primary">푸터</Button>
+      <img src={Logoimg} alt="logo" style={{ width: "50px", height: "50px" }} />
+      <div>SSAFYWIKI | SSAFY 9th | E202 | Bukdu Five Star</div>
     </div>
   );
 };
 
-export default Footer;
+export default MyFooter;
