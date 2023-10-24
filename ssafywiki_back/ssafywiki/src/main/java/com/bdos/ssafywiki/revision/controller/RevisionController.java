@@ -1,8 +1,12 @@
 package com.bdos.ssafywiki.revision.controller;
 
+import com.bdos.ssafywiki.revision.dto.RevisionDto;
+import com.bdos.ssafywiki.revision.entity.Revision;
+import com.bdos.ssafywiki.revision.service.RevisionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -16,11 +20,15 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/version")
 public class RevisionController {
 
+    private final RevisionService revisionService;
+
     @Operation(summary = "문서 버전 목록", description = "두개의 버전을 비교합니다.")
     @GetMapping("/{docs_id}")
     public ResponseEntity getHistory(
             @PathVariable("docs_id") long docsId,
             @PageableDefault(size = 30, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+
+        Page<Revision> revisionPage = revisionService.getHistory(docsId, pageable);
 
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -34,7 +42,7 @@ public class RevisionController {
 
     @Operation(summary = "버전 디테일", description = "해당 버전의 내용을 확인합니다.")
     @GetMapping("/{docs_id}/{rev_id}")
-    public ResponseEntity getDetail(@PathVariable long docsId, @PathVariable long revId){
+    public ResponseEntity getDetail(@PathVariable("docs_id") long docsId, @PathVariable("rev_id") long revId){
 
         return new ResponseEntity(HttpStatus.OK);
     }
