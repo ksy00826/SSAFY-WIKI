@@ -1,6 +1,8 @@
 package com.bdos.ssafywiki.document.controller;
 
+import com.bdos.ssafywiki.document.dto.DocumentReadDto;
 import com.bdos.ssafywiki.document.dto.DocumentWriteDto;
+import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.document.service.DocumentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,7 +23,8 @@ public class DocumentController {
     @Operation(summary = "문서 작성하기", description = "문서 하나를 작성")
     @PostMapping("/api/docs")
     public ResponseEntity<?> writeDocs(@RequestBody DocumentWriteDto documentWriteDto){
+        Document document = documentService.writeDocs(documentWriteDto);
 
-        return null;
+        return ResponseEntity.ok(document);
     }
 }
