@@ -14,13 +14,12 @@ import java.time.LocalDateTime;
 public class RedirectDocs {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "redir_docs_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "docs_id")
-    @Column(name = "origin_docs_id")
+    @JoinColumn(name = "origin_docs_id")
     private Document originalDocs;
 
     @Column(name = "redir_title")
