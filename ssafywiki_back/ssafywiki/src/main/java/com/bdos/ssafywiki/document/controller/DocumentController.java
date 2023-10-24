@@ -22,9 +22,9 @@ public class DocumentController {
 
     @Operation(summary = "문서 작성하기", description = "문서 하나를 작성")
     @PostMapping("/api/docs")
-    public ResponseEntity<?> writeDocs(@RequestBody DocumentWriteDto documentWriteDto){
-        Document document = documentService.writeDocs(documentWriteDto);
+    public ResponseEntity<DocumentReadDto> writeDocs(@RequestBody DocumentWriteDto documentWriteDto){
+        DocumentReadDto documentReadDto = documentService.writeDocs(documentWriteDto);
 
-        return ResponseEntity.ok(document);
+        return ResponseEntity.ok(documentReadDto);
     }
 }
