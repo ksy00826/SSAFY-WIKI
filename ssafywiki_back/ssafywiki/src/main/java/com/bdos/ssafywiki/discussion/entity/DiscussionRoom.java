@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -24,16 +26,16 @@ public class DiscussionRoom {
     @Column(name = "discussroom_id")
     private Long id;
 
-    @CreationTimestamp
-    @Column(name = "discussroom_created_at", columnDefinition = "TIMESTAMP")
+    @CreatedDate
+    @Column(name = "discussroom_created_at", columnDefinition = "TIMESTAMP", updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
+    @LastModifiedDate
     @Column(name = "discussroom_modified_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime modifiedAt;
 
     @ManyToOne
-    @JoinColumn(name = "discussroom_docs_id")
+    @JoinColumn(name = "discussroom_docs_id", nullable = false)
     private Document document;
 
     @Builder

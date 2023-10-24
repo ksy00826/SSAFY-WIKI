@@ -2,6 +2,7 @@ package com.bdos.ssafywiki.template.entity;
 
 import com.bdos.ssafywiki.user.entity.User;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -26,24 +27,32 @@ public class Template {
     @Column(name = "template_id")
     private Long id;
 
-    @Column(name = "template_title")
+    @Column(name = "template_title", nullable = false)
     private String title;
 
-    @Column(name = "template_content")
+    @Column(name = "template_content", nullable = false)
     private String content;
 
-    @Column(name = "template_is_secret")
+    @Column(name = "template_is_secret", nullable = false)
     private boolean secret;
 
-    @CreationTimestamp
-    @Column(name = "template_created_at", columnDefinition = "TIMESTAMP")
+    @CreatedDate
+    @Column(name = "template_created_at", columnDefinition = "TIMESTAMP", updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
+    @LastModifiedDate
     @Column(name = "template_modified_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime modifiedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "template_user_id")
+    @JoinColumn(name = "template_user_id", nullable = false)
     private User user;
+
+    @Builder
+    public Template(String title, String content, boolean secret, User user) {
+        this.title = title;
+        this.content = content;
+        this.secret = secret;
+        this.user = user;
+    }
 }

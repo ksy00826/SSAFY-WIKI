@@ -11,10 +11,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Builder
-@Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @EntityListeners(AuditingEntityListener.class)

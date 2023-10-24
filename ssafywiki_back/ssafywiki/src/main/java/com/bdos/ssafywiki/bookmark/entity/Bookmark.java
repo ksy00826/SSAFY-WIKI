@@ -3,6 +3,7 @@ package com.bdos.ssafywiki.bookmark.entity;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.user.entity.User;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -33,10 +34,16 @@ public class Bookmark {
     private LocalDateTime modifiedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bookmark_user_id")
+    @JoinColumn(name = "bookmark_user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bookmark_docs_id")
+    @JoinColumn(name = "bookmark_docs_id", nullable = false)
     private Document document;
+
+    @Builder
+    public Bookmark(User user, Document document) {
+        this.user = user;
+        this.document = document;
+    }
 }

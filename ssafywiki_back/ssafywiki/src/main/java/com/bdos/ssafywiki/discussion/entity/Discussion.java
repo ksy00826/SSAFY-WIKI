@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -24,23 +26,23 @@ public class Discussion {
     @Column(name = "discussion_id")
     private Long id;
 
-    @Column(name = "discussion_content")
+    @Column(name = "discussion_content", nullable = false)
     private String content;
 
-    @CreationTimestamp
-    @Column(name = "discussion_created_at", columnDefinition = "TIMESTAMP")
+    @CreatedDate
+    @Column(name = "discussion_created_at", columnDefinition = "TIMESTAMP", updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
+    @LastModifiedDate
     @Column(name = "discussion_modified_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime modifiedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "discussion_discussroom_id")
+    @JoinColumn(name = "discussion_discussroom_id", nullable = false)
     private DiscussionRoom discussionRoom;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "discussion_user_id")
+    @JoinColumn(name = "discussion_user_id", nullable = false)
     private User user;
 
     @Builder

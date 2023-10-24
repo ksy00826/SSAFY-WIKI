@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -20,14 +22,14 @@ public class Content {
     @Column(name = "content_id")
     private Long id;
 
-    @Column(name = "content_text", columnDefinition = "TEXT")
+    @Column(name = "content_text", columnDefinition = "TEXT", nullable = false)
     private String text;
 
-    @CreationTimestamp
-    @Column(name="content_created_at",  columnDefinition = "TIMESTAMP")
+    @CreatedDate
+    @Column(name="content_created_at",  columnDefinition = "TIMESTAMP", updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
+    @LastModifiedDate
     @Column(name="content_modified_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime modifiedAt;
 
