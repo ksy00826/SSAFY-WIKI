@@ -1,11 +1,15 @@
-import { Button } from "antd";
+import { Routes, Route } from "react-router-dom";
 
-const MyPage = () => {
+import MyPage from "./MyPage";
+import Contribution from "./ContributionPage";
+
+const UserPage = () => {
   return (
-    <div>
-      <Button type="primary">mypage</Button>
-    </div>
+    <Routes>
+      <Route path="/" element={<MyPage />} />
+      <Route path="/contribution" element={<Contribution />} />
+    </Routes>
   );
 };
 
-export default MyPage;
+export default UserPage;
