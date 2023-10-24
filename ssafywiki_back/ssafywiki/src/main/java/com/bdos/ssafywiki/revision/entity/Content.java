@@ -9,10 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Entity
-@Builder
-@Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @EntityListeners(AuditingEntityListener.class)
@@ -32,4 +29,9 @@ public class Content {
     @UpdateTimestamp
     @Column(name="content_modified_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime modifiedAt;
+
+    @Builder
+    public Content(String text) {
+        this.text = text;
+    }
 }

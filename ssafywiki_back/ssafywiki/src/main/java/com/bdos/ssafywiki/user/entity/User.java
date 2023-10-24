@@ -55,9 +55,23 @@ public class User {
     @Column(name = "user_modified_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime modifiedAt;
 
+    @Setter
     @Column(name = "user_blocked_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime blockedAt;
 
+    @Setter
     @Column
     private String refreshToken;
+
+    @Builder
+    public User(String email, String password, String name, String nickname, String role, String number, String campus, String refreshToken) {
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.nickname = nickname;
+        this.role = role;
+        this.number = number;
+        this.campus = campus;
+        this.refreshToken = refreshToken;
+    }
 }

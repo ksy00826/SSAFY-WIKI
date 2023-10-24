@@ -1,5 +1,6 @@
 package com.bdos.ssafywiki.revision.entity;
 
+import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -58,17 +59,19 @@ public class Revision {
     @JoinColumn(name= "rev_user_id")
     private User user;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "rev_docs_id")
-//    private Document document;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "rev_docs_id")
+    private Document document;
 
     @Builder
-    public Revision(Long diffAmount, Long number, Revision parent, Revision origin, Comment comment, Content content) {
+    public Revision(Long diffAmount, Long number, Revision parent, Revision origin, Comment comment, Content content, User user, Document document) {
         this.diffAmount = diffAmount;
         this.number = number;
         this.parent = parent;
         this.origin = origin;
         this.comment = comment;
         this.content = content;
+        this.user = user;
+        this.document = document;
     }
 }

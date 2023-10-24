@@ -9,10 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 @Entity
-@Builder
-@Setter
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @ToString
 @EntityListeners(AuditingEntityListener.class)
@@ -33,4 +30,8 @@ public class Comment {
     @Column(name = "comment_modified_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime modifiedAt;
 
+    @Builder
+    public Comment(String content) {
+        this.content = content;
+    }
 }
