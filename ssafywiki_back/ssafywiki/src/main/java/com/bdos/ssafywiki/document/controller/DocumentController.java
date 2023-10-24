@@ -1,6 +1,6 @@
 package com.bdos.ssafywiki.document.controller;
 
-import com.bdos.ssafywiki.document.DocumentWriteDto;
+import com.bdos.ssafywiki.document.dto.DocumentWriteDto;
 import com.bdos.ssafywiki.document.service.DocumentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

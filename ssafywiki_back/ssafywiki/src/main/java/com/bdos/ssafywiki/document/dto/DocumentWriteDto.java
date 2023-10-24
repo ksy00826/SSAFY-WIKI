@@ -1,4 +1,4 @@
-package com.bdos.ssafywiki.document;
+package com.bdos.ssafywiki.document.dto;
 
 import lombok.Getter;
 
