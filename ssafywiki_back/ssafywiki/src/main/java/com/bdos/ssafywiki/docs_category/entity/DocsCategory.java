@@ -14,18 +14,16 @@ import java.time.LocalDateTime;
 @Table(name = "Docs_category")
 public class DocsCategory {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "docs_category_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "docs_id")
-    @Column(name = "docs_id")
     private Document document;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
-    @Column(name = "category_id")
     private Category category;
 
     @CreationTimestamp
