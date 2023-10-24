@@ -55,7 +55,7 @@ public class DocumentService {
         contentRepository.save(content);
         commentRepository.save(comment);
 
-        //2.1 연관관계 등록
+        //2.2 연관관계 등록
         revision.setContent(content);
         revision.setComment(comment);
         revision.setDocument(document);
