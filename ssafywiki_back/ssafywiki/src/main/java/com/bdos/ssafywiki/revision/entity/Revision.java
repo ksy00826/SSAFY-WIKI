@@ -25,11 +25,11 @@ public class Revision {
     @Column(name = "rev_id")
     private Long id;
 
-    @CreationTimestamp
-    @Column(name="rev_created_at",  columnDefinition = "TIMESTAMP")
+    @CreatedDate
+    @Column(name="rev_created_at", columnDefinition = "TIMESTAMP", updatable = false)
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
+    @LastModifiedDate
     @Column(name="rev_modified_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime modifiedAt;
 
