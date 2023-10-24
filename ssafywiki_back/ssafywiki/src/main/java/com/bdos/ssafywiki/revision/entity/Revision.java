@@ -74,4 +74,41 @@ public class Revision {
         this.user = user;
         this.document = document;
     }
+
+    public Revision(Long number, Comment comment, Content content, User user, Document document) {
+        this.number = number;
+        this.comment = comment;
+        this.content = content;
+        this.user = user;
+        this.document = document;
+    }
+
+    public Revision(Long diffAmount, Long number) {
+        this.diffAmount = diffAmount;
+        this.number = number;
+    }
+
+    public void setParent(Revision parent) {
+        this.parent = parent;
+    }
+
+    public void setOrigin(Revision origin) {
+        this.origin = origin;
+    }
+
+    public void setComment(Comment comment) {
+        this.comment = comment;
+    }
+
+    public void setContent(Content content) {
+        this.content = content;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setDocument(Document document) {
+        this.document = document;
+    }
 }
