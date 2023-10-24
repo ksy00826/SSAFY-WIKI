@@ -1,7 +1,11 @@
-package com.bdos.ssafywiki.revision.entity;
+package com.bdos.ssafywiki.discussion.entity;
 
+import com.bdos.ssafywiki.document.entity.Document;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
@@ -15,26 +19,27 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "contents")
-public class Content {
+@Table(name = "discussion_rooms")
+public class DiscussionRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "content_id")
+    @Column(name = "discussroom_id")
     private Long id;
 
-    @Column(name = "content_text", columnDefinition = "TEXT", nullable = false)
-    private String text;
-
     @CreatedDate
-    @Column(name="content_created_at",  columnDefinition = "TIMESTAMP", updatable = false)
+    @Column(name = "discussroom_created_at", columnDefinition = "TIMESTAMP", updatable = false)
     private LocalDateTime createdAt;
 
     @LastModifiedDate
-    @Column(name="content_modified_at", columnDefinition = "TIMESTAMP")
+    @Column(name = "discussroom_modified_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime modifiedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "discussroom_docs_id", nullable = false)
+    private Document document;
+
     @Builder
-    public Content(String text) {
-        this.text = text;
+    public DiscussionRoom(Document document) {
+        this.document = document;
     }
 }
