@@ -22,6 +22,7 @@ import java.time.LocalDateTime;
 @Table(name = "templates")
 public class Template {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "template_id")
     private Long id;
 

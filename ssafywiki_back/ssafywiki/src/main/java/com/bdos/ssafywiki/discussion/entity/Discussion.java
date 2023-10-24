@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 @Table(name = "discussions")
 public class Discussion {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "discussion_id")
     private Long id;
 
