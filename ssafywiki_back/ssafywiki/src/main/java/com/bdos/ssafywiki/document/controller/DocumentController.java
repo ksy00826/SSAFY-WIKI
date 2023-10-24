@@ -22,6 +22,6 @@ public class DocumentController {
     @PostMapping("/api/docs")
     public ResponseEntity<?> writeDocs(@RequestBody DocumentWriteDto documentWriteDto){
 
-        return null;
+
     }
 }
