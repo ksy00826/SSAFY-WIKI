@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RevisionRepository extends JpaRepository<Revision, Long> {
 
-    Revision findByDocument(Document document);
+    Revision findTop1ByDocumentOrderByIdDesc(Document document);
 }
