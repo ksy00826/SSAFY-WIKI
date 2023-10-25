@@ -2,6 +2,7 @@ package com.bdos.ssafywiki.document.service;
 
 import com.bdos.ssafywiki.document.dto.DocumentDto;
 import com.bdos.ssafywiki.document.entity.Document;
+import com.bdos.ssafywiki.document.mapper.DocumentMapper;
 import com.bdos.ssafywiki.document.repository.DocumentRepository;
 import com.bdos.ssafywiki.revision.entity.Comment;
 import com.bdos.ssafywiki.revision.entity.Content;
@@ -12,6 +13,7 @@ import com.bdos.ssafywiki.revision.repository.RevisionRepository;
 import com.bdos.ssafywiki.user.entity.User;
 import com.bdos.ssafywiki.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,6 +29,9 @@ public class DocumentService {
     private final ContentRepository contentRepository;
     private final RevisionRepository revisionRepository;
     private final UserRepository userRepository;
+
+    //mapstruct
+    private final DocumentMapper documentMapper;
 
     public DocumentDto.Response writeDocs(DocumentDto.Post post) {
         //로그인 한 사용자(작성 유저) : JWT
@@ -61,8 +66,8 @@ public class DocumentService {
 
         revisionRepository.save(revision);
 
-        //만들어진 문서 엔티티 리턴
-        DocumentDto.Response response = new DocumentDto.Response(document.getId(), user.getId(), document.getTitle(), content.getText());
-        return response;
+        //만들어진 문서 DTO 리턴
+//        DocumentDto.Response response = new DocumentDto.Response(document.getId(), user.getId(), document.getTitle(), content.getText());
+        return documentMapper.toResponse(document, content);
     }
 }
