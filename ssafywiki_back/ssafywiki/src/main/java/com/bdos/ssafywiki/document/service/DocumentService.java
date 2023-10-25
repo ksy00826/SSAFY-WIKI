@@ -4,9 +4,11 @@ import com.bdos.ssafywiki.document.dto.DocumentDto;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.document.mapper.DocumentMapper;
 import com.bdos.ssafywiki.document.repository.DocumentRepository;
+import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import com.bdos.ssafywiki.revision.entity.Comment;
 import com.bdos.ssafywiki.revision.entity.Content;
 import com.bdos.ssafywiki.revision.entity.Revision;
+import com.bdos.ssafywiki.revision.mapper.RevisionMapper;
 import com.bdos.ssafywiki.revision.repository.CommentRepository;
 import com.bdos.ssafywiki.revision.repository.ContentRepository;
 import com.bdos.ssafywiki.revision.repository.RevisionRepository;
@@ -31,9 +33,9 @@ public class DocumentService {
     private final UserRepository userRepository;
 
     //mapstruct
-    private final DocumentMapper documentMapper;
+    private final RevisionMapper revisionMapper;
 
-    public DocumentDto.Response writeDocs(DocumentDto.Post post) {
+    public RevisionDto.Response writeDocs(DocumentDto.Post post) {
         //로그인 한 사용자(작성 유저) : JWT
         User user = new User("qqq@naver.com", "pwpw", "ksy", "sysy", "ssafy", "010", "buk", "token");
         //일단 유저를 다른 곳에 연관관계로 등록하기 위해 임시로 저장
@@ -67,7 +69,17 @@ public class DocumentService {
         revisionRepository.save(revision);
 
         //만들어진 문서 DTO 리턴
-//        DocumentDto.Response response = new DocumentDto.Response(document.getId(), user.getId(), document.getTitle(), content.getText());
-        return documentMapper.toResponse(document, content);
+        return revisionMapper.toResponse(revision);
+    }
+
+    public RevisionDto.Response readDocs(Long docsId) {
+
+        //docsId에 해당하는 가장 최신 버전의 문서를 찾아서 리턴 (revision 엔티티 찾기)
+        Document document = documentRepository.findById(docsId).orElse(null);
+        if (document == null){
+            return null;
+        }
+        Revision revision = revisionRepository.findByDocument(document);
+        return revisionMapper.toResponse(revision);
     }
 }
