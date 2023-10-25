@@ -1,7 +1,6 @@
 package com.bdos.ssafywiki.document.service;
 
-import com.bdos.ssafywiki.document.dto.DocumentReadDto;
-import com.bdos.ssafywiki.document.dto.DocumentWriteDto;
+import com.bdos.ssafywiki.document.dto.DocumentDto;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.document.repository.DocumentRepository;
 import com.bdos.ssafywiki.revision.entity.Comment;
@@ -16,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.sound.sampled.ReverbType;
 import java.util.ArrayList;
 
 @Service
@@ -30,14 +28,14 @@ public class DocumentService {
     private final RevisionRepository revisionRepository;
     private final UserRepository userRepository;
 
-    public DocumentReadDto writeDocs(DocumentWriteDto documentWriteDto) {
+    public DocumentDto.Response writeDocs(DocumentDto.Post post) {
         //로그인 한 사용자(작성 유저) : JWT
         User user = new User("qqq@naver.com", "pwpw", "ksy", "sysy", "ssafy", "010", "buk", "token");
         //일단 유저를 다른 곳에 연관관계로 등록하기 위해 임시로 저장
         userRepository.save(user);
 
         //1. Document entity 생성
-        Document document = new Document(documentWriteDto.getTitle()); //redirect, deleted는 기본값이 false
+        Document document = new Document(post.getTitle()); //redirect, deleted는 기본값이 false
 
         //1.1 연관관계 등록
         document.setUser(user);
@@ -50,7 +48,7 @@ public class DocumentService {
         Revision revision = new Revision(0L, no);
 
         //2.1 Content entity 생성 + Comment entity 생성
-        Content content = new Content(documentWriteDto.getContent());
+        Content content = new Content(post.getContent());
         Comment comment = new Comment("First Document");
         contentRepository.save(content);
         commentRepository.save(comment);
@@ -64,7 +62,7 @@ public class DocumentService {
         revisionRepository.save(revision);
 
         //만들어진 문서 엔티티 리턴
-        DocumentReadDto documentReadDto = new DocumentReadDto(document.getId(), user.getId(), document.getTitle(), content.getText());
-        return documentReadDto;
+        DocumentDto.Response response = new DocumentDto.Response(document.getId(), user.getId(), document.getTitle(), content.getText());
+        return response;
     }
 }
