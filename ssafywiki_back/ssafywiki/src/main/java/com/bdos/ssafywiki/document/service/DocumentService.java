@@ -74,12 +74,13 @@ public class DocumentService {
 
     public RevisionDto.Response readDocs(Long docsId) {
 
-        //docsId에 해당하는 가장 최신 버전의 문서를 찾아서 리턴 (revision 엔티티 찾기)
+        //해당 문서 엔티티 찾기
         Document document = documentRepository.findById(docsId).orElse(null);
         if (document == null){
             return null;
         }
-        Revision revision = revisionRepository.findByDocument(document);
+        //docsId에 해당하는 가장 최신 버전의 문서를 찾아서 리턴 (revision 엔티티 찾기)
+        Revision revision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
         return revisionMapper.toResponse(revision);
     }
 }
