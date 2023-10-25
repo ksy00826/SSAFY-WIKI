@@ -2,6 +2,10 @@ package com.bdos.ssafywiki.document.dto;
 
 import lombok.*;
 
+import java.security.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class DocumentDto {
     @Getter
     @Setter
@@ -14,16 +18,4 @@ public class DocumentDto {
         private String content;
     }
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @ToString
-    @Builder
-    public static class Response {
-        private Long docsId;
-        private Long userId;
-        private String title;
-        private String content;
-    }
 }
