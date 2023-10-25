@@ -29,6 +29,7 @@ public class RevisionController {
             @PageableDefault(size = 30, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
 
         Page<Revision> revisionPage = revisionService.getHistory(docsId, pageable);
+        System.out.println(revisionPage.getContent().size());
 
         return new ResponseEntity(HttpStatus.OK);
     }
