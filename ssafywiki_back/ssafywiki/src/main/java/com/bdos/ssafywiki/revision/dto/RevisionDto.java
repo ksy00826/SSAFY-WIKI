@@ -23,4 +23,22 @@ public class RevisionDto {
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @ToString
+    public static class Version{
+        private Long id;
+        private Long number;
+        private Long diffAmount;
+        private LocalDateTime createdAt;
+        private LocalDateTime modifiedAt;
+        private String comment;
+        private Long originId;
+        private Long originNumber;
+        private UserDto.Version user;
+    }
 }

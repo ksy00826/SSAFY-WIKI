@@ -10,4 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface RevisionRepository extends JpaRepository<Revision, Long> {
 
     Revision findTop1ByDocumentOrderByIdDesc(Document document);
+
+    @Query(value = "SELECT r FROM Revision r JOIN FETCH r.comment WHERE r.document.id = :docsId")
+    Page<Revision> findAllByDocumentJoinComment(Long docsId, Pageable pageable);
 }
