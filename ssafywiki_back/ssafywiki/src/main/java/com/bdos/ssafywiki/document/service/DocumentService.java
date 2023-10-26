@@ -1,6 +1,7 @@
 package com.bdos.ssafywiki.document.service;
 
 import ch.qos.logback.core.spi.ErrorCodes;
+import com.bdos.ssafywiki.diff.DiffMatchPatch;
 import com.bdos.ssafywiki.document.dto.DocumentDto;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.document.mapper.DocumentMapper;
@@ -38,6 +39,8 @@ public class DocumentService {
     //mapstruct
     private final RevisionMapper revisionMapper;
 
+    private final DiffMatchPatch diffMatchPatch;
+
     public RevisionDto.Response writeDocs(DocumentDto.Post post) {
         //로그인 한 사용자(작성 유저) : JWT
         User user = new User("qqq@naver.com", "pwpw", "ksy", "sysy", "ssafy", "010", "buk", "token");
@@ -57,9 +60,10 @@ public class DocumentService {
         documentRepository.save(document);
 
         //2. Revision entity 생성
+
         Revision revision = Revision.builder()
                 .number(1L)
-                .diffAmount(0L)
+                .diffAmount((long)diffMatchPatch.diff_length(diffMatchPatch.diff_main("", post.getContent())))
                 .build();
 
         //2.1 Content entity 생성 + Comment entity 생성
@@ -104,7 +108,7 @@ public class DocumentService {
         Revision preRevision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
 
         //그 외 : 텍스트 증감 수, 문서 버전 번호
-        Long textDiff = 0L; //임시
+        Long textDiff = (long)diffMatchPatch.diff_length(diffMatchPatch.diff_main(preRevision.getContent().getText(), put.getContent()));
         Long newVersionNo = preRevision.getNumber() + 1;
 
         Revision revision = new Revision(textDiff, newVersionNo);
