@@ -7,6 +7,7 @@ import com.bdos.ssafywiki.template.service.TemplateService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +33,9 @@ public class TemplateController {
     public ResponseEntity<List<TemplateDto.Preview>> readTemplateList(){
         List<TemplateDto.Preview> list = templateService.readTemplateList();
 
+        if (list.size() == 0){
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
         return ResponseEntity.ok(list);
     }
 
