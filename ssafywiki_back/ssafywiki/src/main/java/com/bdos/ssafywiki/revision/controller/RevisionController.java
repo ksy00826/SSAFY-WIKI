@@ -42,7 +42,7 @@ public class RevisionController {
     @GetMapping("/compare")
     public ResponseEntity getDiff(@RequestParam long rev, @RequestParam(name = "oldrev") long oldRev){
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(revisionService.diff(rev, oldRev), HttpStatus.OK);
     }
 
     @Operation(summary = "버전 디테일", description = "해당 버전의 내용을 확인합니다.")
