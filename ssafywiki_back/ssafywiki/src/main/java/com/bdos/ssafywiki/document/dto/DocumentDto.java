@@ -18,4 +18,15 @@ public class DocumentDto {
         private String content;
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    @Builder
+    public static class Put {
+        private Long docsId;
+        private String content;
+        private String comment;
+    }
 }

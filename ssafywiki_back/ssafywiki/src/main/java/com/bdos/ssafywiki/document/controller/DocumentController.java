@@ -32,4 +32,12 @@ public class DocumentController {
 
         return ResponseEntity.ok(response);
     }
+
+    @Operation(summary = "문서 수정하기", description = "문서 하나를 수정합니다.")
+    @PutMapping("/api/docs")
+    public ResponseEntity<RevisionDto.Response> updateDocs(@RequestBody DocumentDto.Put put){
+        RevisionDto.Response response = documentService.updateDocs(put);
+
+        return ResponseEntity.ok(response);
+    }
 }
