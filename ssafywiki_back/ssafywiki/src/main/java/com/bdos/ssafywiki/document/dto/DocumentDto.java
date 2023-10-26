@@ -18,4 +18,15 @@ public class DocumentDto {
         private String content;
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    @Builder
+    public static class Detail{
+        private Long id;
+        private String title;
+        // parent, children 추가 해야 할듯
+    }
 }

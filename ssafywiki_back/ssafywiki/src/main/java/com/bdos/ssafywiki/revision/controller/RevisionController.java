@@ -46,10 +46,14 @@ public class RevisionController {
     }
 
     @Operation(summary = "버전 디테일", description = "해당 버전의 내용을 확인합니다.")
-    @GetMapping("/{docs_id}/{rev_id}")
-    public ResponseEntity getDetail(@PathVariable("docs_id") long docsId, @PathVariable("rev_id") long revId){
+    @GetMapping("/{docs_id}/{rev_number}")
+    public ResponseEntity<RevisionDto.Detail> getDetail(
+            @PathVariable("docs_id") long docsId,
+            @PathVariable("rev_number") long revNumber){
 
-        return new ResponseEntity(HttpStatus.OK);
+        Revision revision = revisionService.getDetail(docsId, revNumber);
+
+        return new ResponseEntity(revisionMapper.toDetail(revision), HttpStatus.OK);
     }
 
     @Operation(summary = "버전 되돌리기", description = "해당 버전으로 되돌립니다.")

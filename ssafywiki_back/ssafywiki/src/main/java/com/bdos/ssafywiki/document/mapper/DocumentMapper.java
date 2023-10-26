@@ -12,4 +12,5 @@ public interface DocumentMapper {
 
     Document postToDocument(DocumentDto.Post post);
 
+    DocumentDto.Detail toDetail(Document document);
 }
