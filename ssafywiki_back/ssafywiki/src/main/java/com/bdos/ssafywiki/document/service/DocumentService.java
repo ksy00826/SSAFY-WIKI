@@ -96,7 +96,7 @@ public class DocumentService {
         if (document == null) return null; //일단
 
         //연관관계 : 수정 유저, 이전 버전id, 문서id
-        User user = User.builder().name("수정한 유저임").build(); //임시
+        User user = userRepository.findById(0L).orElse(null); //임시
         Revision preRevision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
 
         //그 외 : 텍스트 증감 수, 문서 버전 번호
@@ -111,6 +111,8 @@ public class DocumentService {
         revision.setContent(content);
         revision.setComment(comment);
         revision.setParent(preRevision);
+
+        revisionRepository.save(revision);
 
         //문서 상세 내용 리턴
         return revisionMapper.toResponse(revision);
