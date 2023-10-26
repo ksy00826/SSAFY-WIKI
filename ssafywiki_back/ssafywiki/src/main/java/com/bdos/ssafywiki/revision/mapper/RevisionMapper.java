@@ -26,4 +26,7 @@ public interface RevisionMapper {
     RevisionDto.Version toVersion(Revision revision);
 
     List<RevisionDto.Version> toVersionList(List<Revision> revisionList);
+
+    @Mapping(source = "revision.content.text", target = "content")
+    RevisionDto.Detail toDetail(Revision revision);
 }
