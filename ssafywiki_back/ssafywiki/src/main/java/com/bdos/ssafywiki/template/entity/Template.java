@@ -49,10 +49,13 @@ public class Template {
     private User user;
 
     @Builder
-    public Template(String title, String content, boolean secret, User user) {
+    public Template(String title, String content, boolean secret) {
         this.title = title;
         this.content = content;
         this.secret = secret;
+    }
+
+    public void setUser(User user) {
         this.user = user;
     }
 }
