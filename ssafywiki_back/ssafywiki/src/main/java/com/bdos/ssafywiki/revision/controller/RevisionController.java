@@ -41,7 +41,8 @@ public class RevisionController {
     @Operation(summary = "버전 비교", description = "두개의 버전을 비교합니다.")
     @GetMapping("/compare")
     public ResponseEntity getDiff(@RequestParam long rev, @RequestParam(name = "oldrev") long oldRev){
-
+//        revisionService.diff(rev, oldRev)
+//        revisionService.diffHtml(rev, oldRev)
         return new ResponseEntity(revisionService.diff(rev, oldRev), HttpStatus.OK);
     }
 

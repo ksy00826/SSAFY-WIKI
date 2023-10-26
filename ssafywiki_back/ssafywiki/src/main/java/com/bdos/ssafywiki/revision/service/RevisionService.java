@@ -49,7 +49,9 @@ public class RevisionService {
         Revision topRev = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
 
         // revokeRev와 topRev의 diff amount를 계산
-        long diffAmount = 0;
+        String oldText = topRev.getContent().getText();
+        String text = revokeRev.getContent().getText();
+        long diffAmount = diffMatchPatch.diff_length(diffMatchPatch.diff_main(oldText, text));
 
         Content newContent = Content.builder().text(revokeRev.getContent().getText()).build();
         contentRepository.save(newContent);
@@ -68,11 +70,22 @@ public class RevisionService {
     }
 
     public LinkedList<Diff> diff(long revId, long oldRevId) {
-//        Revision rev = revisionRepository.findById(revId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.REVISION_NOT_FOUND));
-//        Revision oldRev = revisionRepository.findById(oldRevId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.REVISION_NOT_FOUND));
-        String newText = """
+        Revision rev = revisionRepository.findById(revId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.REVISION_NOT_FOUND));
+        Revision oldRev = revisionRepository.findById(oldRevId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.REVISION_NOT_FOUND));
+
+        String oldText = oldRev.getContent().getText();
+        String text = rev.getContent().getText();
+
+        LinkedList<Diff> diffs = diffMatchPatch.diff_main(oldText, text);
+        diffMatchPatch.diff_cleanupSemantic(diffs);
+
+        return diffs;
+    }
+
+    public String diffHtml(long revId, long oldRevId) {
+        String text = """
                 ----
-                {{{#!wiki style="text-align:center"	
+                {{{#!wiki style="text-align:center"
                 '''{{{+2 여러분이 가꾸어 나가는 {{{#00a495,#E69720 지식의 나무}}}}}}'''
                 [[나무위키|{{{#00a495,#E69720 나무위키}}}]]에 오신 것을 환영합니다!
                 [[:파일:nogray.png|{{{#ffffff,#E69720 다크는 회색이 아니라 검정입니다!}}}]]
@@ -114,12 +127,14 @@ public class RevisionService {
                 [include(틀:운영토론)][[분류:나무위키]]
                 ## 운영 토론이나 운영 알림은 해당 틀을 편집해 주시기 바랍니다.
                 """;
-        LinkedList<Diff> diffs = diffMatchPatch.diff_main(oldText, newText);
-        System.out.println("########################");
-        System.out.println("두개의 차이 " + diffMatchPatch.diff_levenshtein(diffs));
-        System.out.println("차이" + diffMatchPatch.diff_length(diffs));
+        LinkedList<Diff> diffs = diffMatchPatch.diff_main(oldText, text);
+//        System.out.println("########################");
+//        System.out.println("두개의 차이 " + diffMatchPatch.diff_levenshtein(diffs));
+//        System.out.println("차이" + diffMatchPatch.diff_length(diffs));
         diffMatchPatch.diff_cleanupSemantic(diffs);
-        System.out.println(diffs);
-        return diffs;
+//        System.out.println(diffs);
+
+        String html = diffMatchPatch.diff_prettyHtml(diffs);
+        return html;
     }
 }
