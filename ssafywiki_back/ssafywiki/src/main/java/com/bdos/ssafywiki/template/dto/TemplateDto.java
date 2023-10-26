@@ -23,6 +23,7 @@ public class TemplateDto {
     @ToString
     @Builder
     public static class Detail {
+        private Long templateId;
         private String title;
         private String content;
         private boolean secret;

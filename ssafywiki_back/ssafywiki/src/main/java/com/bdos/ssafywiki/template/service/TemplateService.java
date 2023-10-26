@@ -39,4 +39,10 @@ public class TemplateService {
 
         return templateMapper.toPreviewList(templateList);
     }
+
+    public TemplateDto.Detail readTemplateDetail(Long templateId) {
+        Template template = templateRepository.findById(templateId).orElse(null);
+        if (template == null) return null;
+        return templateMapper.toDetail(template);
+    }
 }
