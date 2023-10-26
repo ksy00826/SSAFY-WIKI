@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface RevisionRepository extends JpaRepository<Revision, Long> {
 
-    @Query(value = "SELECT r FROM Revision r JOIN FETCH Comment WHERE r.document.id = :id")
-    Page<Revision> findAllByDocumentJoinComment(Long id, Pageable pageable);
+    @Query(value = "SELECT r FROM Revision r JOIN FETCH Comment c ON r.comment.id = c.id WHERE r.document.id = :docsId")
+    Page<Revision> findAllByDocumentJoinComment(Long docsId, Pageable pageable);
+
+
 }
