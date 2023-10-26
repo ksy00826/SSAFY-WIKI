@@ -45,4 +45,8 @@ public class TemplateService {
         if (template == null) return null;
         return templateMapper.toDetail(template);
     }
+
+    public void deleteTemplate(Long templateId) {
+        templateRepository.deleteById(templateId);
+    }
 }
