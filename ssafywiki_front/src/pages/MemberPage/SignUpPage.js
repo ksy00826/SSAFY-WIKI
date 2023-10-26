@@ -1,113 +1,61 @@
 import React from "react";
-import {
-  Alert,
-  Button,
-  Checkbox,
-  Form,
-  Input,
-  Space,
-  Typography,
-  Steps,
-} from "antd";
-import {
-  LoadingOutlined,
-  SmileOutlined,
-  SolutionOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { Input, Steps, Card, Button } from "antd";
 
-import { LockOutlined } from "@ant-design/icons";
+import styles from "./SignUpPage.module.css";
+import Form1 from "components/Member/SignUpForm1";
+import Form2 from "components/Member/SignUpForm2";
 
+const { Search } = Input;
 const description = "This is a description.";
 const steps = [
   {
-    title: "SSAFY 인증",
-    status: "Verification",
-    // icon: <UserOutlined />,
+    title: "회원 정보 기입",
   },
   {
-    title: "회원 정보 기입",
-    status: "info",
-    // icon: <SolutionOutlined />,
+    title: "SSAFY 인증",
   },
   {
     title: "회원가입 완료",
-    status: "finish",
-    // icon: <SmileOutlined />,
   },
 ];
 
 const SignUp = () => {
   const [current, setCurrent] = React.useState(0);
-  const finish = () => {};
+  const [info, setInfo] = React.useState();
+
+  const next = () => {
+    setCurrent(current + 1);
+  };
+
+  const save = (e) => {
+    setInfo(e);
+    console.log(e);
+  };
+
   return (
-    <div>
+    <Card
+      style={{
+        width: 600,
+        marginLeft: "10%",
+        marginRight: "10%",
+      }}
+    >
       <h1>회원가입</h1>
-      <Steps
-        size="small"
-        current={current}
-        items={steps}
-        style={{ marginTop: "10%", marginBottom: "10%" }}
-      />
-      <Form
-        name="basic"
-        style={{
-          width: 600,
-          marginLeft: "10%",
-          marginRight: "10%",
-        }}
-        initialValues={{
-          remember: true,
-        }}
-        onFinish={finish()}
-        autoComplete="off"
-      >
-        <Form.Item
-          // label="이메일"
-          name="email"
-          rules={[
-            {
-              required: true,
-              message: "이메일을 입력해주세요.",
-            },
-          ]}
-        >
-          <Input
-            prefix={<UserOutlined className="site-form-item-icon" />}
-            placeholder="이메일"
-          />
-        </Form.Item>
+      <Steps current={current} items={steps} className={styles.margintd} />
 
-        <Form.Item
-          // label="비밀번호"
-          name="password"
-          rules={[
-            {
-              required: true,
-              message: "비밀번호를 입력해주세요.",
-            },
-          ]}
-        >
-          <Input.Password
-            prefix={<LockOutlined className="site-form-item-icon" />}
-            placeholder="비밀번호"
-          />
-        </Form.Item>
-
-        <Form.Item name="remember" valuePropName="checked">
-          <Checkbox>이메일 기억하기</Checkbox>
-        </Form.Item>
-
-        <Form.Item>
-          <Space>
-            <Button type="primary" htmlType="submit">
-              로그인
-            </Button>
-            <Button type="default">회원가입</Button>
-          </Space>
-        </Form.Item>
-      </Form>
-    </div>
+      {current === 0 ? <Form1 goNext={next} saveInfo={save}></Form1> : <></>}
+      {current === 1 ? <Form2 goNext={next} info={info}></Form2> : <></>}
+      {current === 2 ? (
+        <>
+          <h3>안녕하세요, {info.username}님</h3>
+          <Button type="default" href="/member/login">
+            로그인 화면으로
+          </Button>
+        </>
+      ) : (
+        <></>
+      )}
+    </Card>
   );
 };
 
