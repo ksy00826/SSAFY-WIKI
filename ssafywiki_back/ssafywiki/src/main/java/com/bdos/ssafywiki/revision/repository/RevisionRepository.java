@@ -11,9 +11,9 @@ public interface RevisionRepository extends JpaRepository<Revision, Long> {
 
     Revision findTop1ByDocumentOrderByIdDesc(Document document);
 
-    @Query(value = "SELECT r FROM Revision r JOIN FETCH r.comment WHERE r.document.id = :docsId")
+    @Query(value = "SELECT r FROM Revision r LEFT JOIN FETCH r.comment WHERE r.document.id = :docsId")
     Page<Revision> findAllByDocumentJoinComment(Long docsId, Pageable pageable);
 
-    @Query(value = "SELECT r FROM Revision r JOIN FETCH r.content JOIN FETCH r.document WHERE r.document.id = :docsId AND r.number = :number")
+    @Query(value = "SELECT r FROM Revision r LEFT JOIN FETCH r.content LEFT JOIN FETCH r.document WHERE r.document.id = :docsId AND r.number = :number")
     Revision findByDocumentIdAndNumber(Long docsId, Long number);
 }
