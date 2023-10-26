@@ -1,13 +1,12 @@
 package com.bdos.ssafywiki.discussion.entity;
 
+import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -38,17 +37,17 @@ public class Discussion {
     private LocalDateTime modifiedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "discussion_discussroom_id", nullable = false)
-    private DiscussionRoom discussionRoom;
+    @JoinColumn(name = "document_id", nullable = false)
+    private Document document;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "discussion_user_id", nullable = false)
     private User user;
 
     @Builder
-    public Discussion(String content, DiscussionRoom discussionRoom, User user) {
+    public Discussion(String content, Document document, User user) {
         this.content = content;
-        this.discussionRoom = discussionRoom;
+        this.document = document;
         this.user = user;
     }
 }
