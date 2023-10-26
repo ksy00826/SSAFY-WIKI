@@ -1,5 +1,6 @@
 package com.bdos.ssafywiki.revision.repository;
 
+import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.revision.entity.Revision;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,8 +9,5 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface RevisionRepository extends JpaRepository<Revision, Long> {
 
-    @Query(value = "SELECT r FROM Revision r JOIN FETCH Comment c ON r.comment.id = c.id WHERE r.document.id = :docsId")
-    Page<Revision> findAllByDocumentJoinComment(Long docsId, Pageable pageable);
-
-
+    Revision findTop1ByDocumentOrderByIdDesc(Document document);
 }

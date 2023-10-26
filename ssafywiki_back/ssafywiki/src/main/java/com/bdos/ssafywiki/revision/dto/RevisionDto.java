@@ -12,16 +12,15 @@ public class RevisionDto {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    @Builder
     @ToString
-    public static class Version{
-        private Long id;
-        private Long number;
-        private Long diffAmount;
+    @Builder
+    public static class Response {
+        private Long docsId;
+        private String author;
+        private String title;
+        private String content;
+        private boolean deleted;
         private LocalDateTime createdAt;
-        private CommentDto.Version comment;
-        private UserDto.Version user;
-
-
+        private LocalDateTime modifiedAt;
     }
 }
