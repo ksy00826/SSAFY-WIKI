@@ -10,8 +10,10 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface TemplateMapper {
 
+    @Mapping(source = "template.id", target = "templateId")
     TemplateDto.Detail toDetail(Template template);
 
+    @Mapping(source = "template.id", target = "templateId")
     @Mapping(source = "template.user.id", target = "author")
     TemplateDto.Preview toPreview(Template template);
 

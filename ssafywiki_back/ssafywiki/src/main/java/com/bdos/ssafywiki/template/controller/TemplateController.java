@@ -34,4 +34,12 @@ public class TemplateController {
 
         return ResponseEntity.ok(list);
     }
+
+    @Operation(summary = "템플릿 상세 불러오기", description = "탬플릿 상세를 불러옵니다.")
+    @GetMapping("/api/docs/template/{templateId}")
+    public ResponseEntity<TemplateDto.Detail> readTemplateDetail(@PathVariable Long templateId){
+        TemplateDto.Detail templateDetail = templateService.readTemplateDetail(templateId);
+
+        return ResponseEntity.ok(templateDetail);
+    }
 }
