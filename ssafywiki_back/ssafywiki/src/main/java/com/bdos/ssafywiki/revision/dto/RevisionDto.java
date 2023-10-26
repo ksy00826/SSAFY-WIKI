@@ -1,5 +1,6 @@
 package com.bdos.ssafywiki.revision.dto;
 
+import com.bdos.ssafywiki.user.dto.UserDto;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
