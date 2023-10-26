@@ -17,4 +17,9 @@ public class RevisionService {
 
         return revisionRepository.findAllByDocumentJoinComment(docsId, pageable);
     }
+
+    public Revision getDetail(long docsId, long revNumber) {
+
+        return revisionRepository.findByDocumentIdAndNumber(docsId, revNumber);
+    }
 }
