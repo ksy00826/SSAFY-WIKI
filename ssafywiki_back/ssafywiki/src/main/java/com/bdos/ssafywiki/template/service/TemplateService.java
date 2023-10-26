@@ -10,6 +10,8 @@ import com.bdos.ssafywiki.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class TemplateService {
@@ -30,5 +32,11 @@ public class TemplateService {
         templateRepository.save(template);
 
         return templateMapper.toDetail(template);
+    }
+
+    public List<TemplateDto.Preview> readTemplateList() {
+        List<Template> templateList = templateRepository.findAll();
+
+        return templateMapper.toPreviewList(templateList);
     }
 }
