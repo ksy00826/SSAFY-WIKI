@@ -19,10 +19,18 @@ function App() {
         <Header className="App-header">
           <Navbar />
         </Header>
-        <Layout>
+        <Layout
+          style={{
+            backgroundColor: "white",
+          }}
+        >
           <AppRouter />
         </Layout>
-        <Footer>
+        <Footer
+          style={{
+            backgroundColor: "white",
+          }}
+        >
           <MyFooter />
         </Footer>
       </Layout>
