@@ -83,4 +83,36 @@ public class DocumentService {
         Revision revision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
         return revisionMapper.toResponse(revision);
     }
+
+    public RevisionDto.Response updateDocs(DocumentDto.Put put) {
+
+        //엔티티 : 코멘트, 내용 -> 버전
+        Comment comment = new Comment(put.getComment());
+        Content content = new Content(put.getContent());
+        commentRepository.save(comment);
+        contentRepository.save(content);
+
+        Document document = documentRepository.findById(put.getDocsId()).orElse(null);
+        if (document == null) return null; //일단
+
+        //연관관계 : 수정 유저, 이전 버전id, 문서id
+        User user = User.builder().name("수정한 유저임").build(); //임시
+        Revision preRevision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
+
+        //그 외 : 텍스트 증감 수, 문서 버전 번호
+        Long textDiff = 0L; //임시
+        Long newVersionNo = preRevision.getNumber() + 1;
+
+        Revision revision = new Revision(textDiff, newVersionNo);
+
+        //연관관계 등록 : 코멘트, 내용, 문서, 유저, 버전(selft)
+        revision.setUser(user);
+        revision.setDocument(document);
+        revision.setContent(content);
+        revision.setComment(comment);
+        revision.setParent(preRevision);
+
+        //문서 상세 내용 리턴
+        return revisionMapper.toResponse(revision);
+    }
 }

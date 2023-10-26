@@ -24,6 +24,18 @@ public class DocumentDto {
     @AllArgsConstructor
     @ToString
     @Builder
+    public static class Put {
+        private Long docsId;
+        private String content;
+        private String comment;
+    }
+    
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    @Builder
     public static class Detail{
         private Long id;
         private String title;
