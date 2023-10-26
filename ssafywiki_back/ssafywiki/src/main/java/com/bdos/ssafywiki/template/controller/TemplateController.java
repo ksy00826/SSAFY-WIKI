@@ -10,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "템플릿 API", description = "템플릿에 대한 CRUD 작업을 수행하는 API")
 @RestController
 @RequiredArgsConstructor
@@ -23,5 +25,13 @@ public class TemplateController {
         TemplateDto.Detail detail = templateService.createTemplate(post);
 
         return ResponseEntity.ok(detail);
+    }
+
+    @Operation(summary = "템플릿 목록 불러오기", description = "탬플릿 목록을 불러옵니다.")
+    @GetMapping("/api/docs/template")
+    public ResponseEntity<List<TemplateDto.Preview>> readTemplateList(){
+        List<TemplateDto.Preview> list = templateService.readTemplateList();
+
+        return ResponseEntity.ok(list);
     }
 }

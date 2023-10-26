@@ -27,4 +27,16 @@ public class TemplateDto {
         private String content;
         private boolean secret;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    @Builder
+    public static class Preview {
+        private Long templateId;
+        private String title;
+        private String author;
+    }
 }
