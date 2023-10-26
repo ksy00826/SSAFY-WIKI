@@ -58,7 +58,10 @@ public class RevisionController {
 
     @Operation(summary = "버전 되돌리기", description = "해당 버전으로 되돌립니다.")
     @PostMapping("/revoke")
-    public ResponseEntity revokeVersion(@RequestParam(name = "select") int revId){
+    public ResponseEntity revokeVersion(
+            @RequestParam(name = "select") long revId){
+
+        revisionService.revokeVersion(revId);
 
         return new ResponseEntity(HttpStatus.OK);
     }
