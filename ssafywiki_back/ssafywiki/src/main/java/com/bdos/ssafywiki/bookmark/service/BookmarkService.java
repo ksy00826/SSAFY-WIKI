@@ -30,7 +30,13 @@ public class BookmarkService {
         User user = userRepository.findById(1L).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
         Document document = documentRepository.findById(docsId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
 
-        Bookmark bookmark = new Bookmark();
+        //이미 해당 문서의 북마크 존재하는지 검사
+        Bookmark bookmark = bookmarkRepository.findByDocsId(docsId).orElse(null);
+        if(bookmark != null){
+            new BusinessLogicException(ExceptionCode.BOOKMARK_CONFLICT);
+        }
+
+        bookmark = new Bookmark();
         bookmark.setUser(user);
         bookmark.setDocument(document);
         bookmarkRepository.save(bookmark);
