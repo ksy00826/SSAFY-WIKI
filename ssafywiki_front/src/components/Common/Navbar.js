@@ -1,37 +1,28 @@
 import React, { useState } from "react";
+import styles from "./Navbar.module.css";
+import Logoimg from "assets/img/logo.png";
 import {
   AppstoreOutlined,
   MailOutlined,
   SettingOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
-import { Menu } from "antd";
+import { Menu, ConfigProvider } from "antd";
 const items = [
   {
-    label: "Navigation One",
-    key: "mail",
-    icon: <MailOutlined />,
-  },
-  {
-    label: "Navigation Two",
-    key: "app",
-    icon: <AppstoreOutlined />,
-    disabled: true,
-  },
-  {
-    label: "Navigation Three - Submenu",
     key: "SubMenu",
-    icon: <SettingOutlined />,
+    label: <UserOutlined />,
     children: [
       {
         type: "group",
         label: "Item 1",
         children: [
           {
-            label: "Option 1",
+            label: "로그인",
             key: "setting:1",
           },
           {
-            label: "Option 2",
+            label: "회원가입",
             key: "setting:2",
           },
         ],
@@ -41,39 +32,35 @@ const items = [
         label: "Item 2",
         children: [
           {
-            label: "Option 3",
+            label: "로그아웃",
             key: "setting:3",
           },
+          { label: "관리자 페이지", key: "admin" },
+          { label: "내 기여 목록", key: "my docs" },
+          { label: "스크랩 목록", key: "my docs" },
           {
-            label: "Option 4",
+            label: "마이페이지",
             key: "setting:4",
           },
         ],
       },
     ],
   },
-  {
-    label: (
-      <a href="https://ant.design" target="_blank" rel="noopener noreferrer">
-        Navigation Four - Link
-      </a>
-    ),
-    key: "alipay",
-  },
 ];
 const Navbar = () => {
-  const [current, setCurrent] = useState("mail");
-  const onClick = (e) => {
-    console.log("click ", e);
-    setCurrent(e.key);
-  };
   return (
-    <Menu
-      onClick={onClick}
-      selectedKeys={[current]}
-      mode="horizontal"
-      items={items}
-    />
+    <div className={styles.NavBox}>
+      <div className={styles.NavLogoBox}>
+        <img src={Logoimg} className={styles.NavLogo} />
+      </div>
+      <ConfigProvider
+        theme={{
+          token: {},
+        }}
+      >
+        <Menu className={styles.NavBar} mode="horizontal" items={items} />
+      </ConfigProvider>
+    </div>
   );
 };
 export default Navbar;
