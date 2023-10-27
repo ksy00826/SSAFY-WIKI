@@ -35,7 +35,7 @@ public class BookmarkService {
         //이미 해당 문서의 북마크 존재하는지 검사
         Bookmark bookmark = bookmarkRepository.findByDocsId(docsId).orElse(null);
         if(bookmark != null){
-            new BusinessLogicException(ExceptionCode.BOOKMARK_CONFLICT);
+            throw new BusinessLogicException(ExceptionCode.BOOKMARK_CONFLICT);
         }
 
         bookmark = new Bookmark();
