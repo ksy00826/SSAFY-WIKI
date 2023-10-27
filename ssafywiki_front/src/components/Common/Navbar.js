@@ -8,6 +8,9 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Menu, ConfigProvider } from "antd";
+import { useNavigate } from "react-router-dom";
+
+import SearchDocs from "./SearchDocs";
 const items = [
   {
     key: "SubMenu",
@@ -48,11 +51,18 @@ const items = [
   },
 ];
 const Navbar = () => {
+  const navigate = useNavigate();
+  const goHome = () => {
+    navigate("/");
+  };
   return (
     <div className={styles.NavBox}>
-      <div className={styles.NavLogoBox}>
+      <div className={styles.NavLogoBox} onClick={goHome}>
         <img src={Logoimg} className={styles.NavLogo} />
       </div>
+
+      <SearchDocs />
+
       <ConfigProvider
         theme={{
           token: {},
