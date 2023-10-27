@@ -8,12 +8,14 @@ import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.document.repository.DocumentRepository;
 import com.bdos.ssafywiki.exception.BusinessLogicException;
 import com.bdos.ssafywiki.exception.ExceptionCode;
-import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import com.bdos.ssafywiki.user.entity.User;
 import com.bdos.ssafywiki.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.awt.print.Book;
 import java.util.List;
 
 @Service
@@ -42,13 +44,13 @@ public class BookmarkService {
         bookmarkRepository.save(bookmark);
     }
 
-    public List<BookmarkDto.Detail> getBookmark() {
+    public List<BookmarkDto.Detail> getBookmark(Pageable pageable) {
         User user = userRepository.findById(1L).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
 
         //사용자의 북마크 불러오기
-        List<Bookmark> bookmarkList = bookmarkRepository.findAllByUserId(user.getId());
+        Page<Bookmark> bookmarkList = bookmarkRepository.findAllByUserId(user.getId(), pageable);
 
-        return bookmarkMapper.toDetailList(bookmarkList);
+        return bookmarkMapper.toDetailList(bookmarkList.getContent());
     }
 
     public void deleteBookmark(Long docsId) {
