@@ -23,10 +23,10 @@ const UserPage = () => {
       >
         <Routes>
           <Route path="/list" element={<ListPage />} />
-          <Route path="/history/*" element={<History />} />
-          <Route path="/edit/*" element={<Edit />} />
-          <Route path="/auth/*" element={<Authority />} />
-          <Route path="/content/*" element={<Contents />} />
+          <Route path="/history/:docsId/:title" element={<History />} />
+          <Route path="/edit/:docsId/:title" element={<Edit />} />
+          <Route path="/auth/:docsId/:title" element={<Authority />} />
+          <Route path="/content/:docsId/:title" element={<Contents />} />
           <Route path="/diff/*" element={<Diff />} />
           <Route path="/raw/*" element={<Raw />} />
         </Routes>

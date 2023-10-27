@@ -2,6 +2,7 @@ import "./App.css";
 
 import React from "react";
 import { Layout } from "antd";
+import { BrowserRouter } from "react-router-dom";
 import AppRouter from "./AppRouter";
 import Navbar from "./components/Common/Navbar";
 import MyFooter from "./components/Common/Footer";
@@ -10,31 +11,33 @@ const { Header, Footer, Sider, Content } = Layout;
 
 function App() {
   return (
-    <div className="App">
-      <Layout
-        style={{
-          minHeight: "100vh",
-        }}
-      >
-        <Header className="App-header">
-          <Navbar />
-        </Header>
+    <BrowserRouter>
+      <div className="App">
         <Layout
           style={{
-            backgroundColor: "white",
+            minHeight: "100vh",
           }}
         >
-          <AppRouter />
+          <Header className="App-header">
+            <Navbar />
+          </Header>
+          <Layout
+            style={{
+              backgroundColor: "white",
+            }}
+          >
+            <AppRouter />
+          </Layout>
+          <Footer
+            style={{
+              backgroundColor: "white",
+            }}
+          >
+            <MyFooter />
+          </Footer>
         </Layout>
-        <Footer
-          style={{
-            backgroundColor: "white",
-          }}
-        >
-          <MyFooter />
-        </Footer>
-      </Layout>
-    </div>
+      </div>
+    </BrowserRouter>
   );
 }
 
