@@ -8,6 +8,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.Table;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +34,8 @@ public class BookmarkController {
 
     @Operation(summary = "북마크 목록 조회하기", description = "사용자가 북마크한 문서 목록을 불러옵니다.")
     @GetMapping ("/api/docs/bookmark")
-    public ResponseEntity<List<BookmarkDto.Detail>> readBookmark(){
-        List<BookmarkDto.Detail> list = bookmarkService.getBookmark();
+    public ResponseEntity<List<BookmarkDto.Detail>> readBookmark(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+        List<BookmarkDto.Detail> list = bookmarkService.getBookmark(pageable);
 
         return ResponseEntity.ok(list);
     }
