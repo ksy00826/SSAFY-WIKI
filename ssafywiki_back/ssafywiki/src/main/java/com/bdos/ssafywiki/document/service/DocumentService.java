@@ -1,9 +1,13 @@
 package com.bdos.ssafywiki.document.service;
 
+import ch.qos.logback.core.spi.ErrorCodes;
+import com.bdos.ssafywiki.diff.DiffMatchPatch;
 import com.bdos.ssafywiki.document.dto.DocumentDto;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.document.mapper.DocumentMapper;
 import com.bdos.ssafywiki.document.repository.DocumentRepository;
+import com.bdos.ssafywiki.exception.BusinessLogicException;
+import com.bdos.ssafywiki.exception.ExceptionCode;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import com.bdos.ssafywiki.revision.entity.Comment;
 import com.bdos.ssafywiki.revision.entity.Content;
@@ -35,14 +39,19 @@ public class DocumentService {
     //mapstruct
     private final RevisionMapper revisionMapper;
 
+    private final DiffMatchPatch diffMatchPatch;
+
     public RevisionDto.Response writeDocs(DocumentDto.Post post) {
         //로그인 한 사용자(작성 유저) : JWT
         User user = new User("qqq@naver.com", "pwpw", "ksy", "sysy", "ssafy", "010", "buk", "token");
         //일단 유저를 다른 곳에 연관관계로 등록하기 위해 임시로 저장
         userRepository.save(user);
+        //유저 널 체크 필요
 
         //1. Document entity 생성
-        Document document = new Document(post.getTitle()); //redirect, deleted는 기본값이 false
+        Document document = Document.builder()
+                .title(post.getTitle())
+                .build(); //redirect, deleted는 기본값이 false
 
         //1.1 연관관계 등록
         document.setUser(user);
@@ -51,8 +60,11 @@ public class DocumentService {
         documentRepository.save(document);
 
         //2. Revision entity 생성
-        Long no = 1L; //임시
-        Revision revision = new Revision(0L, no);
+
+        Revision revision = Revision.builder()
+                .number(1L)
+                .diffAmount((long)diffMatchPatch.diff_length(diffMatchPatch.diff_main("", post.getContent())))
+                .build();
 
         //2.1 Content entity 생성 + Comment entity 생성
         Content content = new Content(post.getContent());
@@ -75,10 +87,7 @@ public class DocumentService {
     public RevisionDto.Response readDocs(Long docsId) {
 
         //해당 문서 엔티티 찾기
-        Document document = documentRepository.findById(docsId).orElse(null);
-        if (document == null){
-            return null;
-        }
+        Document document = documentRepository.findById(docsId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
         //docsId에 해당하는 가장 최신 버전의 문서를 찾아서 리턴 (revision 엔티티 찾기)
         Revision revision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
         return revisionMapper.toResponse(revision);
@@ -92,15 +101,14 @@ public class DocumentService {
         commentRepository.save(comment);
         contentRepository.save(content);
 
-        Document document = documentRepository.findById(put.getDocsId()).orElse(null);
-        if (document == null) return null; //일단
+        Document document = documentRepository.findById(put.getDocsId()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
 
         //연관관계 : 수정 유저, 이전 버전id, 문서id
-        User user = userRepository.findById(0L).orElse(null); //임시
+        User user = userRepository.findById(1L).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
         Revision preRevision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
 
         //그 외 : 텍스트 증감 수, 문서 버전 번호
-        Long textDiff = 0L; //임시
+        Long textDiff = (long)diffMatchPatch.diff_length(diffMatchPatch.diff_main(preRevision.getContent().getText(), put.getContent()));
         Long newVersionNo = preRevision.getNumber() + 1;
 
         Revision revision = new Revision(textDiff, newVersionNo);

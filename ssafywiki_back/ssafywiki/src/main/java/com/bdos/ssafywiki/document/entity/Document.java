@@ -2,6 +2,7 @@ package com.bdos.ssafywiki.document.entity;
 
 import com.bdos.ssafywiki.user.entity.User;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
@@ -49,6 +50,7 @@ public class Document {
     @Column(name = "docs_modified_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime modifiedAt;
 
+    @Builder
     public Document(String title) {
         this.title = title;
     }

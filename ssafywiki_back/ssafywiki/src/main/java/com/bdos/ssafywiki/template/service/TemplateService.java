@@ -1,5 +1,7 @@
 package com.bdos.ssafywiki.template.service;
 
+import com.bdos.ssafywiki.exception.BusinessLogicException;
+import com.bdos.ssafywiki.exception.ExceptionCode;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import com.bdos.ssafywiki.template.dto.TemplateDto;
 import com.bdos.ssafywiki.template.entity.Template;
@@ -21,7 +23,8 @@ public class TemplateService {
     private final TemplateMapper templateMapper;
 
     public TemplateDto.Detail createTemplate(TemplateDto.Post post) {
-        User user = userRepository.findById(1L).orElse(null); //임시
+        //임시 : JWT
+        User user = userRepository.findById(1L).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
 
         Template template = Template.builder()
                 .title(post.getTitle())
@@ -36,17 +39,16 @@ public class TemplateService {
 
     public List<TemplateDto.Preview> readTemplateList() {
         List<Template> templateList = templateRepository.findAll();
-
         return templateMapper.toPreviewList(templateList);
     }
 
     public TemplateDto.Detail readTemplateDetail(Long templateId) {
-        Template template = templateRepository.findById(templateId).orElse(null);
-        if (template == null) return null;
+        Template template = templateRepository.findById(templateId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.TEMPLATE_NOT_FOUND));
         return templateMapper.toDetail(template);
     }
 
     public void deleteTemplate(Long templateId) {
-        templateRepository.deleteById(templateId);
+        Template template = templateRepository.findById(templateId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.TEMPLATE_NOT_FOUND));
+        templateRepository.delete(template);
     }
 }
