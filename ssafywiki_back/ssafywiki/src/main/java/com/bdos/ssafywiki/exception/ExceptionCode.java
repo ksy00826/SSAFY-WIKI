@@ -12,7 +12,8 @@ public enum ExceptionCode {
     MEMBER_NOT_FOUND(404, "Member Not Found"),
     REVISION_NOT_FOUND(404, "Revision Not Found"),
     TEMPLATE_NOT_FOUND(404, "Template Not Found"),
-    DOCUMENT_NOT_FOUND(404, "Document Not Found");
+    DOCUMENT_NOT_FOUND(404, "Document Not Found"),
+    BOOKMARK_NOT_FOUND(404, "Bookmark Not Found");
 
 
     @Getter
