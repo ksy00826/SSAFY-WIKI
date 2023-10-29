@@ -30,9 +30,9 @@ public class TestController {
     		try {
     			// Redis Set Key-value
     			vop.set(req.get("key").toString(), req.get("value").toString());
-    			return "set message success";
+    			return new ResponseEntity<>("set message success", HttpStatus.CREATED);
     		} catch (Exception e) {
-    			return "set message fail";
+    			return new ResponseEntity<>("set message fail", HttpStatus.CREATED);
     		}
 
         return new ResponseEntity<>("정상 등록", HttpStatus.CREATED);
