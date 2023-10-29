@@ -18,6 +18,9 @@ import org.springframework.data.redis.core.ValueOperations;
 public class TestController {
 
     private final RedisTemplate<String, String> redisTemplate;
+    public RedisController(RedisTemplate<String, String> redisTemplate) {
+    	this.redisTemplate = redisTemplate;
+    }
     @GetMapping("/api/test")
     public String testGet() {
         return "Hello, world!";
