@@ -25,7 +25,7 @@ public class TestController {
         return "Hello, world!";
     }
 
-    @PostMapping("api/data")
+    @PostMapping("/api/data")
     public ResponseEntity<String> setRedisData(@RequestBody Map<String, String> req) throws Exception{
 
         ValueOperations<String, String> vop = redisTemplate.opsForValue();
@@ -39,7 +39,7 @@ public class TestController {
         return new ResponseEntity<>("정상 등록", HttpStatus.CREATED);
     }
 
-    @GetMapping("api/data/{key}")
+    @GetMapping("/api/data/{key}")
     public ResponseEntity<String> getRedisData(
             @PathVariable("key") String key){
 
