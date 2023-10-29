@@ -1,6 +1,7 @@
 package com.bdos.ssafywiki;
 
 import lombok.RequiredArgsConstructor;
+import java.util.Map;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
