@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.data.redis.core.ValueOperations;
 
 @RestController
-@RequiredArgsConstructor
 public class TestController {
 
     private final RedisTemplate<String, String> redisTemplate;
