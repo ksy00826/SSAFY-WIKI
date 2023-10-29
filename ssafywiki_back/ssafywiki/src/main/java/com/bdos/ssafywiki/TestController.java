@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.redis.core.ValueOperations;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,10 +20,17 @@ public class TestController {
         return "Hello, world!";
     }
 
-    @PostMapping("api/data/{key}/{value}")
-    public ResponseEntity<String> setRedisData(@PathVariable("key") String key , @PathVariable("value") String value) throws Exception{
+    @PostMapping("api/data")
+    public ResponseEntity<String> setRedisData(@RequestBody Map<String, String> req) throws Exception{
 
-        redisTemplate.opsForValue().set(key, value );
+        ValueOperations<String, String> vop = redisTemplate.opsForValue();
+    		try {
+    			// Redis Set Key-value
+    			vop.set(req.get("key").toString(), req.get("value").toString());
+    			return "set message success";
+    		} catch (Exception e) {
+    			return "set message fail";
+    		}
 
         return new ResponseEntity<>("정상 등록", HttpStatus.CREATED);
     }
