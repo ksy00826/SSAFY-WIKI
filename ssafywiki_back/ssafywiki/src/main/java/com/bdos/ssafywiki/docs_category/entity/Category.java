@@ -1,4 +1,4 @@
-package com.bdos.ssafywiki.category.entity;
+package com.bdos.ssafywiki.docs_category.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;

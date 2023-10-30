@@ -41,9 +41,11 @@ public class Bookmark {
     @JoinColumn(name = "bookmark_docs_id", nullable = false)
     private Document document;
 
-    @Builder
-    public Bookmark(User user, Document document) {
+    public void setUser(User user) {
         this.user = user;
+    }
+
+    public void setDocument(Document document) {
         this.document = document;
     }
 }

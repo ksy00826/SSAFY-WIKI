@@ -12,8 +12,10 @@ public enum ExceptionCode {
     MEMBER_NOT_FOUND(404, "Member Not Found"),
     REVISION_NOT_FOUND(404, "Revision Not Found"),
     TEMPLATE_NOT_FOUND(404, "Template Not Found"),
-    MERGE_FAILED(404, "Merge Failed");
-
+    MERGE_FAILED(404, "Merge Failed"),
+    DOCUMENT_NOT_FOUND(404, "Document Not Found"),
+    BOOKMARK_NOT_FOUND(404, "Bookmark Not Found"),
+    BOOKMARK_CONFLICT(409, "Conflict");
 
     @Getter
     private final int status;
