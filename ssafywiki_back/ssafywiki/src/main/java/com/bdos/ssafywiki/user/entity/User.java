@@ -71,4 +71,8 @@ public class User {
         this.campus = campus;
         this.refreshToken = refreshToken;
     }
+
+    public User orElseThrow(Object o) {
+        return null;
+    }
 }
