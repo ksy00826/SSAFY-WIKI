@@ -10,12 +10,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TemplateRepository extends JpaRepository<Template, Long> {
 
+    @Query("select t from Template t where t.user.id = :userId")
+    Page<Template> findAllWithAuthor(Long userId, Pageable pageable);
+
+    @Query("select t from Template t where t.user.id != :userId and t.secret = false")
+    Page<Template> findAllNotWithAuthor(Long userId, Pageable pageable);
+
     @Query("select t from Template t where t.user.id = :userId and t.title like concat('%', :keyword, '%')")
     Page<Template> findAllWithAuthorAndKeyword(String keyword, Long userId, Pageable pageable);
 
-    @Query("select t from Template t where t.user.id != :userId and t.title like concat('%', :keyword, '%')")
+    @Query("select t from Template t where t.user.id != :userId and t.title like concat('%', :keyword, '%') and t.secret = false")
     Page<Template> findAllWithNotAuthorAndKeyword(String keyword, Long userId, Pageable pageable);
 
-    @Query("select t from Template t where t.user.id = :userId")
-    Page<Template> findAllWithAuthor(Long userId, Pageable pageable);
 }
