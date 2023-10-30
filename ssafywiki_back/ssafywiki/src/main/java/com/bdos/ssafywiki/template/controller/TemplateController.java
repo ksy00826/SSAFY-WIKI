@@ -31,8 +31,9 @@ public class TemplateController {
 
     @Operation(summary = "템플릿 목록 불러오기", description = "탬플릿 목록을 불러옵니다.")
     @GetMapping("/api/docs/template")
-    public ResponseEntity<List<TemplateDto.Preview>> readTemplateList(@PageableDefault(size = 30, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
-        List<TemplateDto.Preview> list = templateService.readTemplateList(pageable);
+    public ResponseEntity<List<TemplateDto.Preview>> readTemplateList(@RequestParam("isMyTemplate") boolean isMyTemplate,
+                                                                      @PageableDefault(size = 30, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+        List<TemplateDto.Preview> list = templateService.readTemplateList(isMyTemplate, pageable);
 
         if (list.size() == 0){
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -54,7 +55,7 @@ public class TemplateController {
                                                                     @PageableDefault(size = 30, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
         templateService.deleteTemplate(templateId);
         //삭제 후 목록 반환하기
-        List<TemplateDto.Preview> list = templateService.readTemplateList(pageable);
+        List<TemplateDto.Preview> list = templateService.readTemplateList(true, pageable);
         return ResponseEntity.ok(list);
     }
 

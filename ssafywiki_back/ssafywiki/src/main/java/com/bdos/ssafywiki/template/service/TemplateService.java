@@ -38,8 +38,9 @@ public class TemplateService {
         return templateMapper.toDetail(template);
     }
 
-    public List<TemplateDto.Preview> readTemplateList(Pageable pageable) {
-        Page<Template> templateList = templateRepository.findAll(pageable);
+    public List<TemplateDto.Preview> readTemplateList(boolean isMyTemplate, Pageable pageable) {
+        //임시 사용자
+        Page<Template> templateList = templateRepository.findAllWithAuthor(1L, pageable);
         return templateMapper.toPreviewList(templateList.getContent());
     }
 
