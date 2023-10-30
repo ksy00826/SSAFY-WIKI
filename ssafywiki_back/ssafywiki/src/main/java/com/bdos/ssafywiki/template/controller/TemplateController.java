@@ -50,10 +50,21 @@ public class TemplateController {
 
     @Operation(summary = "템플릿 하나 삭제하기", description = "자신이 작성한 템플릿을 삭제합니다")
     @DeleteMapping("/api/docs/template/{templateId}")
-    public ResponseEntity<List<TemplateDto.Preview>> deleteTemplate(@PathVariable Long templateId, @PageableDefault(size = 30, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+    public ResponseEntity<List<TemplateDto.Preview>> deleteTemplate(@PathVariable Long templateId,
+                                                                    @PageableDefault(size = 30, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
         templateService.deleteTemplate(templateId);
         //삭제 후 목록 반환하기
         List<TemplateDto.Preview> list = templateService.readTemplateList(pageable);
+        return ResponseEntity.ok(list);
+    }
+
+    @Operation(summary = "템플릿 검색하기", description = "이름에 키워드가 포함된 템플릿을 검색합니다")
+    @GetMapping("/api/docs/template/search")
+    public ResponseEntity<List<TemplateDto.Preview>> searchTemplate(@RequestParam("keyword") String keyword,
+                                                                    @RequestParam("isMyTemplate") boolean isMyTemplate,
+                                                                    @PageableDefault(size = 30, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+        List<TemplateDto.Preview> list = templateService.searchTemplate(keyword, isMyTemplate, pageable);
+
         return ResponseEntity.ok(list);
     }
 }

@@ -52,4 +52,16 @@ public class TemplateService {
         Template template = templateRepository.findById(templateId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.TEMPLATE_NOT_FOUND));
         templateRepository.delete(template);
     }
+
+    public List<TemplateDto.Preview> searchTemplate(String keyword, boolean isMyTemplate, Pageable pageable) {
+        Page<Template> templateList = null;
+        if (isMyTemplate){
+            //임시 : JWT
+            templateList = templateRepository.findAllWithAuthorAndKeyword(keyword, 1L, pageable);
+        }
+        else{
+            templateList = templateRepository.findAllWithNotAuthorAndKeyword(keyword, 1L, pageable);
+        }
+        return templateMapper.toPreviewList(templateList.getContent());
+    }
 }
