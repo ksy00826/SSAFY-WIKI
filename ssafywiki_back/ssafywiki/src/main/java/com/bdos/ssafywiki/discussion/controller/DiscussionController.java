@@ -1,7 +1,8 @@
-package com.bdos.ssafywiki.discussion;
+package com.bdos.ssafywiki.discussion.controller;
 
 import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
-import com.bdos.ssafywiki.discussion.service.DiscusService;
+import com.bdos.ssafywiki.discussion.service.DiscussionService;
+import com.bdos.ssafywiki.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -17,16 +18,16 @@ import java.util.List;
 public class DiscussionController {
 
     private final SimpMessageSendingOperations messageSendingTemplate;
-    private final DiscusService discusService;
+    private final DiscussionService discusService;
 
     @MessageMapping("/{docsId}/chat")
     public void discuss(@PathVariable Long docsId, String discuss) {
-        String nickname = "광표";
+        User user = User.builder().nickname("광표").build();
         DiscussionDto discussionDto = DiscussionDto
                 .builder()
                 .docsId(docsId)
-                .message(discuss)
-                .userNickname(nickname)
+                .content(discuss)
+                .user(user)
                 .build();
         messageSendingTemplate.convertAndSend("/sub/chat/room/" + docsId, discuss);
     }
