@@ -39,8 +39,14 @@ public class TemplateService {
     }
 
     public List<TemplateDto.Preview> readTemplateList(boolean isMyTemplate, Pageable pageable) {
-        //임시 사용자
-        Page<Template> templateList = templateRepository.findAllWithAuthor(1L, pageable);
+        Page<Template> templateList = null;
+        if (isMyTemplate){
+            //임시 사용자
+            templateList = templateRepository.findAllWithAuthor(1L, pageable);
+        }
+        else{
+            templateList = templateRepository.findAllNotWithAuthor(1L, pageable);
+        }
         return templateMapper.toPreviewList(templateList.getContent());
     }
 
