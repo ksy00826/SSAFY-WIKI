@@ -13,10 +13,9 @@ import com.bdos.ssafywiki.revision.repository.RevisionRepository;
 import com.bdos.ssafywiki.user.entity.User;
 import com.bdos.ssafywiki.user.repository.UserRepository;
 import com.github.difflib.DiffUtils;
-import com.github.difflib.patch.AbstractDelta;
-import com.github.difflib.patch.Chunk;
-import com.github.difflib.patch.DeltaType;
-import com.github.difflib.patch.Patch;
+import com.github.difflib.algorithm.DiffAlgorithmFactory;
+import com.github.difflib.algorithm.DiffAlgorithmI;
+import com.github.difflib.patch.*;
 import com.github.difflib.text.DiffRow;
 import com.github.difflib.text.DiffRowGenerator;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.sql.SQLOutput;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -62,7 +63,9 @@ public class RevisionService {
         // revokeRev와 topRev의 diff amount를 계산
         String oldText = topRev.getContent().getText();
         String text = revokeRev.getContent().getText();
-        long diffAmount = diffMatchPatch.diff_length(diffMatchPatch.diff_main(oldText, text));
+        Patch<String> patch = DiffUtils.diff(splitIntoLines(oldText), splitIntoLines(text));
+
+        long diffAmount = diffLength(patch);
 
         Content newContent = Content.builder().text(revokeRev.getContent().getText()).build();
         contentRepository.save(newContent);
@@ -80,76 +83,19 @@ public class RevisionService {
         revisionRepository.save(newRev);
     }
 
-    public LinkedList<Diff> diff(long revId, long oldRevId) {
+    public List<AbstractDelta<String>> diff(long revId, long oldRevId) {
         Revision rev = revisionRepository.findById(revId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.REVISION_NOT_FOUND));
         Revision oldRev = revisionRepository.findById(oldRevId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.REVISION_NOT_FOUND));
 
         String oldText = oldRev.getContent().getText();
         String text = rev.getContent().getText();
 
-        LinkedList<Diff> diffs = diffMatchPatch.diff_main(oldText, text);
-        diffMatchPatch.diff_cleanupSemantic(diffs);
+        Patch<String> patch = DiffUtils.diff(splitIntoLines(oldText), splitIntoLines(text));
 
-        return diffs;
+        return patch.getDeltas();
     }
 
-    public String diffHtml(long revId, long oldRevId) {
-        String text = """
-                ----
-                {{{#!wiki style="text-align:center"
-                '''{{{+2 여러분이 가꾸어 나가는 {{{#00a495,#E69720 지식의 나무}}}}}}'''
-                [[나무위키|{{{#00a495,#E69720 나무위키}}}]]에 오신 것을 환영합니다!
-                [[:파일:nogray.png|{{{#ffffff,#E69720 다크는 회색이 아니라 검정입니다!}}}]]
-                나무위키는 누구나 기여할 수 있는 위키입니다.
-                검증되지 않았거나 편향된 내용이 있을 수 있습니다.
-                }}}
-                ----
-                [include(틀:이용안내)]
-                ----
-                [include(틀:나무위키 프로젝트)]
-                ----
-                {{{#!wiki style="margin-bottom:-10px"
-                {{{#!wiki style="margin-bottom:-10px"
-                [include(위키운영:접근 틀)]
-                }}}
-                [include(틀:나무위키)]}}}
-                ----
-                [include(틀:운영알림)]
-                ----
-                [include(틀:운영토론)][[분류:나무위키]]
-                ## 운영 토론이나 운영 알림은 해당 틀을 편집해 주시기 바랍니다.
-                """;
-        String oldText = """
-                ----
-                [include(틀:대문 기념일)]
-                ----
-                [include(틀:이용안내)]
-                ----
-                [include(틀:나무위키 프로젝트)]
-                ----
-                {{{#!wiki style="margin-bottom:-10px"
-                {{{#!wiki style="margin-bottom:-10px"
-                [include(위키운영:접근 틀)]
-                }}}
-                [include(틀:나무위키)]}}}
-                ----
-                [include(틀:운영알림)]
-                ----
-                [include(틀:운영토론)][[분류:나무위키]]
-                ## 운영 토론이나 운영 알림은 해당 틀을 편집해 주시기 바랍니다.
-                """;
-        LinkedList<Diff> diffs = diffMatchPatch.diff_main(oldText, text);
-//        System.out.println("########################");
-//        System.out.println("두개의 차이 " + diffMatchPatch.diff_levenshtein(diffs));
-//        System.out.println("차이" + diffMatchPatch.diff_length(diffs));
-        diffMatchPatch.diff_cleanupSemantic(diffs);
-//        System.out.println(diffs);
-
-        String html = diffMatchPatch.diff_prettyHtml(diffs);
-        return html;
-    }
-
-    public List<AbstractDelta<String>> diffTest(){
+    public List<AbstractDelta<String>> diffTest() {
         String text = """
                 ----
                 {{{#!wiki style="text-align:center"
@@ -197,36 +143,57 @@ public class RevisionService {
 
         List<String> oldStrings = List.of(oldText.split("\n"));
         List<String> newStrings = List.of(text.split("\n"));
-//        System.out.println(oldStrings);
-//        System.out.println(newStrings);
         Patch<String> patch = DiffUtils.diff(oldStrings, newStrings);
 
-        DiffRowGenerator generator = DiffRowGenerator.create()
-                .showInlineDiffs(true)
-                .inlineDiffByWord(true)
-                .oldTag(f -> "~")
-                .newTag(f -> "**")
-                .build();
+        System.out.println(diffLength(patch));
 
-//        List<DiffRow> rows = generator.generateDiffRows(DI)
-//        System.out.println(patch);
 
-//        for (AbstractDelta<String> delta : patch.getDeltas()) {
-//            switch (delta.getType()) {
-//                case CHANGE:
-//                    System.out.println("ChangeDelta: " + delta);
-//                    break;
-//                case DELETE:
-//                    System.out.println("DeleteDelta: " + delta);
-//                    break;
-//                case INSERT:
-//                    System.out.println("InsertDelta: " + delta);
-//                    break;
-//                case EQUAL:
-//                    System.out.println("EqualDelta: " + delta); // Usually not shown in diffs
-//                    break;
-//            }
-//        }
+        for (AbstractDelta<String> delta : patch.getDeltas()) {
+            switch (delta.getType()) {
+                case CHANGE:
+                    System.out.println("ChangeDelta: " + delta);
+                    break;
+                case DELETE:
+                    System.out.println("DeleteDelta: " + delta);
+                    break;
+                case INSERT:
+                    System.out.println("InsertDelta: " + delta);
+                    break;
+                case EQUAL:
+                    System.out.println("EqualDelta: " + delta); // Usually not shown in diffs
+                    break;
+            }
+        }
+
+        String version2 = """
+                ----
+                이부분이 충돌이 나겠지?
+                ----
+                이부분은 충돌이 안나겠지?
+                ----
+                ----
+                {{{#!wiki style="margin-bottom:-10px"
+                {{{#!wiki style="margin-bottom:-10px"
+                [include(위키운영:접근 틀)]
+                }}}
+                [include(틀:나무위키)]}}}
+                ----
+                [include(틀:운영알림)]
+                ----
+                [include(틀:운영토론)][[분류:나무위키]]
+                ## 운영 토론이나 운영 알림은 해당 틀을 편집해 주시기 바랍니다.
+                """;
+
+        try {
+            String result = threeWayMerge(oldStrings, newStrings, splitIntoLines(version2));
+            System.out.println("########################");
+            for (String s : splitIntoLines(result)) {
+                System.out.println(s);
+            }
+        } catch (PatchFailedException e) {
+            e.printStackTrace();
+            throw new BusinessLogicException(ExceptionCode.MERGE_FAILED);
+        }
 
         return patch.getDeltas();
     }
@@ -244,23 +211,114 @@ public class RevisionService {
     public <T> int diffLength(Patch<T> patch) {
         int length = 0;
         for (AbstractDelta<T> delta : patch.getDeltas()) {
+            Chunk<T> source = null;
+            Chunk<T> target = null;
+            int decrease = 0;
+            int increase = 0;
             switch (delta.getType()) {
                 case CHANGE:
-                    Chunk<T> source = delta.getSource();
-                    Chunk<T> target = delta.getTarget();
-                    int decrease = source.getLines().stream().mapToInt(line -> line.toString().length()).sum();
-                    int increase = target.getLines().stream().mapToInt(line -> line.toString().length()).sum();
+                    source = delta.getSource();
+                    target = delta.getTarget();
+                    decrease = source.getLines().stream().mapToInt(line -> line.toString().length() + 1).sum();
+                    increase = target.getLines().stream().mapToInt(line -> line.toString().length() + 1).sum();
                     length += increase - decrease;
                     break;
                 case DELETE:
-                    delta
-                    System.out.println("DeleteDelta: " + delta);
+                    source = delta.getSource();
+                    System.out.println(delta.getSource());
+                    System.out.println(delta.getTarget());
+                    decrease = source.getLines().stream().mapToInt(line -> line.toString().length() + 1).sum();
+                    length -= decrease;
                     break;
                 case INSERT:
-                    System.out.println("InsertDelta: " + delta);
+                    target = delta.getTarget();
+                    System.out.println(delta.getSource());
+                    System.out.println(delta.getTarget());
+                    increase = target.getLines().stream().mapToInt(line -> line.toString().length() + 1).sum();
+                    length += increase;
                     break;
             }
         }
         return length;
     }
+
+    public String threeWayMerge(List<String> base, List<String> versionA, List<String> versionB) throws PatchFailedException {
+        Patch<String> patchA = DiffUtils.diff(base, versionA);
+//        patchA.withConflictOutput(Patch.CONFLICT_PRODUCES_MERGE_CONFLICT);
+        Patch<String> patchB = DiffUtils.diff(base, versionB);
+        System.out.println(diffLength(patchB));
+        ;
+        patchB.withConflictOutput(CUSTOM_CONFLICT_PRODUCES_MERGE_CONFLICT);
+//        System.out.println(patchB);
+
+        // A를 base에 적용함
+        List<String> merged = DiffUtils.patch(base, patchA);
+        merged = DiffUtils.patch(merged, patchB);
+
+        System.out.println("########################");
+        for (String s : merged) {
+            System.out.println(s);
+        }
+
+
+        merged = DiffUtils.patch(base, patchA);
+//        System.out.println(merged);
+//
+        for (AbstractDelta<String> delta : patchB.getDeltas()) {
+            if (isConflict(delta, patchA)) {
+                int lineNumber = delta.getSource().getPosition();
+                System.out.println("Conflict line : " + lineNumber);
+                System.out.println("Base : " + base.get(lineNumber));
+                System.out.println("Version A : " + versionA.get(lineNumber));
+                System.out.println("Version B : " + versionB.get(lineNumber));
+            } else {
+                Patch<String> singleDeltaPatch = createSingleDeltaPatch(delta);
+
+                merged = DiffUtils.patch(merged, singleDeltaPatch);
+            }
+        }
+
+        return merged.stream().collect(Collectors.joining("\n"));
+    }
+
+    private static boolean isConflict(AbstractDelta<String> deltaB, Patch<String> patchA) {
+        return patchA.getDeltas().stream().anyMatch(deltaA ->
+                deltaA.getSource().getPosition() == deltaB.getSource().getPosition());
+    }
+
+    private static Patch<String> createSingleDeltaPatch(AbstractDelta<String> delta) {
+        Patch<String> singleDeltaPatch = new Patch<>();
+        singleDeltaPatch.addDelta(delta);
+        return singleDeltaPatch;
+    }
+
+    public static final ConflictOutput<String> CUSTOM_CONFLICT_PRODUCES_MERGE_CONFLICT = (VerifyChunk verifyChunk, AbstractDelta<String> delta, List<String> result) -> {
+        System.out.println("result : " + result);
+        if (result.size() > delta.getSource().getPosition()) {
+            List<String> orgData = new ArrayList<>();
+
+            if (delta.getType() == DeltaType.CHANGE) {
+                for (int i = 0; i < delta.getTarget().size(); i++) {
+                    orgData.add(result.get(delta.getSource().getPosition()));
+                    result.remove(delta.getSource().getPosition());
+                }
+            } else {
+                for (int i = 0; i < delta.getSource().size(); i++) {
+                    orgData.add(result.get(delta.getSource().getPosition()));
+                    result.remove(delta.getSource().getPosition());
+                }
+            }
+
+
+            orgData.add(0, "<<<<<< HEAD");
+            orgData.add("======");
+            orgData.addAll(delta.getTarget().getLines());
+            orgData.add(">>>>>>> PATCH");
+
+            result.addAll(delta.getSource().getPosition(), orgData);
+
+        } else {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+    };
 }
