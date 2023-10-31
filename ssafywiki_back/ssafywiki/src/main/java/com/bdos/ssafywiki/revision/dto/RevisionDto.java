@@ -1,5 +1,9 @@
 package com.bdos.ssafywiki.revision.dto;
 
+import com.bdos.ssafywiki.docs_category.dto.CategoryDto;
+import com.bdos.ssafywiki.docs_category.dto.DocsCategoryDto;
+import com.bdos.ssafywiki.docs_category.entity.Category;
+import com.bdos.ssafywiki.docs_category.entity.DocsCategory;
 import com.bdos.ssafywiki.document.dto.DocumentDto;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.user.dto.UserDto;
@@ -7,6 +11,7 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class RevisionDto {
 
@@ -24,6 +29,7 @@ public class RevisionDto {
         private boolean deleted;
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
+        private List<CategoryDto.Detail> categoryList;
     }
 
     @Getter
