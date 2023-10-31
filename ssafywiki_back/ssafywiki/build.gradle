@@ -58,6 +58,11 @@ dependencies {
 
 	// JWT Token
 	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+	// email 발송
+	// https://mvnrepository.com/artifact/javax.mail/mail
+	implementation group: 'javax.mail', name: 'mail', version: '1.4.7'
+
 }
 
 tasks.named('test') {

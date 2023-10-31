@@ -63,7 +63,8 @@ public class SecurityConfig {
 
                                 ).permitAll()
                                 //.requestMatchers("/api/v1/resource").hasAnyRole("ADMIN","USER") replaced with annotation in AuthorizationController
-                                .requestMatchers(HttpMethod.POST,"/api/v1/resource").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.POST,"/api/user").hasRole("USER")
+                                .requestMatchers(HttpMethod.POST,"/admin").hasRole("ADMIN")
                                 .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider).addFilterBefore(

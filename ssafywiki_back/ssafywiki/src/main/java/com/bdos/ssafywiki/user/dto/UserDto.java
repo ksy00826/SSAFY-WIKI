@@ -61,72 +61,15 @@ public class UserDto {
     }
 
 
-    @Data
-    @Builder
+    @Getter
+    @Setter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class AuthenticationResponse {
-        private  Long id;
+    @Builder
+    @ToString
+    public static class checkEmail {
         private String email;
-        private List<String> roles;
-
-        @JsonProperty("access_token")
-        private String accessToken;
-        @JsonProperty("refresh_token")
-        private String refreshToken;
-        @JsonProperty("token_type")
-        private String tokenType;
-
-    }
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public class RegisterRequest {
-
-        @NotBlank(message = "firstname is required")
-        private String firstname;
-        @NotBlank(message = "lastname is required")
-        private String lastname;
-        @NotBlank(message = "email is required")
-        @Email(message = "email format is not valid")
-        private String email;
-        @NotBlank(message = "password is required")
-//        @StrongPassword
-        private String password;
-        @NotNull
-        private Role role;
-    }
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public class AuthenticationRequest {
-        private String email;
-        private String password;
-    }
-
-    @Data
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public class RefreshTokenResponse {
-
-        @JsonProperty("access_token")
-        private String accessToken;
-        @JsonProperty("refresh_token")
-        private String refreshToken;
-        @JsonProperty("token_type")
-        private String tokenType;
-
-    }
-
-    @Data @NoArgsConstructor @AllArgsConstructor
-    public class RefreshTokenRequest {
-        private String refreshToken;
-
+        private String role;
     }
 
 }

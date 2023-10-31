@@ -19,7 +19,7 @@ public class UserService {
                 .password(registrationDto.getPassword())
                 .email(registrationDto.getEmail())
                 .campus(registrationDto.getCampus())
-                .role(registrationDto.getRoll())
+                .role(registrationDto.getRoll().getKey())
                 .build();
         userRepository.save(user);
     }
