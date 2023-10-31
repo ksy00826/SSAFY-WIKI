@@ -5,6 +5,7 @@ import lombok.*;
 import java.security.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class DocumentDto {
     @Getter
@@ -16,6 +17,7 @@ public class DocumentDto {
     public static class Post {
         private String title;
         private String content;
+        private List<String> categories;
     }
 
     @Getter
