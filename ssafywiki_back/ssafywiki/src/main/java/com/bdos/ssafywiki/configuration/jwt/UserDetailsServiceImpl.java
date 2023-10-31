@@ -1,4 +1,4 @@
-package com.bdos.ssafywiki.jwt;
+package com.bdos.ssafywiki.configuration.jwt;
 
 import com.bdos.ssafywiki.user.entity.User;
 import com.bdos.ssafywiki.user.repository.UserRepository;
@@ -18,7 +18,7 @@ import java.util.Set;
 @Slf4j
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserRepository memberRepository;
+    private final UserRepository userRepository;
 
     /**
      * UserDetailsService 인터페이스를 구현한 클래스
@@ -29,13 +29,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        User user = memberRepository.findByEmail(email)
-                // 전달된 이메일과 같은 유저가 없다면, 예외처리 발생.
-//                .orElseThrow(() -> {
-//                    log.error("Invalid authentication!");
-//                    return new UsernameNotFoundException("Invalid authentication!");
-//                });
-        ;
+        User member = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid authentication!"));
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
 //        return new org
@@ -47,7 +42,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(email)
-                .password(user.getPassword())
+                .password(member.getPassword())
                 .build();
 
 

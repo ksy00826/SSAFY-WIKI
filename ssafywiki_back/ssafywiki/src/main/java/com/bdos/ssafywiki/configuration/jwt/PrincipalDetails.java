@@ -1,4 +1,4 @@
-package com.bdos.ssafywiki.jwt;
+package com.bdos.ssafywiki.configuration.jwt;
 
 import com.bdos.ssafywiki.user.entity.User;
 import lombok.AllArgsConstructor;
@@ -13,11 +13,11 @@ import java.util.Collection;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PrincipalDetails implements UserDetails {
-    private User user;
+    private User member;
 
-    public static PrincipalDetails create(User user) {
+    public static PrincipalDetails create(User member) {
         return new PrincipalDetails(
-                user
+                member
         );
     }
 
@@ -26,12 +26,12 @@ public class PrincipalDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return member.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return member.getEmail();
     }
 
     @Override

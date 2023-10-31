@@ -1,4 +1,4 @@
-package com.bdos.ssafywiki.jwt;
+package com.bdos.ssafywiki.configuration.jwt;
 
 import com.bdos.ssafywiki.exception.BusinessLogicException;
 import com.bdos.ssafywiki.exception.ExceptionCode;
@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -17,6 +18,8 @@ import java.io.IOException;
  * 헤더(Authorization) 에 있는 토큰을 꺼내 이상이 없는 경우 SecurityContext에 저장
  * Request 이전에 작동
  * */
+
+@Component
 public class JwtFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
 

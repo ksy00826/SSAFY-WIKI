@@ -1,4 +1,4 @@
-package com.bdos.ssafywiki.jwt;
+package com.bdos.ssafywiki.configuration.jwt;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,4 +1,4 @@
-package com.bdos.ssafywiki.jwt;
+package com.bdos.ssafywiki.configuration.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;

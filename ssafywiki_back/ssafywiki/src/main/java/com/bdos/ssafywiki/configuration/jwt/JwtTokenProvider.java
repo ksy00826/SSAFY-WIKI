@@ -1,4 +1,4 @@
-package com.bdos.ssafywiki.jwt;
+package com.bdos.ssafywiki.configuration.jwt;
 
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
