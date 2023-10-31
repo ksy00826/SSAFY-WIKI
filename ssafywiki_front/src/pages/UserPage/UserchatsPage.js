@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import UserNavbar from 'components/Common/UserNavbar';
 import { Link } from "react-router-dom";
 import {
   FileOutlined,
@@ -6,8 +7,7 @@ import {
   TeamOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import {Layout, Menu, theme } from 'antd';
-import UserNavbar from 'components/Common/UserNavbar';
+import { Layout, Menu, theme } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 function getItem(label, key, icon, children) {
   return {
@@ -17,7 +17,7 @@ function getItem(label, key, icon, children) {
     label,
   };
 }
-const MyPage = () => {
+const UserchatsPage = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -27,7 +27,7 @@ const MyPage = () => {
             minHeight: '100vh',
           }}
       >
-        <UserNavbar selectedKey='1'></UserNavbar>
+        <UserNavbar selectedKey='4'></UserNavbar>
         <Layout>
           <Header
               style={{
@@ -47,7 +47,7 @@ const MyPage = () => {
                   background: colorBgContainer,
                 }}
             >
-              마이페이지
+              참여한 채팅 목록
             </div>
           </Content>
           <Footer
@@ -61,4 +61,4 @@ const MyPage = () => {
       </Layout>
   );
 };
-export default MyPage;
+export default UserchatsPage;
