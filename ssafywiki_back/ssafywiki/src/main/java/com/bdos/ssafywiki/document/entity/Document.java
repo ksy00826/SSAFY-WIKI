@@ -1,14 +1,20 @@
 package com.bdos.ssafywiki.document.entity;
 
+import com.bdos.ssafywiki.docs_category.entity.DocsCategory;
 import com.bdos.ssafywiki.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.cglib.proxy.Factory;
+import org.springframework.data.util.Lazy;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -49,6 +55,10 @@ public class Document {
     @UpdateTimestamp
     @Column(name = "docs_modified_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime modifiedAt;
+
+    //양방향 연관관계
+    @OneToMany(mappedBy = "document", cascade = CascadeType.ALL)
+    private List<DocsCategory> categoryList = new ArrayList<>();
 
     @Builder
     public Document(String title) {
