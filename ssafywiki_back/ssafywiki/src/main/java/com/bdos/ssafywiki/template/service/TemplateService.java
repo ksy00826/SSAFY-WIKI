@@ -38,8 +38,15 @@ public class TemplateService {
         return templateMapper.toDetail(template);
     }
 
-    public List<TemplateDto.Preview> readTemplateList(Pageable pageable) {
-        Page<Template> templateList = templateRepository.findAll(pageable);
+    public List<TemplateDto.Preview> readTemplateList(boolean isMyTemplate, Pageable pageable) {
+        Page<Template> templateList = null;
+        if (isMyTemplate){
+            //임시 사용자
+            templateList = templateRepository.findAllWithAuthor(1L, pageable);
+        }
+        else{
+            templateList = templateRepository.findAllNotWithAuthor(1L, pageable);
+        }
         return templateMapper.toPreviewList(templateList.getContent());
     }
 
@@ -51,5 +58,17 @@ public class TemplateService {
     public void deleteTemplate(Long templateId) {
         Template template = templateRepository.findById(templateId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.TEMPLATE_NOT_FOUND));
         templateRepository.delete(template);
+    }
+
+    public List<TemplateDto.Preview> searchTemplate(String keyword, boolean isMyTemplate, Pageable pageable) {
+        Page<Template> templateList = null;
+        if (isMyTemplate){
+            //임시 : JWT
+            templateList = templateRepository.findAllWithAuthorAndKeyword(keyword, 1L, pageable);
+        }
+        else{
+            templateList = templateRepository.findAllWithNotAuthorAndKeyword(keyword, 1L, pageable);
+        }
+        return templateMapper.toPreviewList(templateList.getContent());
     }
 }
