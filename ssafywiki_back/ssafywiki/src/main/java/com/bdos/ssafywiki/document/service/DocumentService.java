@@ -17,6 +17,7 @@ import com.bdos.ssafywiki.revision.repository.CommentRepository;
 import com.bdos.ssafywiki.revision.repository.ContentRepository;
 import com.bdos.ssafywiki.revision.repository.RevisionRepository;
 import com.bdos.ssafywiki.user.entity.User;
+import com.bdos.ssafywiki.user.enums.Role;
 import com.bdos.ssafywiki.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -43,7 +44,7 @@ public class DocumentService {
 
     public RevisionDto.Response writeDocs(DocumentDto.Post post) {
         //로그인 한 사용자(작성 유저) : JWT
-        User user = new User("qqq@naver.com", "pwpw", "ksy", "sysy", "ssafy", "010", "buk", "token");
+        User user = new User("qqq@naver.com", "pwpw", "ksy", "sysy", Role.USER9, "010", "buk", "token");
         //일단 유저를 다른 곳에 연관관계로 등록하기 위해 임시로 저장
         userRepository.save(user);
         //유저 널 체크 필요

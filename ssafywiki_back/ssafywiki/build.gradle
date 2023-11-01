@@ -63,6 +63,7 @@ dependencies {
 	// https://mvnrepository.com/artifact/javax.mail/mail
 	implementation group: 'javax.mail', name: 'mail', version: '1.4.7'
 
+	implementation 'javax.xml.bind:jaxb-api:2.3.0'
 }
 
 tasks.named('test') {

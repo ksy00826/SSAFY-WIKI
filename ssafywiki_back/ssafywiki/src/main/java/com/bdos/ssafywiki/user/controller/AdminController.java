@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 // admin 유저 확인용
 @Controller
-@RequestMapping("")
+@RequestMapping("/admin")
 public class AdminController {
 
     @GetMapping("/admin")

@@ -1,5 +1,6 @@
 package com.bdos.ssafywiki.user.entity;
 
+import com.bdos.ssafywiki.user.enums.Role;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -39,7 +40,8 @@ public class User implements UserDetails {
     private String nickname;
 
     @Enumerated(EnumType.STRING)
-    private String role;
+    @Column(name = "user_role")
+    private Role role;
 
     @Column(name = "user_number")
     private String number;
@@ -64,7 +66,7 @@ public class User implements UserDetails {
     private String refreshToken;
 
     @Builder
-    public User(String email, String password, String name, String nickname, String role, String number, String campus, String refreshToken) {
+    public User(String email, String password, String name, String nickname, Role role, String number, String campus, String refreshToken) {
         this.email = email;
         this.password = password;
         this.name = name;

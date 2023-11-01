@@ -16,7 +16,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
@@ -29,7 +29,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        User member = userRepository.findByEmail(email)
+        log.info(">>>>>>>>>>>>>>>>");
+        User user = userRepository.findByEmail(email)
+                .map(m -> new CustomUserDetails(m))
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid authentication!"));
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
@@ -41,12 +43,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 //                .User(user.getEmail(), user.getPassword(), grantedAuthorities);
 
         return org.springframework.security.core.userdetails.User.builder()
-                .username(email)
-                .password(member.getPassword())
+                .username(user.getEmail())
+                .password(user.getPassword())
                 .build();
-
-
-//        return PrincipalDetails.create(user);
 
 
     }

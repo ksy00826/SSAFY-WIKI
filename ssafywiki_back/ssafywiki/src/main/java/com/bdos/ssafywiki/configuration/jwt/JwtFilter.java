@@ -6,6 +6,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,15 +19,14 @@ import java.io.IOException;
 /**
  * 헤더(Authorization) 에 있는 토큰을 꺼내 이상이 없는 경우 SecurityContext에 저장
  * Request 이전에 작동
- * */
+ */
 
 @Component
+@RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
-    private final JwtTokenProvider jwtTokenProvider;
 
-    public JwtFilter(JwtTokenProvider jwtTokenProvider){
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
+
+    private final JwtTokenProvider jwtTokenProvider;
 
     /**
      * doFilterInternal 함수 오버라이드
@@ -40,21 +41,21 @@ public class JwtFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
-    ) throws ServletException, IOException{
+    ) throws ServletException, IOException {
         String token = jwtTokenProvider.resolveToken(request);
         System.out.println("doFilter >>> " + token);
-        try{
-            if(token != null && jwtTokenProvider.validateToken(token)){
+        try {
+            if (token != null && jwtTokenProvider.validateToken(token)) {
                 Authentication auth = jwtTokenProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
-        }catch (RedisConnectionFailureException e){
+        } catch (RedisConnectionFailureException e) {
             e.printStackTrace();
             SecurityContextHolder.clearContext();
 //            throw new IllegalArgumentException("레디스 잘못 됨");
 //            throw new BaseException(REDIS_ERROR);
             throw new BusinessLogicException(ExceptionCode.INVALID_REFRESH_TOKEN);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
 //            throw new BaseException(INVALID_JWT);
 //            throw new IllegalArgumentException("토큰 잘못 됨");

@@ -8,7 +8,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,28 +27,21 @@ public class JwtTokenProvider {
      * JwtTokenProvider : 유저 정보로 jwt access/refresh 토큰 생성 및 재발급 + 토큰으로부터 유저 정보 받기
      */
 
-//    private final RedisTemplate<String, String> redisTemplate;
+
+    @Value("${jwt.secretKey}")
+    private String secretKey;
+    @Value("${jwt.refreshExpiration}")
+    private long refreshExpirationTime;
+    @Value("${jwt.expiration}")
+    private long expirationTime;
+
+//    @Value("Authorization")
+//    private String jwtHeader;
+
 
     private final UserRepository userRepository;
+    private final CustomUserDetailsService userDetailsService;
 
-    private final Environment env;
-
-
-    //    @Value("${secret}")
-    private String secretKey = "c88d74ba-1554-48a4-b549-b926f5d77c9e";
-
-    @Value("Authorization")
-    private String jwtHeader;
-
-    @Value("${jwt.token.access-token-expiration-sec}")
-    private long accessExpirationTime;
-
-    private final long JWT_EXPIRATION_MS = 6000000 * 1;
-
-    @Value("12096000")
-    private long refreshExpirationTime;
-
-    private final UserDetailsServiceImpl userDetailsService;
 
     /**
      * === createAccessToken , createRefreshToken ===
@@ -60,51 +55,49 @@ public class JwtTokenProvider {
      * Access 토큰 생성
      */
 
-    public String createAccessToken(String email) {
-        log.info("엑세스 토큰 진입 직후 >>> " + email);
-        Claims claims = Jwts.claims().setSubject(email);
+    public String createAccessToken(User user) {
+
+        log.info("엑세스 토큰 진입 직후 >>> " + user.getId());
+        Claims claims = Jwts.claims().setSubject(user.getEmail());
         Date now = new Date();
-        Date expireDate = new Date(now.getTime() + JWT_EXPIRATION_MS);
+        Date expireDate = new Date(now.getTime() + expirationTime);
 
         System.out.println("create access >>> " + expireDate);
 
-        log.info("엑세스 토큰 클레임 생성 후 >>> " + email);
+        log.info("엑세스 토큰 클레임 생성 후 >>> " + user.getId());
 
         return Jwts.builder()
+                .setSubject(user.getName())
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(expireDate)
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .signWith(SignatureAlgorithm.HS256,secretKey)
                 .compact();
     }
 
     /**
      * Refresh 토큰 생성
      */
-    public String createRefreshToken(String email) {
-        log.info("리프레시 토큰 진입 직후 >>> " + email);
-        Claims claims = Jwts.claims().setSubject(email);
+    public String createRefreshToken(User user) {
+        log.info("리프레시 토큰 진입 직후 >>> " + user.getId());
+        Claims claims = Jwts.claims().setSubject(user.getEmail());
         Date now = new Date();
         Date expireDate = new Date(now.getTime() + refreshExpirationTime);
 
-        log.info("리프레시 토큰 클레임 생성 후 >>> " + email);
+        log.info("리프레시 토큰 클레임 생성 후 >>> " + user.getId());
 
         String refreshToken = Jwts.builder()
+                .setSubject(user.getName())
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(expireDate)
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
-        // redis에 저장
-//        redisTemplate.opsForValue().set(
-//                authentication.getName(),
-//                refreshToken,
-//                refreshExpirationTime,
-//                TimeUnit.MILLISECONDS
-//        );
+
+        log.info("1111111111");
 
         // 디비에 저장
-        User user = userRepository.findByEmail(email).get();
+//        User user = userRepository.findByEmail(email).get();
         user.setRefreshToken(refreshToken);
         userRepository.save(user);
 
@@ -121,6 +114,7 @@ public class JwtTokenProvider {
      * 토큰으로부터 클레임을 만들고, 이를 통해 User 객체 생성해 Authentication 객체 반환
      */
     public Authentication getAuthentication(String token) {
+
         String userPrincipal = Jwts.parser().
                 setSigningKey(secretKey)
                 .parseClaimsJws(token)
@@ -169,8 +163,11 @@ public class JwtTokenProvider {
      * Jwts 모듈이 각각 상황에 맞는 exception 던져줌
      */
     public boolean validateToken(String token) {
+        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext();
+        ConfigurableEnvironment env = context.getEnvironment();
+
         try {
-            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(env.getProperty("jwt.secret-key")).parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException e) {
             return false;
@@ -184,7 +181,10 @@ public class JwtTokenProvider {
      * 토큰으로 회원 정보 조회
      */
     public String getUserEmail(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext();
+        ConfigurableEnvironment env = context.getEnvironment();
+
+        return Jwts.parser().setSigningKey(env.getProperty("jwt.secret-key")).parseClaimsJws(token).getBody().getSubject();
     }
 
     // 엑세스 토큰 헤더 설정

@@ -30,10 +30,12 @@ public class UserDto {
     @ToString
     public static class Registration {
         private String name;
+        private String nickname;
         private String email;
         private String password;
-        private Role roll;
+        private String role;
         private String campus;
+        private String number;
     }
 
     @Getter
@@ -53,7 +55,8 @@ public class UserDto {
     @AllArgsConstructor
     @Builder
     @ToString
-    public static class Token {
+    public static class UserToken {
+        private String name;
         @JsonProperty("access_token")
         private String accessToken;
         @JsonProperty("refresh_token")

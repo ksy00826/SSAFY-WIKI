@@ -13,12 +13,13 @@ import static com.bdos.ssafywiki.user.enums.Privilege.*;
 @RequiredArgsConstructor
 public enum Role {
 
-    ADMIN("관리자", Set.of(READ_PRIVILEGE,WRITE_PRIVILEGE,UPDATE_PRIVILEGE,DELETE_PRIVILEGE)),
-    PRO("프로", Set.of(READ_PRIVILEGE,WRITE_PRIVILEGE,UPDATE_PRIVILEGE,DELETE_PRIVILEGE)),
-    CONSULTANT("컨설턴트", Set.of(READ_PRIVILEGE,WRITE_PRIVILEGE,UPDATE_PRIVILEGE,DELETE_PRIVILEGE)),
-    COACH("코치", Set.of(READ_PRIVILEGE,WRITE_PRIVILEGE,UPDATE_PRIVILEGE,DELETE_PRIVILEGE)),
-    USER("9기,10기", Set.of(READ_PRIVILEGE,WRITE_PRIVILEGE,UPDATE_PRIVILEGE,DELETE_PRIVILEGE)),
-    GUEST("게스트", Set.of(READ_PRIVILEGE));
+    ADMIN("관리자", Set.of(READ_LV1,WRITE_LV1,UPDATE_LV1,READ_LV2,WRITE_LV2, UPDATE_LV2, DELETE)),
+    PRO("프로", Set.of(READ_LV1,WRITE_LV1,UPDATE_LV1,READ_LV2,WRITE_LV2, UPDATE_LV2, DELETE)),
+    CONSULTANT("컨설턴트", Set.of(READ_LV1,WRITE_LV1,UPDATE_LV1, READ_LV2,WRITE_LV2, UPDATE_LV2, DELETE)),
+    COACH("코치", Set.of(READ_LV1,WRITE_LV1, UPDATE_LV1, READ_LV2,WRITE_LV2, UPDATE_LV2)),
+    USER9("9기", Set.of(READ_LV1,WRITE_LV1, UPDATE_LV1)),
+    USER10("10기", Set.of(READ_LV1,WRITE_LV1, UPDATE_LV1)),
+    GUEST("게스트", Set.of(READ_LV1));
 
     @Getter
     private final String key;
@@ -33,4 +34,14 @@ public enum Role {
         authorities.add(new SimpleGrantedAuthority("ROLE_"+this.name()));
         return authorities;
     }
+
+    public static Role krToRole(String str) {
+        for (Role status : Role.values()) {
+            if (status.getKey().equals(str)) {
+                return status;
+            }
+        }
+        return null;
+    }
+
 }

@@ -10,6 +10,8 @@ public enum ExceptionCode {
     MEMBER_UNAUTHORIZED(403,"Member Unauthorized"),
     EMAIL_NOT_FOUND(404, "Email Not Found"),
     MEMBER_NOT_FOUND(404, "Member Not Found"),
+    MEMBER_EXIST(404, "Member Already Exist"),
+    BLOCKED_USER(404, "Member is blocked"),
     REVISION_NOT_FOUND(404, "Revision Not Found"),
     TEMPLATE_NOT_FOUND(404, "Template Not Found"),
     DOCUMENT_NOT_FOUND(404, "Document Not Found"),
