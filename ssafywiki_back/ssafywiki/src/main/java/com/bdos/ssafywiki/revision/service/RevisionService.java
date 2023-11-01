@@ -1,5 +1,6 @@
 package com.bdos.ssafywiki.revision.service;
 
+import com.bdos.ssafywiki.diff.Conflict;
 import com.bdos.ssafywiki.diff.Diff;
 import com.bdos.ssafywiki.diff.DiffMatchPatch;
 import com.bdos.ssafywiki.diff.MergeResult;
@@ -187,10 +188,7 @@ public class RevisionService {
 
         try {
             String result = threeWayMerge(oldStrings, newStrings, splitIntoLines(version2));
-//            System.out.println("########################");
-//            for (String s : splitIntoLines(result)) {
-//                System.out.println(s);
-//            }
+
         } catch (PatchFailedException e) {
             e.printStackTrace();
             throw new BusinessLogicException(ExceptionCode.MERGE_FAILED);
@@ -245,13 +243,13 @@ public class RevisionService {
 
     public String threeWayMerge(List<String> base, List<String> versionA, List<String> versionB) throws PatchFailedException {
         Patch<String> patchA = DiffUtils.diff(base, versionA);
-        System.out.println(patchA.getDeltas());
+//        System.out.println(patchA.getDeltas());
         Patch<String> patchB = DiffUtils.diff(base, versionB);
-        System.out.println(patchB.getDeltas());
+//        System.out.println(patchB.getDeltas());
 //        patchB.withConflictOutput(CUSTOM_CONFLICT_PRODUCES_MERGE_CONFLICT);
 
         // A를 base에 적용함
-        List<String> merged = DiffUtils.patch(base, patchA);
+//        List<String> merged = DiffUtils.patch(base, patchA);
 //        merged = DiffUtils.patch(merged, patchB);
 //
 //        System.out.println("########################");
@@ -265,6 +263,7 @@ public class RevisionService {
 
         // 변화가 뒤에서 부터 일어나야지 List 인덱스가 안변함
         List<AbstractDelta<String>> deltasA = patchA.getDeltas();
+//        System.out.println(deltasA.stream().map(delta -> delta.getTarget()).collect(Collectors.toList()));
         List<AbstractDelta<String>> deltasB = patchB.getDeltas();
 
         int indexA = patchA.getDeltas().size() - 1;
@@ -273,33 +272,40 @@ public class RevisionService {
         // 수정할 수 있는 Delta 객체를 Patch에 저장
         Patch<String> mergeDeltaPatch = new Patch<>();
         // Conflict 나는 Delta 쌍을 List에 저장
-        List<AbstractDelta<String>[]> conflictList = new ArrayList<>();
+        List<Conflict> conflictList = new ArrayList<>();
 
         while (indexA >= 0 && indexB >= 0) {
             AbstractDelta<String> deltaA = deltasA.get(indexA);
             AbstractDelta<String> deltaB = deltasB.get(indexB);
+
+            Conflict conflict = conflictList.size() > 0 ? conflictList.get(conflictList.size() - 1) : null;
+            boolean isExistA = false;
+            boolean isExistB = false;
+            if (conflict != null) {
+                isExistA = conflict.isExistInA(deltaA);
+                isExistB = conflict.isExistInB(deltaB);
+            }
 
             if (deltaA.getSource().getPosition() <= deltaB.getSource().last() && deltaA.getSource().last() >= deltaB.getSource().getPosition()) {
                 // 겹치는 구간 존재
                 // 겹쳤는데 이후 변화가 같음
                 if (deltaA.equals(deltaB)) {
                     mergeDeltaPatch.addDelta(deltaA);
-                }
-
-
-
-                // 다른 경우
-                if (deltaA.getSource().getPosition() > deltaB.getSource().getPosition()) {
-                    conflictList.add(new AbstractDelta[]{deltaA, deltaB});
+                } else if (deltaA.getSource().getPosition() <= deltaB.getSource().getPosition() && isExistB) {
+                    conflict.addDeltaA(deltaA);
+                } else if (deltaA.getSource().getPosition() > deltaB.getSource().getPosition() && isExistA) {
+                    conflict.addDeltaB(deltaB);
                 } else {
-                    conflictList.add(new AbstractDelta[]{deltaA, deltaB});
+                    conflictList.add(new Conflict(deltaA, deltaB));
                 }
             } else {
-                // 안겹침 / 가장 뒤에 있는 것 수정 가능
+                // 안겹침 / 가장 뒤에 있는 것 수정 가능 / 뒤에있는게 conflict에 있으면 안됨
                 if (deltaA.getSource().last() < deltaB.getSource().last()) {
-                    mergeDeltaPatch.addDelta(deltaB);
+                    if (!isExistB)
+                        mergeDeltaPatch.addDelta(deltaB);
                 } else {
-                    mergeDeltaPatch.addDelta(deltaA);
+                    if (!isExistA)
+                        mergeDeltaPatch.addDelta(deltaA);
                 }
             }
 
@@ -308,82 +314,23 @@ public class RevisionService {
             } else {
                 indexB--;
             }
-            System.out.println("indexA : " + indexA + ", " + "indexB : " + indexB);
+//            System.out.println("indexA : " + indexA + ", " + "indexB : " + indexB);
         }
 
         // mergeDeltaPatch를 적용
-        merged = DiffUtils.patch(base, mergeDeltaPatch);
-        System.out.println("########################");
-        for (String s : merged) {
-            System.out.println(s);
-        }
-        System.out.println("########################");
-        conflictList.stream().forEach(System.out::println);
+        List<String> merged = DiffUtils.patch(base, mergeDeltaPatch);
+        applyConflict(merged, conflictList);
 
-
-//        while (it.hasPrevious()) {
-//            AbstractDelta<String> delta = it.previous();
-//            if (isConflict(delta, patchA)) {
-//                List<String> orgData = new ArrayList<>();
-//
-//
-//
-//                int lineNumber = delta.getSource().getPosition();
-//                System.out.println("Conflict line : " + lineNumber);
-//                System.out.println("Base : " + base.get(lineNumber));
-//                System.out.println("Version A : " + versionA.get(lineNumber));
-//                System.out.println("Version B : " + versionB.get(lineNumber));
-//            } else {
-//                Patch<String> singleDeltaPatch = createSingleDeltaPatch(delta);
-//
-////                merged = DiffUtils.patch(merged, singleDeltaPatch);
-//            }
-//        }
-
-//        for (AbstractDelta<String> delta : patchB.getDeltas().) {
-//            if (isConflict(delta, patchA)) {
-//                int lineNumber = delta.getSource().getPosition();
-//                System.out.println("Conflict line : " + lineNumber);
-//                System.out.println("Base : " + base.get(lineNumber));
-//                System.out.println("Version A : " + versionA.get(lineNumber));
-//                System.out.println("Version B : " + versionB.get(lineNumber));
-//            } else {
-//                Patch<String> singleDeltaPatch = createSingleDeltaPatch(delta);
-//
-////                merged = DiffUtils.patch(merged, singleDeltaPatch);
-//            }
-//        }
+//        System.out.println("########################");
+//        merged.stream().forEach(System.out::println);
 
         return merged.stream().collect(Collectors.joining("\n"));
     }
 
-//    private static boolean isConflict(AbstractDelta<String> deltaA, AbstractDelta<String> deltaB) {
-//        Chunk<String> sourceA = deltaA.getSource();
-//        Chunk<String> sourceB = deltaB.getSource();
-//        if (sourceB.getPosition() < sourceB.last())
-//
-//            return null;
-//    }
-
-    private static boolean isConflict(AbstractDelta<String> deltaB, Patch<String> patchA) {
-        return patchA.getDeltas().stream().anyMatch(deltaA -> {
-            // deltaB의 변동이 일어난 position이 deltaA에 존재하는지 확인
-            for (int position = deltaB.getSource().getPosition(); position <= deltaB.getSource().last(); position++) {
-                // deltaA의 변동 범위와 겹침
-                if (position >= deltaA.getSource().getPosition() && position <= deltaA.getSource().last()) {
-                    // 겹쳐도 deltaA의 변화와 deltaB의 변화가 같다면 충돌은 일어나지 않을 것
-                    if (!deltaA.getSource().equals(deltaB.getSource()) || !deltaA.getTarget().equals(deltaB.getTarget()))
-                        return true;
-                }
-            }
-            return false;
-        });
-    }
-
-    private static Patch<String> createSingleDeltaPatch(AbstractDelta<String> delta) {
-        Patch<String> singleDeltaPatch = new Patch<>();
-        singleDeltaPatch.addDelta(delta);
-        return singleDeltaPatch;
+    public void applyConflict(List<String> base, List<Conflict> conflictList) {
+        for (Conflict conflict : conflictList) {
+            conflict.patch(base);
+        }
     }
 
     public static final ConflictOutput<String> CUSTOM_CONFLICT_PRODUCES_MERGE_CONFLICT = (VerifyChunk verifyChunk, AbstractDelta<String> delta, List<String> result) -> {
