@@ -1,6 +1,6 @@
-import React, { useState,useParams } from 'react';
-import UserNavbar from 'components/Common/UserNavbar';
-import { Layout, theme, Card, Col, Row  } from 'antd';
+import React, { useState, useParams } from "react";
+import UserNavbar from "components/Common/UserNavbar";
+import { Layout, theme, Card, Col, Row } from "antd";
 import { getContributedChats } from "utils/UserApi";
 
 const { Header, Content, Footer } = Layout;
@@ -12,61 +12,62 @@ const UsetChatsPage = () => {
     getContributedChats().then((response) => {
       setchatList(response.docs);
     });
-  },[]);
+  }, []);
 
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const chatc =  chatList.map((chat) => 
-    <Col span={8}>
-      <Card title={chat.discussroom_id} bordered={false}>
-        {chat.discuss_created_at}
+  const chatc = chatList.map((chat) => (
+    <Col key={chat.docs_title} span={8}>
+      <Card
+        title={chat.docs_title}
+        extra={chat.discuss_created_at}
+        headStyle={{ backgroundColor: "lightblue", border: 0 }}
+        bodyStyle={{ backgroundColor: "white", border: 0 }}
+      >
+        {chat.discuss_content}
       </Card>
     </Col>
-  );
+  ));
   return (
-      <Layout
+    <Layout
+      style={{
+        minHeight: "100vh",
+      }}
+    >
+      <UserNavbar selectedKey="4"></UserNavbar>
+      <Layout>
+        <Header
           style={{
-            minHeight: '100vh',
+            padding: 0,
+            background: colorBgContainer,
           }}
-      >
-        <UserNavbar selectedKey='3'></UserNavbar>
-        <Layout>
-          <Header
-              style={{
-                padding: 0,
-                background: colorBgContainer,
-              }}
-          />
-          <Content
-              style={{
-                margin: '0 16px',
-              }}
+        />
+        <Content
+          style={{
+            margin: "0 16px",
+          }}
+        >
+          <div
+            style={{
+              padding: 24,
+              minHeight: 360,
+              background: colorBgContainer,
+            }}
           >
-            <div
-                style={{
-                  padding: 24,
-                  minHeight: 360,
-                  background: colorBgContainer,
-                }}
-            >
-              <Row gutter={16}>
-                
-                {chatc}
-          
-              </Row>
-            </div>
-          </Content>
-          <Footer
-              style={{
-                textAlign: 'center',
-              }}
-          >
-            Ant Design ©2023 Created by Ant UED
-          </Footer>
-        </Layout>
+            <Row gutter={16}>{chatc}</Row>
+          </div>
+        </Content>
+        <Footer
+          style={{
+            textAlign: "center",
+          }}
+        >
+          Ant Design ©2023 Created by Ant UED
+        </Footer>
       </Layout>
+    </Layout>
   );
 };
 export default UsetChatsPage;
