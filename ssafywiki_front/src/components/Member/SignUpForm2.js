@@ -16,7 +16,7 @@ import {
   InfoCircleOutlined,
   LockOutlined,
 } from "@ant-design/icons";
-
+import { checkSSAFYEmail } from "utils/UserApi";
 const { Search } = Input;
 
 const SignUp = ({ goNext, info }) => {
@@ -36,6 +36,7 @@ const SignUp = ({ goNext, info }) => {
   const checkEmail = (value) => {
     // 실제 SSAFY 이메일인지 검증
     //axios
+    console.log(checkSSAFYEmail(value));
     console.log("checking", value, info.roll);
     setChecking(true);
     setChecking(false);

@@ -57,30 +57,40 @@ const EdituserPage = () => {
           }}
           layout="horizontal"
           style={{
-            maxWidth: 600,
+            maxWidth: 1200,
           }}
         >
           {/* <Form.Item label="Checkbox" name="disabled" valuePropName="checked">
             <Checkbox>Checkbox</Checkbox>
           </Form.Item> */}
-          <Form.Item label="Radio">
+          {/* <Form.Item label="소속 캠퍼스">
             <Radio.Group>
               <Radio value="부울경"> 부울경 </Radio>
-              <Radio value="pear"> 서울 </Radio>
-              <Radio value="apple"> 광주 </Radio>
-              <Radio value="pear"> 대전 </Radio>
-              <Radio value="apple"> 구미 </Radio>
+              <Radio value="서울"> 서울 </Radio>
+              <Radio value="광주"> 광주 </Radio>
+              <Radio value="대전"> 대전 </Radio>
+              <Radio value="구미"> 구미 </Radio>
             </Radio.Group>
+          </Form.Item> */}
+          <Form.Item label="아이디">
+            <Input disabled />
           </Form.Item>
-          <Form.Item label="Input">
-            <Input />
+          <Form.Item label="비밀번호">
+            <Input.Password placeholder="비밀번호" />
           </Form.Item>
-          <Form.Item label="Select">
+          <Form.Item label="비밀번호 확인">
+            <Input.Password placeholder="비밀번호 확인" />
+          </Form.Item>
+          <Form.Item label="소속캠퍼스">
             <Select>
-              <Select.Option value="demo">Demo</Select.Option>
+              <Select.Option value="부울경">부울경</Select.Option>
+              <Select.Option value="서울">서울</Select.Option>
+              <Select.Option value="구미">구미</Select.Option>
+              <Select.Option value="광주">광주</Select.Option>
+              <Select.Option value="대전">대전</Select.Option>
             </Select>
           </Form.Item>
-          <Form.Item label="TreeSelect">
+          {/* <Form.Item label="TreeSelect">
             <TreeSelect
               treeData={[
                 {
@@ -95,7 +105,7 @@ const EdituserPage = () => {
                 },
               ]}
             />
-          </Form.Item>
+          </Form.Item> */}
           <Form.Item label="Cascader">
             <Cascader
               options={[
