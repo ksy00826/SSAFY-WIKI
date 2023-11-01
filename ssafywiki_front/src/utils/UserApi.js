@@ -20,12 +20,15 @@ export const editUserProfile = async (nickname,passwordOld,passwordNew) => {
 
 
 export const getContributedDocs = async (id) => {
-  try {
-    const response = await axiosInstance.get(`/api/mypage/writedocs`);
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+  // try {
+  //   const response = await axiosInstance.get(`/api/mypage/writedocs`);
+  //   return response.data;
+  // } catch (error) {
+  //   throw error;
+  // 
+  return { 'docs' : [{docs_id : '1',docs_title:'hello1',docs_is_redirected : false,docs_is_deleted : false,rev_modified_at:"2020-10-16"},
+  {docs_id : '2',docs_title:'hello2',docs_is_redirected : false,docs_is_deleted : false,rev_modified_at:"2020-10-16"},
+  {docs_id : '3',docs_title:'hello3',docs_is_redirected : false,docs_is_deleted : false,rev_modified_at:"2020-10-16"}]};
 };
 
 export const getContributedChats = async (id) => {

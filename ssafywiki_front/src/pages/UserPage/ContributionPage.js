@@ -1,22 +1,31 @@
 import React, { useState,useParams } from 'react';
 import UserNavbar from 'components/Common/UserNavbar';
-import { Layout, Menu, theme } from 'antd';
+import { Layout, theme, Card, Col, Row  } from 'antd';
 import { getContributedDocs } from "utils/UserApi";
 
 const { Header, Content, Footer } = Layout;
 
 const ContributionPage = () => {
-  const [content, setContent] = React.useState();
+  const [docList, setdocList] = React.useState([]);
   // 처음 랜더링시 내용 가져오기
   React.useEffect(() => {
     getContributedDocs().then((response) => {
-      console.log(response);
-      setContent(response.content);
+      setdocList(response.docs);
+      
     });
-  });
+  },[]);
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
+  const docc =  docList.map((doc) => 
+    <Col span={8}>
+      <Card title={doc.docs_title} bordered={false}>
+        {doc.rev_modified_at}
+      </Card>
+    </Col>
+  );
   return (
       <Layout
           style={{
@@ -36,7 +45,6 @@ const ContributionPage = () => {
                 margin: '0 16px',
               }}
           >
-
             <div
                 style={{
                   padding: 24,
@@ -44,7 +52,11 @@ const ContributionPage = () => {
                   background: colorBgContainer,
                 }}
             >
-              {content}
+              <Row gutter={16}>
+                
+                {docc}
+          
+              </Row>
             </div>
           </Content>
           <Footer

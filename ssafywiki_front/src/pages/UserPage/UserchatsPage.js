@@ -1,33 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState,useParams } from 'react';
 import UserNavbar from 'components/Common/UserNavbar';
-import { Link } from "react-router-dom";
-import {
-  FileOutlined,
-  PieChartOutlined,
-  TeamOutlined,
-  UserOutlined,
-} from '@ant-design/icons';
-import { Layout, Menu, theme } from 'antd';
-const { Header, Content, Footer, Sider } = Layout;
-function getItem(label, key, icon, children) {
-  return {
-    key,
-    icon,
-    children,
-    label,
-  };
-}
-const UserchatsPage = () => {
+import { Layout, theme, Card, Col, Row  } from 'antd';
+import { getContributedChats } from "utils/UserApi";
+
+const { Header, Content, Footer } = Layout;
+
+const UsetChatsPage = () => {
+  const [chatList, setchatList] = React.useState([]);
+  // 처음 랜더링시 내용 가져오기
+  React.useEffect(() => {
+    getContributedChats().then((response) => {
+      setchatList(response.docs);
+    });
+  },[]);
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
+
+  const chatc =  chatList.map((chat) => 
+    <Col span={8}>
+      <Card title={chat.discussroom_id} bordered={false}>
+        {chat.discuss_created_at}
+      </Card>
+    </Col>
+  );
   return (
       <Layout
           style={{
             minHeight: '100vh',
           }}
       >
-        <UserNavbar selectedKey='4'></UserNavbar>
+        <UserNavbar selectedKey='3'></UserNavbar>
         <Layout>
           <Header
               style={{
@@ -47,7 +51,11 @@ const UserchatsPage = () => {
                   background: colorBgContainer,
                 }}
             >
-              참여한 채팅 목록
+              <Row gutter={16}>
+                
+                {chatc}
+          
+              </Row>
             </div>
           </Content>
           <Footer
@@ -61,4 +69,4 @@ const UserchatsPage = () => {
       </Layout>
   );
 };
-export default UserchatsPage;
+export default UsetChatsPage;
