@@ -7,11 +7,14 @@ import com.bdos.ssafywiki.discussion.repository.DiscussionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -20,7 +23,15 @@ import java.util.concurrent.TimeUnit;
 public class DiscussionService {
     private final RedisTemplate<String, DiscussionDto> redisTemplateMessage;
     private final DiscussionRepository discussionRepository;
+
+    // 쪽지방(topic)에 발행되는 메시지 처리하는 리스너
+    private final RedisMessageListenerContainer redisMessageListener;
+
+    // 구독 처리 서비스
+    private final RedisSubscriber redisSubscriber;
     // 대화 저장
+
+    private Map<String, ChannelTopic> topics;
     public void saveMessage(DiscussionDto discussionDto, Long userId) {
         // DB 저장
         Discussion discuss = DiscussionMapper.INSTANCE.toDiscussion(discussionDto);
@@ -61,4 +72,15 @@ public class DiscussionService {
 
         return messageList;
     }
+
+    public void enterMessageRoom(String roomId) {
+        ChannelTopic topic = topics.get(roomId);
+
+        if (topic == null) {
+            topic = new ChannelTopic(roomId);
+            redisMessageListener.addMessageListener(redisSubscriber, topic);        // pub/sub 통신을 위해 리스너를 설정. 대화가 가능해진다
+            topics.put(roomId, topic);
+        }
+    }
+
 }
