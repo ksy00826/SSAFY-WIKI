@@ -19,9 +19,9 @@ const Login = () => {
 
   const navigate = useNavigate();
 
-  const doLogin = (e) => {
+  const doLogin = async (e) => {
     console.log(e);
-    let result = login(e.email, e.password);
+    let result = await login(e.email, e.password);
     if (result.state === 200) {
       //성공
       // 아이디 저장
