@@ -1,13 +1,21 @@
 import { useRef, useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import * as StompJs from '@stomp/stompjs';
-
+import { getDiscussList } from "utils/DocsApi";
 function Discussion() {
   const [chatList, setChatList] = useState([]);
   const [chat, setChat] = useState('');
-
-  const { docsId } = 1;
+  const params = useParams();
+  const docsId = 1;
   const client = useRef({});
+
+  useEffect(() => {
+    getDiscussList(docsId).then((response) => {
+      console.log(response);
+      setChatList(response);
+    });
+  }, [params]);
+
 
   const connect = () => {
     client.current = new StompJs.Client({
@@ -22,11 +30,14 @@ function Discussion() {
 
   const publish = (chat) => {
     if (!client.current.connected) return;
-
+    console.log('pub', chat, docsId)
     client.current.publish({
-      destination: '/pub/chat' + docsId,
+      destination: '/pub/chat',
       body: JSON.stringify({
-        content: chat,
+        "nickname" : null,
+        "docsId" : docsId,
+        "content" : chat,
+        "createdAt" : null
       }),
     });
 
@@ -52,7 +63,7 @@ function Discussion() {
 
   const handleSubmit = (event, chat) => { // 보내기 버튼 눌렀을 때 publish
     event.preventDefault();
-
+    console.log('버튼', chat)
     publish(chat);
   };
   
@@ -64,7 +75,13 @@ function Discussion() {
 
   return (
     <div>
-      <div className={'chat-list'}>{chatList}</div>
+      <div className={'chat-list'}>
+        {chatList.map((chatMessage, index) => (
+          <div key={index}>
+            <p>{chatMessage.nickname}: {chatMessage.content}</p>
+          </div>
+        ))}
+      </div>
       <form onSubmit={(event) => handleSubmit(event, chat)}>
         <div>
           <input type={'text'} name={'chatInput'} onChange={handleChange} value={chat} />
