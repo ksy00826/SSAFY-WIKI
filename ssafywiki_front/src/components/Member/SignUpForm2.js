@@ -16,7 +16,7 @@ import {
   InfoCircleOutlined,
   LockOutlined,
 } from "@ant-design/icons";
-
+import { checkSSAFYEmail } from "utils/UserApi";
 const { Search } = Input;
 
 const SignUp = ({ goNext, info }) => {
@@ -37,14 +37,38 @@ const SignUp = ({ goNext, info }) => {
     // 실제 SSAFY 이메일인지 검증
     //axios
     console.log("checking", value, info.roll);
-    setChecking(true);
-    setChecking(false);
 
     let result = true;
-    if (!result) {
-    } else {
-      setEmailBtn("이메일 확인 완료");
-      setEmailSuccess(true);
+    if (info.roll === "학생") {
+      checkSSAFYEmail(value).then((data) => {
+        setChecking(true);
+        if (data === "아이디가 존재하지 않습니다.") {
+          result = false;
+        }
+        setChecking(false);
+        if (!result) {
+          setEmailBtn("이메일 확인");
+          setEmailSuccess(false);
+        } else {
+          setEmailBtn("이메일 확인 완료");
+          setEmailSuccess(true);
+        }
+      });
+    }
+    else {
+      setChecking(true);
+      var emails = value.split('@');
+      if(emails[1] !== "multicampus.com") {
+        result = false;
+      }
+      setChecking(false);
+      if (!result) {
+        setEmailBtn("이메일 확인");
+        setEmailSuccess(false);
+      } else {
+        setEmailBtn("이메일 확인 완료");
+        setEmailSuccess(true);
+      }
     }
   };
 
