@@ -16,16 +16,14 @@ public class DiscussionDto {
     private Long docsId;
     private String nickname;
     private String content;
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    private LocalDateTime createdAt;
+    private String createdAt;
 
     @Builder
     public DiscussionDto(Long docsId, String nickname, String content, LocalDateTime createdAt) {
         this.docsId = docsId;
         this.nickname = nickname;
         this.content = content;
-        this.createdAt = createdAt;
+        this.createdAt = createdAt.toString();
     }
 
 }
