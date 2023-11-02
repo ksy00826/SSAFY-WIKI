@@ -50,6 +50,16 @@ public class RedisConfig {
         return redisTemplate;
     }
 
+    @Bean
+    public RedisTemplate<String, String> redisTemplateString(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, String> redisTemplateString = new RedisTemplate<>();
+        redisTemplateString.setConnectionFactory(connectionFactory);
+        redisTemplateString.setKeySerializer(new StringRedisSerializer());        // Key Serializer
+        redisTemplateString.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));      // Value Serializer
+
+        return redisTemplateString;
+    }
+
     // Redis 에 메시지 내역을 저장하기 위한 RedisTemplate 을 설정
     @Bean
     public RedisTemplate<String, DiscussionDto> redisTemplateMessage(RedisConnectionFactory connectionFactory) {

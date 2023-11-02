@@ -163,11 +163,8 @@ public class JwtTokenProvider {
      * Jwts 모듈이 각각 상황에 맞는 exception 던져줌
      */
     public boolean validateToken(String token) {
-        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext();
-        ConfigurableEnvironment env = context.getEnvironment();
-
         try {
-            Jwts.parser().setSigningKey(env.getProperty("jwt.secret-key")).parseClaimsJws(token);
+            Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException e) {
             return false;
@@ -181,10 +178,8 @@ public class JwtTokenProvider {
      * 토큰으로 회원 정보 조회
      */
     public String getUserEmail(String token) {
-        ConfigurableApplicationContext context = new AnnotationConfigApplicationContext();
-        ConfigurableEnvironment env = context.getEnvironment();
 
-        return Jwts.parser().setSigningKey(env.getProperty("jwt.secret-key")).parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 
     // 엑세스 토큰 헤더 설정
