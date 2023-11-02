@@ -2,6 +2,10 @@ package com.bdos.ssafywiki.document.service;
 
 import ch.qos.logback.core.spi.ErrorCodes;
 import com.bdos.ssafywiki.diff.DiffMatchPatch;
+import com.bdos.ssafywiki.docs_category.entity.Category;
+import com.bdos.ssafywiki.docs_category.entity.DocsCategory;
+import com.bdos.ssafywiki.docs_category.repository.CategoryRepository;
+import com.bdos.ssafywiki.docs_category.repository.DocsCategoryRepository;
 import com.bdos.ssafywiki.document.dto.DocumentDto;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.document.mapper.DocumentMapper;
@@ -25,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -36,12 +41,15 @@ public class DocumentService {
     private final ContentRepository contentRepository;
     private final RevisionRepository revisionRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
+    private final DocsCategoryRepository docsCategoryRepository;
 
     //mapstruct
     private final RevisionMapper revisionMapper;
 
     private final DiffMatchPatch diffMatchPatch;
 
+    @Transactional
     public RevisionDto.Response writeDocs(DocumentDto.Post post) {
         //로그인 한 사용자(작성 유저) : JWT
         User user = new User("qqq@naver.com", "pwpw", "ksy", "sysy", Role.USER9, "010", "buk", "token");
@@ -49,7 +57,7 @@ public class DocumentService {
         userRepository.save(user);
         //유저 널 체크 필요
 
-        //1. Document entity 생성
+        //@@@@@@@1. Document entity 생성
         Document document = Document.builder()
                 .title(post.getTitle())
                 .build(); //redirect, deleted는 기본값이 false
@@ -60,8 +68,30 @@ public class DocumentService {
         document.setChildren(new ArrayList<>());
         documentRepository.save(document);
 
-        //2. Revision entity 생성
+        //1.2 카테고리 등록
+        //카테고리 테이블을 일단 읽어옴
+        post.getCategories().stream()
+                //존재하지 않는 카테고리는 생성 및 저장하여 리턴
+                .map(categoryName ->
+                        categoryRepository.findByName(categoryName)
+                                .orElseGet(() -> {
+                                    Category category = Category.builder().name(categoryName).build();
+                                    categoryRepository.save(category);
+                                    return category;
+                                }))
+                //각 카테고리마다 문서와 연결
+                .forEach(category -> {
+                    //카테고리-문서 엔티티 생성
+                    DocsCategory docsCategory = new DocsCategory();
+                    System.out.println(category);
+                    docsCategory.setCategory((Category) category);
+                    docsCategory.setDocument(document);
+                    docsCategoryRepository.save(docsCategory);
+                    System.out.println(docsCategory);
+                });
+        System.out.println(document.getCategoryList());
 
+        //@@@@@@@2. Revision entity 생성
         Revision revision = Revision.builder()
                 .number(1L)
                 .diffAmount((long)diffMatchPatch.diff_length(diffMatchPatch.diff_main("", post.getContent())))

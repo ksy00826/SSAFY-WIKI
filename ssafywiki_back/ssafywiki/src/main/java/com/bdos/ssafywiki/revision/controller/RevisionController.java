@@ -44,6 +44,8 @@ public class RevisionController {
 //        revisionService.diff(rev, oldRev)
 //        revisionService.diffHtml(rev, oldRev)
         return new ResponseEntity(revisionService.diff(rev, oldRev), HttpStatus.OK);
+
+//        return new ResponseEntity(revisionService.diffTest(), HttpStatus.OK);
     }
 
     @Operation(summary = "버전 디테일", description = "해당 버전의 내용을 확인합니다.")
