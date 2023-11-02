@@ -27,18 +27,18 @@ public class DiscussionController {
 
     @MessageMapping("/chat")
     public void discuss(DiscussionDto discussionDto) {
-        String nickname = "광표";
+        String nickname = "sysy";
         Long userId = 1L;
 
         discussionDto.setNickname(nickname);
-        discussionDto.setCreatedAt(LocalDateTime.now());
+        discussionDto.setCreatedAt(LocalDateTime.now().toString());
         System.out.println(discussionDto);;
         messageSendingTemplate.convertAndSend("/sub/chat/" + discussionDto.getDocsId(), discussionDto);
         discussionService.saveMessage(discussionDto, userId);
 
     }
 
-    @GetMapping("/chatlist/{docsId}")
+    @GetMapping("/api/chatlist/{docsId}")
     public ResponseEntity<?> preChatList(@PathVariable Long docsId) {
         List<DiscussionDto> list = discussionService.loadMessage(docsId);
         return new ResponseEntity(list, HttpStatus.OK);

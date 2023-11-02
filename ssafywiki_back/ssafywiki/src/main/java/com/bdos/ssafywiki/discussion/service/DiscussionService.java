@@ -73,7 +73,7 @@ public class DiscussionService {
             for (Discussion discussion : dbMessageList) {
                 DiscussionDto discussionDto = DiscussionMapper.INSTANCE.toDto(discussion);
                 messageList.add(discussionDto);
-                redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(Discussion.class));      // 직렬화
+                redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(DiscussionDto.class));      // 직렬화
                 redisTemplateMessage.opsForList().rightPush(docsId.toString(), discussionDto);                                // redis 저장
             }
         } else {
