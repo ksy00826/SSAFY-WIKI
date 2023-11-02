@@ -33,9 +33,10 @@ public class RevisionController {
             @PageableDefault(size = 30, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
 
         Page<Revision> revisionPage = revisionService.getHistory(docsId, pageable);
-        List<Revision> revisionList= revisionPage.getContent();
+//        revisionPage.getTotalElements();
+//        List<Revision> revisionList= revisionPage.getContent();
 
-        return new ResponseEntity(revisionMapper.toVersionList(revisionList), HttpStatus.OK);
+        return new ResponseEntity(revisionMapper.toVersionPage(revisionPage), HttpStatus.OK);
     }
 
     @Operation(summary = "버전 비교", description = "두개의 버전을 비교합니다.")
