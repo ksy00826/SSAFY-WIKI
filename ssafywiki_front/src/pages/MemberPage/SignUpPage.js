@@ -5,6 +5,7 @@ import styles from "./SignUpPage.module.css";
 import Form1 from "components/Member/SignUpForm1";
 import Form2 from "components/Member/SignUpForm2";
 
+
 const { Search } = Input;
 const description = "This is a description.";
 const steps = [
