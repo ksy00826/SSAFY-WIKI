@@ -138,7 +138,7 @@ function FileUpload() {
             uploadButton
           )}
         </Upload>
-        <Card title="Image URL" style={{}}>
+        <Card title="Image URL" style={{ width: "100em" }}>
           {imageUrl ? <p>{imageUrl}</p> : <p>loading..</p>}
         </Card>
       </Space>
