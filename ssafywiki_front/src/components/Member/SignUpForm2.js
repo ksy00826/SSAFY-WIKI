@@ -17,7 +17,7 @@ import {
   LockOutlined,
 } from "@ant-design/icons";
 import { checkSSAFYEmail } from "utils/UserApi";
-import { axiosInstance } from "./AxiosConfig";
+import { axiosInstance } from "utils/AxiosConfig";
 const { Search } = Input;
 
 const SignUp = ({ goNext, info }) => {
