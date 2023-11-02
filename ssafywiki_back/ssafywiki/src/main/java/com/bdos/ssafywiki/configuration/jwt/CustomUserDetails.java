@@ -1,27 +1,21 @@
 package com.bdos.ssafywiki.configuration.jwt;
 
 import com.bdos.ssafywiki.user.entity.User;
-import com.bdos.ssafywiki.user.enums.Role;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @ToString
 public class CustomUserDetails extends User implements UserDetails {
-    private Long id;
-    private String email;
-    private String password;
-    private Role role;
-    private LocalDateTime blockedAt;
+
+    private User user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -30,7 +24,7 @@ public class CustomUserDetails extends User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.email;
+        return this.user.getUsername();
     }
 
     // 계정이 만료되지 않았는지
@@ -42,10 +36,6 @@ public class CustomUserDetails extends User implements UserDetails {
     // 계정이 잠겨있지 않은지
     @Override
     public boolean isAccountNonLocked() {
-//        if(blockedAt == null) return true;
-//
-//        LocalDateTime current = LocalDateTime.now();
-//        return blockedAt.isBefore(current);
         return true;
     }
 
@@ -62,10 +52,6 @@ public class CustomUserDetails extends User implements UserDetails {
     }
 
     public CustomUserDetails(User user) {
-        this.id = user.getId();
-        this.email = user.getEmail();
-        this.password = user.getPassword();
-        this.role = user.getRole();
-        this.blockedAt = user.getBlockedAt();
+        this.user = user;
     }
 }

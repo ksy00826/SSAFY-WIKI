@@ -37,7 +37,7 @@ public class AuthenticationController {
 
     @Operation(summary = "로그인")
     @PostMapping("/login")
-    public ResponseEntity<Authentication> authenticate(@RequestBody UserDto.Login request) {
+    public ResponseEntity<UserDto.UserToken> authenticate(@RequestBody UserDto.Login request) {
         return ResponseEntity.ok(service.login(request));
     }
 
