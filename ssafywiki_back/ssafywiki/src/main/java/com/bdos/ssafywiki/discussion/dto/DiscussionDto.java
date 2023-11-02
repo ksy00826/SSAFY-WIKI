@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
+@ToString
 public class DiscussionDto {
     private Long docsId;
     private String nickname;
@@ -20,4 +21,5 @@ public class DiscussionDto {
         this.content = content;
         this.createdAt = createdAt;
     }
+
 }

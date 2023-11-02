@@ -3,6 +3,7 @@ package com.bdos.ssafywiki.discussion.controller;
 import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
 import com.bdos.ssafywiki.discussion.service.DiscussionService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class DiscussionController {
@@ -23,20 +25,16 @@ public class DiscussionController {
     private final DiscussionService discussionService;
 
 
-    @MessageMapping("/chat/{docsId}")
-    public void discuss(@PathVariable Long docsId, String discuss) {
+    @MessageMapping("/chat")
+    public void discuss(DiscussionDto discussionDto) {
         String nickname = "광표";
         Long userId = 1L;
-        DiscussionDto discussionDto = DiscussionDto
-                .builder()
-                .docsId(docsId)
-                .content(discuss)
-                .nickname(nickname)
-                .createdAt(LocalDateTime.now())
-                .build();
-//        discussionService.enterMessageRoom(docsId.toString());
-        messageSendingTemplate.convertAndSend("/sub/chat/" + docsId, discussionDto);
-//        discussionService.saveMessage(discussionDto, userId);
+
+        discussionDto.setNickname(nickname);
+        discussionDto.setCreatedAt(LocalDateTime.now());
+        System.out.println(discussionDto);;
+        messageSendingTemplate.convertAndSend("/sub/chat/" + discussionDto.getDocsId(), discussionDto);
+        discussionService.saveMessage(discussionDto, userId);
 
     }
 

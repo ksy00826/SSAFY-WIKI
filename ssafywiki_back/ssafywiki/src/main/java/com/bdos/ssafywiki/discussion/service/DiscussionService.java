@@ -4,6 +4,11 @@ import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
 import com.bdos.ssafywiki.discussion.entity.Discussion;
 import com.bdos.ssafywiki.discussion.mapper.DiscussionMapper;
 import com.bdos.ssafywiki.discussion.repository.DiscussionRepository;
+import com.bdos.ssafywiki.document.entity.Document;
+import com.bdos.ssafywiki.document.repository.DocumentRepository;
+import com.bdos.ssafywiki.user.entity.User;
+import com.bdos.ssafywiki.user.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -11,8 +16,11 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
+import java.nio.file.attribute.UserPrincipalNotFoundException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -30,11 +38,14 @@ public class DiscussionService {
     // 구독 처리 서비스
     private final RedisSubscriber redisSubscriber;
     // 대화 저장
-
-    private Map<String, ChannelTopic> topics;
+    private final UserRepository userRepository;
+    private final DocumentRepository documentRepository;
     public void saveMessage(DiscussionDto discussionDto, Long userId) {
         // DB 저장
         Discussion discuss = DiscussionMapper.INSTANCE.toDiscussion(discussionDto);
+        User user = userRepository.findById(userId).orElseThrow(()-> new NotFoundException("User Not Found"));
+        Document document = documentRepository.findById(discussionDto.getDocsId()).orElseThrow(() -> new NotFoundException("Docs Not Found"));
+        discuss.setUserAndDocument(user, document);
         discussionRepository.save(discuss);
 
         // 1. 직렬화
@@ -71,16 +82,6 @@ public class DiscussionService {
         }
 
         return messageList;
-    }
-
-    public void enterMessageRoom(String roomId) {
-        ChannelTopic topic = topics.get(roomId);
-
-        if (topic == null) {
-            topic = new ChannelTopic(roomId);
-            redisMessageListener.addMessageListener(redisSubscriber, topic);        // pub/sub 통신을 위해 리스너를 설정. 대화가 가능해진다
-            topics.put(roomId, topic);
-        }
     }
 
 }
