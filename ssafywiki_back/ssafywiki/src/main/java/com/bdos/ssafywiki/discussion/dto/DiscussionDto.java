@@ -1,6 +1,10 @@
 package com.bdos.ssafywiki.discussion.dto;
 
 import com.bdos.ssafywiki.user.entity.User;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,6 +16,8 @@ public class DiscussionDto {
     private Long docsId;
     private String nickname;
     private String content;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     private LocalDateTime createdAt;
 
     @Builder

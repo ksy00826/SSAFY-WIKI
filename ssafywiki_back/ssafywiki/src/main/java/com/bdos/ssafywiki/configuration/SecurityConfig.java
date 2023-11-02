@@ -70,7 +70,8 @@ public class SecurityConfig {
                                 .requestMatchers(mvcMatcherBuilder.pattern("/v3/api-docs/**")).permitAll()
                                 .requestMatchers(mvcMatcherBuilder.pattern("/image/**")).permitAll()
                                 .requestMatchers(mvcMatcherBuilder.pattern("/api/diary")).permitAll()
-                                .anyRequest().authenticated()
+                                .requestMatchers(mvcMatcherBuilder.pattern("/ws")).permitAll()
+//                                .anyRequest().authenticated()
                         //.requestMatchers("/api/v1/resource").hasAnyRole("ADMIN","USER") replaced with annotation in AuthorizationController
 //                                .requestMatchers(HttpMethod.POST, "/api/user").hasRole("USER")
 //                                .requestMatchers(HttpMethod.POST, "/admin").hasRole("ADMIN")
