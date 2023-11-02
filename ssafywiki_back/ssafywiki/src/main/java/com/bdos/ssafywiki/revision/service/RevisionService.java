@@ -12,6 +12,7 @@ import com.bdos.ssafywiki.revision.entity.Revision;
 import com.bdos.ssafywiki.revision.repository.ContentRepository;
 import com.bdos.ssafywiki.revision.repository.RevisionRepository;
 import com.bdos.ssafywiki.user.entity.User;
+import com.bdos.ssafywiki.user.enums.Role;
 import com.bdos.ssafywiki.user.repository.UserRepository;
 import com.github.difflib.DiffUtils;
 import com.github.difflib.algorithm.DiffAlgorithmFactory;
@@ -54,7 +55,7 @@ public class RevisionService {
     @Transactional
     public void revokeVersion(long revId) {
         // revoke를 한 user
-        User user = new User("qqq@naver.com", "pwpw", "조현덕", "hd", "ssafy", "010", "buk", "token");
+        User user = new User("qqq@naver.com", "pwpw", "조현덕", "hd", Role.USER9, "010", "buk", "token");
         // 일단 유저를 다른 곳에 연관관계로 등록하기 위해 임시로 저장
         userRepository.save(user);
 
