@@ -9,6 +9,11 @@ export const isLogin = () => {
   return isUserLoggedIn;
 };
 
+// 쿠키에 저장된 토큰 가져오는 함수
+export const getToken = () => {
+  return cookie.load("token");
+};
+
 // 로그인 로직
 export const login = (email, password) => {
   // 1. axios로 확인

@@ -1,16 +1,16 @@
 import React, { useState, useParams } from "react";
 import UserNavbar from "components/Common/UserNavbar";
 import { Layout, theme, Card, Col, Row } from "antd";
-import { getContributedDocs } from "utils/UserApi";
+import { getContributedChats } from "utils/UserApi";
 
 const { Header, Content, Footer } = Layout;
 
-const ContributionPage = () => {
-  const [docList, setdocList] = React.useState([]);
+const UserChatsPage = () => {
+  const [chatList, setchatList] = React.useState([]);
   // 처음 랜더링시 내용 가져오기
   React.useEffect(() => {
-    getContributedDocs().then((response) => {
-      setdocList(response.docs);
+    getContributedChats().then((response) => {
+      setchatList(response.docs);
     });
   }, []);
 
@@ -18,15 +18,15 @@ const ContributionPage = () => {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const docc = docList.map((doc) => (
-    <Col key={doc.docs_id} span={8}>
+  const chatc = chatList.map((chat) => (
+    <Col key={chat.docs_title} span={8}>
       <Card
-        title={doc.docs_title}
-        bordered={false}
+        title={chat.docs_title}
+        extra={chat.discuss_created_at}
         headStyle={{ backgroundColor: "lightblue", border: 0 }}
         bodyStyle={{ backgroundColor: "white", border: 0 }}
       >
-        {doc.rev_modified_at}
+        {chat.discuss_content}
       </Card>
     </Col>
   ));
@@ -36,7 +36,7 @@ const ContributionPage = () => {
         minHeight: "100vh",
       }}
     >
-      <UserNavbar selectedKey="3"></UserNavbar>
+      <UserNavbar selectedKey="4"></UserNavbar>
       <Layout>
         <Header
           style={{
@@ -56,7 +56,7 @@ const ContributionPage = () => {
               background: colorBgContainer,
             }}
           >
-            <Row gutter={16}>{docc}</Row>
+            <Row gutter={16}>{chatc}</Row>
           </div>
         </Content>
         <Footer
@@ -70,4 +70,4 @@ const ContributionPage = () => {
     </Layout>
   );
 };
-export default ContributionPage;
+export default UserChatsPage;
