@@ -4,6 +4,7 @@ import com.bdos.ssafywiki.bookmark.dto.BookmarkDto;
 import com.bdos.ssafywiki.bookmark.entity.Bookmark;
 import com.bdos.ssafywiki.bookmark.mapper.BookmarkMapper;
 import com.bdos.ssafywiki.bookmark.repository.BookmarkRepository;
+import com.bdos.ssafywiki.configuration.jwt.CustomUserDetails;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.document.repository.DocumentRepository;
 import com.bdos.ssafywiki.exception.BusinessLogicException;
@@ -15,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.awt.print.Book;
 import java.util.List;
 
 @Service
@@ -27,10 +27,11 @@ public class BookmarkService {
     private final DocumentRepository documentRepository;
     private final BookmarkMapper bookmarkMapper;
 
-    public void registBookmark(Long docsId) {
+    public void registBookmark(Long docsId, CustomUserDetails userDetails) {
         //사용자, 문서 -> 북마크
-        User user = userRepository.findById(1L).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
-        Document document = documentRepository.findById(docsId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
+        User user = userDetails.getUser();
+        Document document = documentRepository.findById(docsId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
 
         //이미 해당 문서의 북마크 존재하는지 검사
         Bookmark bookmark = bookmarkRepository.findByDocsId(docsId).orElse(null);
@@ -44,8 +45,8 @@ public class BookmarkService {
         bookmarkRepository.save(bookmark);
     }
 
-    public List<BookmarkDto.Detail> getBookmark(Pageable pageable) {
-        User user = userRepository.findById(1L).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+    public List<BookmarkDto.Detail> getBookmark(Pageable pageable, CustomUserDetails userDetails) {
+        User user = userDetails.getUser();
 
         //사용자의 북마크 불러오기
         Page<Bookmark> bookmarkList = bookmarkRepository.findAllByUserId(user.getId(), pageable);
