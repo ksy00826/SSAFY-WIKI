@@ -1,6 +1,5 @@
 package com.bdos.ssafywiki.revision.service;
 
-import com.bdos.ssafywiki.diff.Conflict;
 import com.bdos.ssafywiki.diff.Diff;
 import com.bdos.ssafywiki.diff.DiffMatchPatch;
 import com.bdos.ssafywiki.diff.MergeResult;
@@ -12,7 +11,6 @@ import com.bdos.ssafywiki.revision.entity.Revision;
 import com.bdos.ssafywiki.revision.repository.ContentRepository;
 import com.bdos.ssafywiki.revision.repository.RevisionRepository;
 import com.bdos.ssafywiki.user.entity.User;
-import com.bdos.ssafywiki.user.enums.Role;
 import com.bdos.ssafywiki.user.repository.UserRepository;
 import com.github.difflib.DiffUtils;
 import com.github.difflib.algorithm.DiffAlgorithmFactory;
@@ -31,7 +29,6 @@ import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.stream.Collectors;
 
 @Service
@@ -55,7 +52,7 @@ public class RevisionService {
     @Transactional
     public void revokeVersion(long revId) {
         // revoke를 한 user
-        User user = new User("qqq@naver.com", "pwpw", "조현덕", "hd", Role.USER9, "010", "buk", "token");
+        User user = new User("qqq@naver.com", "pwpw", "조현덕", "hd", "ssafy", "010", "buk", "token");
         // 일단 유저를 다른 곳에 연관관계로 등록하기 위해 임시로 저장
         userRepository.save(user);
 
@@ -108,10 +105,10 @@ public class RevisionService {
                 나무위키는 누구나 기여할 수 있는 위키입니다.
                 검증되지 않았거나 편향된 내용이 있을 수 있습니다.
                 }}}
-                ####
+                ----
                 [include(틀:이용안내)]
                 ----
-                [include(틀:나무위키 프로젝트~~~~~)]
+                [include(틀:나무위키 프로젝트)]
                 ----
                 {{{#!wiki style="margin-bottom:-10px"
                 {{{#!wiki style="margin-bottom:-10px"
@@ -148,25 +145,25 @@ public class RevisionService {
         List<String> newStrings = List.of(text.split("\n"));
         Patch<String> patch = DiffUtils.diff(oldStrings, newStrings);
 
-//        System.out.println(diffLength(patch));
+        System.out.println(diffLength(patch));
 
 
-//        for (AbstractDelta<String> delta : patch.getDeltas()) {
-//            switch (delta.getType()) {
-//                case CHANGE:
-//                    System.out.println("ChangeDelta: " + delta);
-//                    break;
-//                case DELETE:
-//                    System.out.println("DeleteDelta: " + delta);
-//                    break;
-//                case INSERT:
-//                    System.out.println("InsertDelta: " + delta);
-//                    break;
-//                case EQUAL:
-//                    System.out.println("EqualDelta: " + delta); // Usually not shown in diffs
-//                    break;
-//            }
-//        }
+        for (AbstractDelta<String> delta : patch.getDeltas()) {
+            switch (delta.getType()) {
+                case CHANGE:
+                    System.out.println("ChangeDelta: " + delta);
+                    break;
+                case DELETE:
+                    System.out.println("DeleteDelta: " + delta);
+                    break;
+                case INSERT:
+                    System.out.println("InsertDelta: " + delta);
+                    break;
+                case EQUAL:
+                    System.out.println("EqualDelta: " + delta); // Usually not shown in diffs
+                    break;
+            }
+        }
 
         String version2 = """
                 ----
@@ -189,7 +186,10 @@ public class RevisionService {
 
         try {
             String result = threeWayMerge(oldStrings, newStrings, splitIntoLines(version2));
-
+            System.out.println("########################");
+            for (String s : splitIntoLines(result)) {
+                System.out.println(s);
+            }
         } catch (PatchFailedException e) {
             e.printStackTrace();
             throw new BusinessLogicException(ExceptionCode.MERGE_FAILED);
@@ -244,101 +244,59 @@ public class RevisionService {
 
     public String threeWayMerge(List<String> base, List<String> versionA, List<String> versionB) throws PatchFailedException {
         Patch<String> patchA = DiffUtils.diff(base, versionA);
-//        System.out.println(patchA.getDeltas());
+//        patchA.withConflictOutput(Patch.CONFLICT_PRODUCES_MERGE_CONFLICT);
         Patch<String> patchB = DiffUtils.diff(base, versionB);
-//        System.out.println(patchB.getDeltas());
-//        patchB.withConflictOutput(CUSTOM_CONFLICT_PRODUCES_MERGE_CONFLICT);
+        System.out.println(diffLength(patchB));
+        ;
+        patchB.withConflictOutput(CUSTOM_CONFLICT_PRODUCES_MERGE_CONFLICT);
+//        System.out.println(patchB);
 
         // A를 base에 적용함
-//        List<String> merged = DiffUtils.patch(base, patchA);
-//        merged = DiffUtils.patch(merged, patchB);
-//
-//        System.out.println("########################");
-//        for (String s : merged) {
-//            System.out.println(s);
-//        }
+        List<String> merged = DiffUtils.patch(base, patchA);
+        merged = DiffUtils.patch(merged, patchB);
 
-
-//        merged = DiffUtils.patch(base, patchA);
-//        System.out.println(merged);
-
-        // 변화가 뒤에서 부터 일어나야지 List 인덱스가 안변함
-        List<AbstractDelta<String>> deltasA = patchA.getDeltas();
-//        System.out.println(deltasA.stream().map(delta -> delta.getTarget()).collect(Collectors.toList()));
-        List<AbstractDelta<String>> deltasB = patchB.getDeltas();
-
-        int indexA = patchA.getDeltas().size() - 1;
-        int indexB = patchB.getDeltas().size() - 1;
-
-        // 수정할 수 있는 Delta 객체를 Patch에 저장
-        Patch<String> mergeDeltaPatch = new Patch<>();
-        // Conflict 나는 Delta 쌍을 List에 저장
-        List<Conflict> conflictList = new ArrayList<>();
-
-        while (indexA >= 0 && indexB >= 0) {
-            AbstractDelta<String> deltaA = deltasA.get(indexA);
-            AbstractDelta<String> deltaB = deltasB.get(indexB);
-
-            Conflict conflict = conflictList.size() > 0 ? conflictList.get(conflictList.size() - 1) : null;
-            boolean isExistA = false;
-            boolean isExistB = false;
-            if (conflict != null) {
-                isExistA = conflict.isExistInA(deltaA);
-                isExistB = conflict.isExistInB(deltaB);
-            }
-
-            if (deltaA.getSource().getPosition() <= deltaB.getSource().last() && deltaA.getSource().last() >= deltaB.getSource().getPosition()) {
-                // 겹치는 구간 존재
-                // 겹쳤는데 이후 변화가 같음
-                if (deltaA.equals(deltaB)) {
-                    mergeDeltaPatch.addDelta(deltaA);
-                } else if (deltaA.getSource().getPosition() <= deltaB.getSource().getPosition() && isExistB) {
-                    conflict.addDeltaA(deltaA);
-                } else if (deltaA.getSource().getPosition() > deltaB.getSource().getPosition() && isExistA) {
-                    conflict.addDeltaB(deltaB);
-                } else {
-                    conflictList.add(new Conflict(deltaA, deltaB));
-                }
-            } else {
-                // 안겹침 / 가장 뒤에 있는 것 수정 가능 / 뒤에있는게 conflict에 있으면 안됨
-                if (deltaA.getSource().last() < deltaB.getSource().last()) {
-                    if (!isExistB)
-                        mergeDeltaPatch.addDelta(deltaB);
-                } else {
-                    if (!isExistA)
-                        mergeDeltaPatch.addDelta(deltaA);
-                }
-            }
-
-            if (deltaA.getSource().getPosition() > deltaB.getSource().getPosition()) {
-                indexA--;
-            } else {
-                indexB--;
-            }
-//            System.out.println("indexA : " + indexA + ", " + "indexB : " + indexB);
+        System.out.println("########################");
+        for (String s : merged) {
+            System.out.println(s);
         }
 
-        // mergeDeltaPatch를 적용
-        List<String> merged = DiffUtils.patch(base, mergeDeltaPatch);
-        applyConflict(merged, conflictList);
 
-//        System.out.println("########################");
-//        merged.stream().forEach(System.out::println);
+        merged = DiffUtils.patch(base, patchA);
+//        System.out.println(merged);
+//
+        for (AbstractDelta<String> delta : patchB.getDeltas()) {
+            if (isConflict(delta, patchA)) {
+                int lineNumber = delta.getSource().getPosition();
+                System.out.println("Conflict line : " + lineNumber);
+                System.out.println("Base : " + base.get(lineNumber));
+                System.out.println("Version A : " + versionA.get(lineNumber));
+                System.out.println("Version B : " + versionB.get(lineNumber));
+            } else {
+                Patch<String> singleDeltaPatch = createSingleDeltaPatch(delta);
+
+                merged = DiffUtils.patch(merged, singleDeltaPatch);
+            }
+        }
 
         return merged.stream().collect(Collectors.joining("\n"));
     }
 
-    public void applyConflict(List<String> base, List<Conflict> conflictList) {
-        for (Conflict conflict : conflictList) {
-            conflict.patch(base);
-        }
+    private static boolean isConflict(AbstractDelta<String> deltaB, Patch<String> patchA) {
+        return patchA.getDeltas().stream().anyMatch(deltaA ->
+                deltaA.getSource().getPosition() == deltaB.getSource().getPosition());
+    }
+
+    private static Patch<String> createSingleDeltaPatch(AbstractDelta<String> delta) {
+        Patch<String> singleDeltaPatch = new Patch<>();
+        singleDeltaPatch.addDelta(delta);
+        return singleDeltaPatch;
     }
 
     public static final ConflictOutput<String> CUSTOM_CONFLICT_PRODUCES_MERGE_CONFLICT = (VerifyChunk verifyChunk, AbstractDelta<String> delta, List<String> result) -> {
         System.out.println("result : " + result);
         if (result.size() > delta.getSource().getPosition()) {
             List<String> orgData = new ArrayList<>();
-            System.out.println(delta);
+
             if (delta.getType() == DeltaType.CHANGE) {
                 for (int i = 0; i < delta.getTarget().size(); i++) {
                     orgData.add(result.get(delta.getSource().getPosition()));

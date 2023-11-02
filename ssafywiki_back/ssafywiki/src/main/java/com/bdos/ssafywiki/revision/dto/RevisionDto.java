@@ -30,8 +30,6 @@ public class RevisionDto {
         private LocalDateTime createdAt;
         private LocalDateTime modifiedAt;
         private List<CategoryDto.Detail> categoryList;
-        private Long readAuth;
-        private Long writeAuth;
     }
 
     @Getter

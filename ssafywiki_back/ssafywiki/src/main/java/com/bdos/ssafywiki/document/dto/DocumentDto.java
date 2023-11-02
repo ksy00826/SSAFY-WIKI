@@ -18,8 +18,6 @@ public class DocumentDto {
         private String title;
         private String content;
         private List<String> categories;
-        private Long readAuth;
-        private Long writeAuth;
     }
 
     @Getter

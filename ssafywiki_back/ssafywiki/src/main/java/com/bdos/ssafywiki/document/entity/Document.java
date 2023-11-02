@@ -49,12 +49,6 @@ public class Document {
     @Column(name = "docs_is_deleted")
     private boolean deleted;
 
-    //권한 처리
-    @Column(name = "docs_read_auth")
-    private Long readAuth;
-    @Column(name = "docs_write_auth")
-    private Long writeAuth;
-
     @CreationTimestamp
     @Column(name = "docs_created_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;
@@ -67,10 +61,8 @@ public class Document {
     private List<DocsCategory> categoryList = new ArrayList<>();
 
     @Builder
-    public Document(String title, Long readAuth, Long writeAuth) {
+    public Document(String title) {
         this.title = title;
-        this.readAuth = readAuth;
-        this.writeAuth = writeAuth;
     }
 
     //연관관계 설정

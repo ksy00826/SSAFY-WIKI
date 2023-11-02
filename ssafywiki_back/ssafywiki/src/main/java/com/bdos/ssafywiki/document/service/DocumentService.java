@@ -21,7 +21,6 @@ import com.bdos.ssafywiki.revision.repository.CommentRepository;
 import com.bdos.ssafywiki.revision.repository.ContentRepository;
 import com.bdos.ssafywiki.revision.repository.RevisionRepository;
 import com.bdos.ssafywiki.user.entity.User;
-import com.bdos.ssafywiki.user.enums.Role;
 import com.bdos.ssafywiki.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
@@ -52,7 +51,7 @@ public class DocumentService {
     @Transactional
     public RevisionDto.Response writeDocs(DocumentDto.Post post) {
         //로그인 한 사용자(작성 유저) : JWT
-        User user = new User("qqq@naver.com", "pwpw", "ksy", "sysy", Role.USER9, "010", "buk", "token");
+        User user = new User("qqq@naver.com", "pwpw", "ksy", "sysy", "ssafy", "010", "buk", "token");
         //일단 유저를 다른 곳에 연관관계로 등록하기 위해 임시로 저장
         userRepository.save(user);
         //유저 널 체크 필요
@@ -60,8 +59,6 @@ public class DocumentService {
         //@@@@@@@1. Document entity 생성
         Document document = Document.builder()
                 .title(post.getTitle())
-                .readAuth(post.getReadAuth())
-                .writeAuth(post.getWriteAuth())
                 .build(); //redirect, deleted는 기본값이 false
 
         //1.1 연관관계 등록
@@ -118,7 +115,6 @@ public class DocumentService {
     }
 
     public RevisionDto.Response readDocs(Long docsId) {
-        //유저의 권한과 문서의 권한을 체크해서 처리
 
         //해당 문서 엔티티 찾기
         Document document = documentRepository.findById(docsId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
@@ -128,7 +124,6 @@ public class DocumentService {
     }
 
     public RevisionDto.Response updateDocs(DocumentDto.Put put) {
-        //유저의 권한과 문서의 권한을 체크해서 처리
 
         //엔티티 : 코멘트, 내용 -> 버전
         Comment comment = new Comment(put.getComment());

@@ -37,8 +37,6 @@ public interface RevisionMapper {
                 .deleted(revision.getDocument().isDeleted())
                 .createdAt(revision.getDocument().getCreatedAt())
                 .modifiedAt(revision.getModifiedAt())
-                .readAuth(revision.getDocument().getReadAuth())
-                .writeAuth(revision.getDocument().getWriteAuth())
                 .build();
 
         return response;
