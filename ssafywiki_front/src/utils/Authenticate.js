@@ -62,3 +62,8 @@ export const getRememberEmail = () => {
 export const removeRememberEmail = () => {
   return cookie.remove("remember", { path: "/member/login" });
 };
+
+// 로그아웃
+export const logout = () => {
+  cookie.remove("token", { path: "/" }, 1000);
+};
