@@ -7,6 +7,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.security.core.Authentication;
@@ -22,11 +25,13 @@ import java.io.IOException;
  */
 
 @Component
+@Slf4j
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
 
 
     private final JwtTokenProvider jwtTokenProvider;
+    private static final String TOKEN_PREFIX = "Bearer ";
 
     /**
      * doFilterInternal 함수 오버라이드
@@ -36,30 +41,37 @@ public class JwtFilter extends OncePerRequestFilter {
      * 유효하지 않은 경우 정상적으로 수행되지 않음
      */
 
+
     @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain
-    ) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
+
         String token = jwtTokenProvider.resolveToken(request);
-        System.out.println("doFilter >>> " + token);
+
+        // 토큰 없는 경우 로직 종료
+        if(token == null || !token.startsWith(TOKEN_PREFIX)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // Bearer 제거
+        token = token.replace(TOKEN_PREFIX, "");
+
+        // 사용자 인증
+        log.info("doFilter >>> " + token);
         try {
-            if (token != null && jwtTokenProvider.validateToken(token)) {
+            if (jwtTokenProvider.validateToken(token)) {
                 Authentication auth = jwtTokenProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(auth);
+                log.info("[Token 인증] 사용자 인증 성공");
             }
-        } catch (RedisConnectionFailureException e) {
-            e.printStackTrace();
-            SecurityContextHolder.clearContext();
-//            throw new IllegalArgumentException("레디스 잘못 됨");
-//            throw new BaseException(REDIS_ERROR);
-            throw new BusinessLogicException(ExceptionCode.INVALID_REFRESH_TOKEN);
-        } catch (Exception e) {
+        }  catch (Exception e) {
             e.printStackTrace();
 //            throw new BaseException(INVALID_JWT);
 //            throw new IllegalArgumentException("토큰 잘못 됨");
-            throw new BusinessLogicException(ExceptionCode.INVALID_REFRESH_TOKEN);
+            log.info("[Token 인증] 유효하지 않은 토큰입니다.");
+
+            throw new BusinessLogicException(ExceptionCode.INVALID_ACCESS_TOKEN);
         }
         filterChain.doFilter(request, response);
     }
