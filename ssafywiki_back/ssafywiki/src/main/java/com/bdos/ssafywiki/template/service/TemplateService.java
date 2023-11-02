@@ -1,5 +1,6 @@
 package com.bdos.ssafywiki.template.service;
 
+import com.bdos.ssafywiki.configuration.jwt.CustomUserDetails;
 import com.bdos.ssafywiki.exception.BusinessLogicException;
 import com.bdos.ssafywiki.exception.ExceptionCode;
 import com.bdos.ssafywiki.template.dto.TemplateDto;
@@ -8,9 +9,11 @@ import com.bdos.ssafywiki.template.mapper.TemplateMapper;
 import com.bdos.ssafywiki.template.repository.TemplateRepository;
 import com.bdos.ssafywiki.user.entity.User;
 import com.bdos.ssafywiki.user.repository.UserRepository;
+import com.bdos.ssafywiki.util.UserUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,9 +26,8 @@ public class TemplateService {
     private final UserRepository userRepository;
     private final TemplateMapper templateMapper;
 
-    public TemplateDto.Detail createTemplate(TemplateDto.Post post) {
-        //임시 : JWT
-        User user = userRepository.findById(1L).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+    public TemplateDto.Detail createTemplate(TemplateDto.Post post, CustomUserDetails userDetails) {
+        User user = userDetails.getUser();
 
         Template template = Template.builder()
                 .title(post.getTitle())
@@ -38,19 +40,19 @@ public class TemplateService {
         return templateMapper.toDetail(template);
     }
 
-    public List<TemplateDto.Preview> readTemplateList(boolean isMyTemplate, Pageable pageable) {
+    public List<TemplateDto.Preview> readTemplateList(boolean isMyTemplate, Pageable pageable, CustomUserDetails userDetails) {
         Page<Template> templateList = null;
         if (isMyTemplate){
             //임시 사용자
-            templateList = templateRepository.findAllWithAuthor(1L, pageable);
+            templateList = templateRepository.findAllWithAuthor(userDetails.getUser().getId(), pageable);
         }
         else{
-            templateList = templateRepository.findAllNotWithAuthor(1L, pageable);
+            templateList = templateRepository.findAllNotWithAuthor(userDetails.getUser().getId(), pageable);
         }
         return templateMapper.toPreviewList(templateList.getContent());
     }
 
-    public TemplateDto.Detail readTemplateDetail(Long templateId) {
+    public TemplateDto.Detail readTemplateDetail(Long templateId, CustomUserDetails userDetails) {
         Template template = templateRepository.findById(templateId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.TEMPLATE_NOT_FOUND));
         return templateMapper.toDetail(template);
     }

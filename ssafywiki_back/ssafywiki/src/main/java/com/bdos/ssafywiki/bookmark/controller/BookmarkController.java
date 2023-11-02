@@ -2,6 +2,7 @@ package com.bdos.ssafywiki.bookmark.controller;
 
 import com.bdos.ssafywiki.bookmark.dto.BookmarkDto;
 import com.bdos.ssafywiki.bookmark.service.BookmarkService;
+import com.bdos.ssafywiki.configuration.jwt.CustomUserDetails;
 import com.bdos.ssafywiki.document.dto.DocumentDto;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import io.swagger.v3.oas.annotations.Operation;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,16 +28,18 @@ public class BookmarkController {
 
     @Operation(summary = "북마크 등록하기", description = "문서 하나를 북마크합니다.")
     @PostMapping("/api/docs/bookmark/{docsId}")
-    public ResponseEntity<?> writeBookmark(@PathVariable Long docsId){
-        bookmarkService.registBookmark(docsId);
+    public ResponseEntity<?> writeBookmark(@PathVariable Long docsId,
+                                           @AuthenticationPrincipal CustomUserDetails userDetails){
+        bookmarkService.registBookmark(docsId, userDetails);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @Operation(summary = "북마크 목록 조회하기", description = "사용자가 북마크한 문서 목록을 불러옵니다.")
     @GetMapping ("/api/docs/bookmark")
-    public ResponseEntity<List<BookmarkDto.Detail>> readBookmark(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
-        List<BookmarkDto.Detail> list = bookmarkService.getBookmark(pageable);
+    public ResponseEntity<List<BookmarkDto.Detail>> readBookmark(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+                                                                @AuthenticationPrincipal CustomUserDetails userDetails){
+        List<BookmarkDto.Detail> list = bookmarkService.getBookmark(pageable, userDetails);
 
         return ResponseEntity.ok(list);
     }
