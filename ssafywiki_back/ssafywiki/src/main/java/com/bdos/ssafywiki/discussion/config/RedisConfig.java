@@ -18,16 +18,16 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 public class RedisConfig {
 
 
-    @Value("${spring.redis.host}")
-    private String host;
-
-    @Value("${spring.redis.port}")
-    private int port;
-
-    @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(host, port);
-    }
+//    @Value("${spring.redis.host}")
+//    private String host;
+//
+//    @Value("${spring.redis.port}")
+//    private int port;
+//
+//    @Bean
+//    public RedisConnectionFactory redisConnectionFactory() {
+//        return new LettuceConnectionFactory(host, port);
+//    }
 
 
     // redis 연결, redis 의 pub/sub 기능을 이용하기 위해 pub/sub 메시지를 처리하는 MessageListener 설정(등록)
@@ -48,6 +48,16 @@ public class RedisConfig {
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));      // Value Serializer
 
         return redisTemplate;
+    }
+
+    @Bean
+    public RedisTemplate<String, String> redisTemplateString(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, String> redisTemplateString = new RedisTemplate<>();
+        redisTemplateString.setConnectionFactory(connectionFactory);
+        redisTemplateString.setKeySerializer(new StringRedisSerializer());        // Key Serializer
+        redisTemplateString.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));      // Value Serializer
+
+        return redisTemplateString;
     }
 
     // Redis 에 메시지 내역을 저장하기 위한 RedisTemplate 을 설정

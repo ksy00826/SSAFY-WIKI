@@ -73,6 +73,7 @@ public class UserDto {
     public static class checkEmail {
         private String email;
         private String role;
+        private String authCode;
     }
 
 }
