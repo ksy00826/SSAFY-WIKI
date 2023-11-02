@@ -50,4 +50,10 @@ public class Discussion {
         this.document = document;
         this.user = user;
     }
+
+    public void setUserAndDocument(User user, Document document) {
+        this.user = user;
+        this.document = document;
+    }
+
 }

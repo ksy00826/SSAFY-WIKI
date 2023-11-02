@@ -1,8 +1,12 @@
 package com.bdos.ssafywiki.util;
 
+import java.util.concurrent.TimeUnit;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
 import javax.mail.*;
@@ -13,10 +17,11 @@ import java.util.Properties;
 import java.util.Random;
 
 @Service
+@RequiredArgsConstructor
 public class EmailUtil {
 
     private final Logger log = LoggerFactory.getLogger(EmailUtil.class);
-
+    private final RedisTemplate<String, String > redisTemplateString;
     @Value("mail.username")
     private String emailName;
     @Value("mail.password")
@@ -62,7 +67,11 @@ public class EmailUtil {
 
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(email)); //수신자메일주소
             message.setSubject("[SSAFY WIKI] 인증번호 전송");     //메일 제목을 입력
-            message.setText("<h3>SSAFY WIKI 회원가입 인증번호 입니다.<h3>" + makeRandomNumber());      //메일 내용을 입력
+            //randomNumber to Redis
+            String randomNumber = makeRandomNumber();
+            ValueOperations<String, String> vop = redisTemplateString.opsForValue();
+            vop.set(email,randomNumber , 5 , TimeUnit.MINUTES);
+            message.setText("<h3>SSAFY WIKI 회원가입 인증번호 입니다.<h3>" + randomNumber);      //메일 내용을 입력
 
             // send the message
             Transport.send(message); ////전송
@@ -73,6 +82,16 @@ public class EmailUtil {
         } catch (MessagingException e) {
             log.error(e.toString());
         }
+        return 0;
+    }
+
+    public int authEmail(String email, String authCode) {
+        ValueOperations<String, String> vop = redisTemplateString.opsForValue();
+        if(vop.get(email).equals(authCode)){
+            return 1;
+        }
+
+
         return 0;
     }
 }

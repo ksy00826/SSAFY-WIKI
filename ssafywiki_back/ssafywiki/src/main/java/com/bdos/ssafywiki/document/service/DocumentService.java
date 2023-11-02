@@ -60,6 +60,8 @@ public class DocumentService {
         //@@@@@@@1. Document entity 생성
         Document document = Document.builder()
                 .title(post.getTitle())
+                .readAuth(post.getReadAuth())
+                .writeAuth(post.getWriteAuth())
                 .build(); //redirect, deleted는 기본값이 false
 
         //1.1 연관관계 등록
@@ -116,6 +118,7 @@ public class DocumentService {
     }
 
     public RevisionDto.Response readDocs(Long docsId) {
+        //유저의 권한과 문서의 권한을 체크해서 처리
 
         //해당 문서 엔티티 찾기
         Document document = documentRepository.findById(docsId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
@@ -125,6 +128,7 @@ public class DocumentService {
     }
 
     public RevisionDto.Response updateDocs(DocumentDto.Put put) {
+        //유저의 권한과 문서의 권한을 체크해서 처리
 
         //엔티티 : 코멘트, 내용 -> 버전
         Comment comment = new Comment(put.getComment());
