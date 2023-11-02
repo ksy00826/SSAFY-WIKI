@@ -1,4 +1,4 @@
-import { axiosInstance } from "./AxiosConfig";
+import { axiosInstance , axiosSsafygitInstance } from "./AxiosConfig";
 
 export const getUserProfile = async (id) => {
   // try {
@@ -103,46 +103,16 @@ export const getStarDocs = async (id) => {
 };
 
 export const checkSSAFYEmail = async (id) => {
-  var data = '{"usernameOrEmail":"kss4037@gmail.com","password":"kwon5147k!"}';
-
-  var xhr = new XMLHttpRequest();
-  xhr.withCredentials = true;
-
-  xhr.addEventListener("readystatechange", function () {
-    if (this.readyState === 4) {
-      console.log(this.responseText);
+  try {
+    let data = `{"usernameOrEmail":"${id}","password":"aaaaa"}`;
+    const response = await axiosSsafygitInstance.post(`/signin`,data);
+    return response.data;
+  } catch (error) {
+    if(error.response.data.message === "아이디가 존재하지 않습니다."
+      || error.response.data.message.startsWith("비밀번호가 ")) {
+        console.log("noID on API");
+      return error.response.data.message;
     }
-  });
-
-  xhr.open("POST", "https://project.ssafy.com/ssafy/api/auth/signin");
-  xhr.setRequestHeader("Accept", "application/json, text/plain, */*");
-  xhr.setRequestHeader(
-    "Accept-Language",
-    "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6"
-  );
-  xhr.setRequestHeader("Authorization", "");
-  xhr.setRequestHeader("Connection", "keep-alive");
-  xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-  // WARNING: Cookies will be stripped away by the browser before sending the request.
-  xhr.setRequestHeader("Cookie", "SCOUTER=z3rk4dv32gumkl");
-  xhr.setRequestHeader("Origin", "https://project.ssafy.com");
-  xhr.setRequestHeader(
-    "Referer",
-    "https://project.ssafy.com/login?returnPath=%2Fhome"
-  );
-  xhr.setRequestHeader("Sec-Fetch-Dest", "empty");
-  xhr.setRequestHeader("Sec-Fetch-Mode", "cors");
-  xhr.setRequestHeader("Sec-Fetch-Site", "same-origin");
-  xhr.setRequestHeader(
-    "User-Agent",
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36"
-  );
-  xhr.setRequestHeader(
-    "sec-ch-ua",
-    '"Chromium";v="118", "Google Chrome";v="118", "Not=A?Brand";v="99"'
-  );
-  xhr.setRequestHeader("sec-ch-ua-mobile", "?0");
-  xhr.setRequestHeader("sec-ch-ua-platform", '"Windows"');
-
-  return xhr.send(data);
+    return error;
+  }
 };
