@@ -27,31 +27,14 @@ public class CustomUserDetailsService implements UserDetailsService {
      * */
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public User loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        log.info(">>>>>>>>>>>>>>>>");
         User user = userRepository.findByEmail(email)
                 .map(m -> new CustomUserDetails(m))
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid authentication!"));
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-//        return new org
-//                .springframework
-//                .security
-//                .core
-//                .userdetails
-//                .User(user.getEmail(), user.getPassword(), grantedAuthorities);
-
-        return org.springframework.security.core.userdetails.User.builder()
-                .username(user.getEmail())
-                .password(user.getPassword())
-                .build();
-
-
+        return user;
     }
-
-
-
-
 
 }

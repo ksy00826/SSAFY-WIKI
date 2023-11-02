@@ -24,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -31,7 +32,7 @@ import java.util.Optional;
 public class AuthenticationService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
+//    private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider tokenProvider;
 
 
@@ -68,32 +69,36 @@ public class AuthenticationService {
                 .build();
     }
 
-    public Authentication login(UserDto.Login request) {
-        System.out.println(request);
-        // 1. id, pass를 기반으로 AuthenticationToken 생성
-        UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());
+    public UserDto.UserToken login(UserDto.Login request) {
+        //authenticationManager.authenticate() 사용하는 방법 모르겠음. 그냥 판단
 
-        // 2. User Password 인증
-        //"authenticate" 가 실행될때 "CustomUserDetailService.loadUserByUsername" 실행
-        try {
-            Authentication authenticate = authenticationManager.authenticate(authenticationToken);
-            return authenticate;
+        // 1. 유저 아이디 검색
+        User user = repository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.EMAIL_NOT_FOUND));
 
-//            // token 생성
-//            String accessToken = tokenProvider.generateAccessToken(authentication);
-//            String refreshToken = tokenProvider.generateRefreshToken(authentication);
-//            User user = (User) authentication.getPrincipal(); // user 정보
+        System.out.println(passwordEncoder.matches(request.getPassword(), user.getPassword()));
+        // 2. 비밀번호 비교
+        boolean result = passwordEncoder.matches(request.getPassword(), user.getPassword());
+        if(!result) throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
 
-
-        } catch (UsernameNotFoundException e) {
-            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
-        } catch (BadCredentialsException e) {
-            throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+        // 3. block 유저인지 확인
+        if(user.getBlockedAt() != null) {
+            LocalDateTime current = LocalDateTime.now();
+            if(user.getBlockedAt().isBefore(current))
+                throw new BusinessLogicException(ExceptionCode.BLOCKED_USER);
         }
-//        catch (LockedException e) {
-//            throw new BusinessLogicException(ExceptionCode.BLOCKED_USER);
-//        }
+
+        // 4. access Token, RefreshToken 생성 및 저장
+        var jwtToken = tokenProvider.createAccessToken(user);
+        var refreshToken = tokenProvider.createRefreshToken(user);
+        saveUserToken(user, jwtToken);
+
+        // 반환
+        return UserDto.UserToken.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .name(user.getName())
+                .build();
 
     }
 
