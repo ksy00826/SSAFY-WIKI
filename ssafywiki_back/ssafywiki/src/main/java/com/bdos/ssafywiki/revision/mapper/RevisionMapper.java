@@ -5,6 +5,7 @@ import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import com.bdos.ssafywiki.revision.entity.Revision;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -29,4 +30,6 @@ public interface RevisionMapper {
 
     @Mapping(source = "revision.content.text", target = "content")
     RevisionDto.Detail toDetail(Revision revision);
+
+    RevisionDto.VersionPage toVersionPage(Page<Revision> revisionPage);
 }
