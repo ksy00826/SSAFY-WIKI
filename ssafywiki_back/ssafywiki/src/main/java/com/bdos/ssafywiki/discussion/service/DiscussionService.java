@@ -49,7 +49,7 @@ public class DiscussionService {
         discussionRepository.save(discuss);
 
         // 1. 직렬화
-        redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(Discussion.class));
+        redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(DiscussionDto.class));
 
         // 2. redis 저장
         redisTemplateMessage.opsForList().rightPush(discussionDto.getDocsId().toString(), discussionDto);
