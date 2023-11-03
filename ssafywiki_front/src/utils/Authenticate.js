@@ -1,5 +1,5 @@
 import cookie from "react-cookies";
-import { axiosInstance } from "./AxiosConfig";
+import { axiosInstance, axiosInstanceNoTimeout } from "./AxiosConfig";
 
 // 로그인 되어있는지 확인하는 함수
 export const isLogin = () => {
@@ -88,4 +88,22 @@ export const removeRememberEmail = () => {
 // 로그아웃
 export const logout = () => {
   cookie.remove("token", { path: "/" }, 1000);
+};
+
+// 회원가입시 이메일 전송
+export const sendEmail = async (email, role) => {
+  try {
+    const response = await axiosInstanceNoTimeout
+      .post(`/api/members/email`, {
+        email: email,
+        role: role,
+        authCode: "null",
+      })
+      .then((data) => {
+        console.log(data);
+        return data;
+      });
+  } catch (error) {
+    throw error;
+  }
 };
