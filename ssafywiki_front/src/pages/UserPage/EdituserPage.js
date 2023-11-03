@@ -30,7 +30,7 @@ const normFile = (e) => {
 };
 const EdituserPage = () => {
   // 처음 랜더링시 내용 가져오기
-  React.useEffect(() => {
+  React.useEffect(() => { 
     getUserProfile().then((response) => {
       console.log(response);
     });
