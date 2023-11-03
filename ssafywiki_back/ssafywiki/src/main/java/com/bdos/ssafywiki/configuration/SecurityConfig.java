@@ -85,7 +85,8 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests((req) -> req
                         // 나머지는 인증이 필요한 곳
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
+
                 )
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(unauthorizedEntryPoint)
