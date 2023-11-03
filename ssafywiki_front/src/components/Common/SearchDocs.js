@@ -27,13 +27,13 @@ const App = () => {
       popupClassName="certain-category-search-dropdown"
       popupMatchSelectWidth={500}
       style={{
-        width: 250,
+        width: 300,
       }}
       options={options}
       onSelect={onSelect}
       onSearch={handleSearch}
     >
-      <Input.Search placeholder="input here" />
+      <Input.Search placeholder="검색" />
     </AutoComplete>
   );
 };
