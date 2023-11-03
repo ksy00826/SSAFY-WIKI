@@ -1,16 +1,20 @@
 package com.bdos.ssafywiki.discussion.controller;
 
 import com.bdos.ssafywiki.configuration.jwt.CustomUserDetails;
+import com.bdos.ssafywiki.configuration.jwt.JwtTokenProvider;
 import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
 import com.bdos.ssafywiki.discussion.service.DiscussionService;
 import com.bdos.ssafywiki.discussion.service.RedisPublisher;
+import com.bdos.ssafywiki.user.entity.User;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,19 +31,21 @@ public class DiscussionController {
 
     private final RedisPublisher redisPublisher;
     private final DiscussionService discussionService;
-
+    private final JwtTokenProvider jwtTokenProvider;
 
     @MessageMapping("/chat")
-    public void discuss(DiscussionDto discussionDto, @AuthenticationPrincipal CustomUserDetails userDetails) {
+    public void discuss(DiscussionDto discussionDto, @Header("Authorization") String token) {
 
-        System.out.println(userDetails);
+        System.out.println(token);
+        User user = jwtTokenProvider.getUserByToken(token) ;
+        log.info(user.toString());
 //        String nickname = userDetails.getUser().getNickname();
-        String nickname = "sysy";
+        String nickname = user.getNickname();
         discussionDto.setNickname(nickname);
         discussionDto.setCreatedAt(LocalDateTime.now().toString());
         System.out.println(discussionDto);
         redisPublisher.publish(discussionService.getTopic(discussionDto.getDocsId().toString()), discussionDto);
-//        discussionService.saveMessage(discussionDto, userDetails.getUser());
+        discussionService.saveMessage(discussionDto, user);
 
     }
 

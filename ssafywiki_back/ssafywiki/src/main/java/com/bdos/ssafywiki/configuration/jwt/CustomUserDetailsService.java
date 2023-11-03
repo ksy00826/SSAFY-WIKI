@@ -30,7 +30,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     public User loadUserByUsername(String email) throws UsernameNotFoundException {
 
         User user = userRepository.findByEmail(email)
-                .map(m -> new CustomUserDetails(m))
+                .map(m -> new CustomUserDetails(m).getUser())
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid authentication!"));
 
         Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
