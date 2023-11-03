@@ -38,7 +38,7 @@ export const login = async (email, password) => {
 
     // 2. 성공시 쿠키에 저장
     console.log(response.data);
-    saveCookie(response.data.refresh_token);
+    saveCookie(response.data.access_token);
 
     return { state: 200 };
   } catch (error) {
