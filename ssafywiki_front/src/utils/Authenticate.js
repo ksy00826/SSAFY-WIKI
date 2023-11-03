@@ -1,4 +1,5 @@
 import cookie from "react-cookies";
+import { axiosInstance } from "./AxiosConfig";
 
 // 로그인 되어있는지 확인하는 함수
 export const isLogin = () => {
@@ -14,22 +15,43 @@ export const getToken = () => {
   return cookie.load("token");
 };
 
-// 로그인 로직
-export const login = (email, password) => {
-  // 1. axios로 확인
+// 회원가입 로직
+export const signup = async (info) => {
+  try {
+    const response = await axiosInstance.post(`/api/members/signup`, info);
 
-  //결과에 따라
-  // return { state: 201, msg: "비밀번호가 일치하지 않습니다." };
-
-  // 2. 쿠키에 저장
-  saveCookie();
-  return { state: 200 };
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
-const saveCookie = () => {
+// 로그인 로직
+export const login = async (email, password) => {
+  // 1. axios로 확인
+  try {
+    const response = await axiosInstance.post(`/api/members/login`, {
+      email: email,
+      password: password,
+    });
+
+    // 2. 성공시 쿠키에 저장
+    console.log(response.data);
+    saveCookie(response.data.refresh_token);
+
+    return { state: 200 };
+  } catch (error) {
+    throw error;
+  }
+  //결과에 따라
+  // return { state: 201, msg: "비밀번호가 일치하지 않습니다." };
+};
+
+const saveCookie = (toekn) => {
   const expires = new Date();
   expires.setMinutes(expires.getMinutes() + 60);
-  cookie.save("token", "react200", {
+  cookie.save("token", toekn, {
     path: "/",
     expires,
     // secure : true,
@@ -61,4 +83,9 @@ export const getRememberEmail = () => {
 // 로그인시 저장된 아이디 삭제하기
 export const removeRememberEmail = () => {
   return cookie.remove("remember", { path: "/member/login" });
+};
+
+// 로그아웃
+export const logout = () => {
+  cookie.remove("token", { path: "/" }, 1000);
 };

@@ -103,6 +103,24 @@ const SignUp = ({ goNext, saveInfo }) => {
         />
       </Form.Item>
 
+      <Form.Item
+        name="campus"
+        rules={[
+          {
+            required: true,
+            message: "",
+          },
+        ]}
+      >
+        <Select
+          showSearch
+          placeholder="캠퍼스"
+          optionFilterProp="children"
+          filterOption={filterOption}
+          options={campus}
+        />
+      </Form.Item>
+
       {isStudent ? (
         <Form.Item
           name="roll2"
@@ -125,8 +143,24 @@ const SignUp = ({ goNext, saveInfo }) => {
         <></>
       )}
 
+      {isStudent ? (
+        <Form.Item
+          name="number"
+          rules={[
+            {
+              required: true,
+              message: "",
+            },
+          ]}
+        >
+          <Input placeholder="학번" />
+        </Form.Item>
+      ) : (
+        <></>
+      )}
+
       <Form.Item
-        name="campus"
+        name="username"
         rules={[
           {
             required: true,
@@ -134,26 +168,24 @@ const SignUp = ({ goNext, saveInfo }) => {
           },
         ]}
       >
-        <Select
-          showSearch
-          placeholder="캠퍼스"
-          optionFilterProp="children"
-          filterOption={filterOption}
-          options={campus}
+        <Input
+          prefix={<UserOutlined className="site-form-item-icon" />}
+          placeholder="이름"
         />
       </Form.Item>
+
       <Form.Item
-        name="username"
+        name="nickname"
         rules={[
           {
             required: true,
-            message: "이름을 입력해주세요.",
+            message: "",
           },
         ]}
       >
         <Input
           prefix={<UserOutlined className="site-form-item-icon" />}
-          placeholder="이름"
+          placeholder="닉네임"
         />
       </Form.Item>
 

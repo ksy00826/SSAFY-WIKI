@@ -8,50 +8,73 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import { Menu, ConfigProvider } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 
 import SearchDocs from "./SearchDocs";
-const items = [
-  {
-    key: "SubMenu",
-    label: <UserOutlined />,
-    children: [
-      {
-        type: "group",
-        label: "Item 1",
-        children: [
-          {
-            label: "로그인",
-            key: "setting:1",
-          },
-          {
-            label: "회원가입",
-            key: "setting:2",
-          },
-        ],
-      },
-      {
-        type: "group",
-        label: "Item 2",
-        children: [
-          {
-            label: "로그아웃",
-            key: "setting:3",
-          },
-          { label: "관리자 페이지", key: "admin" },
-          { label: "내 기여 목록", key: "my docs" },
-          { label: "스크랩 목록", key: "my docs" },
-          {
-            label: "마이페이지",
-            key: "setting:4",
-          },
-        ],
-      },
-    ],
-  },
-];
+
+import { isLogin } from "utils/Authenticate";
+import { logout } from "utils/Authenticate";
+
 const Navbar = () => {
+  const [user, setUser] = React.useState(false);
+  const location = useLocation();
   const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    setUser(false);
+    window.location.reload();
+  };
+
+  const handleLogin = () => {
+    console.log(location);
+    navigate(`/member/login?redirect=${location.pathname}`);
+  };
+
+  const items1 = [
+    {
+      key: "SubMenu",
+      label: <UserOutlined />,
+      children: [
+        {
+          label: <a onClick={handleLogin}>로그인</a>,
+          key: "login",
+        },
+        {
+          label: <Link to="/member/signup">회원가입</Link>,
+          key: "singup",
+        },
+      ],
+    },
+  ];
+  const items2 = [
+    {
+      key: "SubMenu",
+      label: <UserOutlined />,
+      children: [
+        {
+          label: <a onClick={handleLogout}>로그아웃</a>,
+          key: "logout",
+        },
+        {
+          label: <Link to="/userpage">마이페이지</Link>,
+          key: "mypage",
+        },
+        { label: <Link to="/userpage">관리자 페이지</Link>, key: "admin" },
+        {
+          label: <Link to="/userpage/contribution">내 기여 목록</Link>,
+          key: "my docs",
+        },
+        { label: <Link to="/userpage">스크랩 목록</Link>, key: "bookmark" },
+      ],
+    },
+  ];
+
+  // 위치 이동하고 랜더링 될때마다 로그인 되어있는지 확인
+  React.useEffect(() => {
+    setUser(isLogin());
+  });
+
   const goHome = () => {
     navigate("/");
   };
@@ -61,14 +84,19 @@ const Navbar = () => {
         <img src={Logoimg} className={styles.NavLogo} />
       </div>
 
-      <SearchDocs />
-
+      <div className={styles.NavSearch}>
+        <SearchDocs />
+      </div>
       <ConfigProvider
         theme={{
           token: {},
         }}
       >
-        <Menu className={styles.NavBar} mode="horizontal" items={items} />
+        {user ? (
+          <Menu className={styles.NavUser} mode="horizontal" items={items2} />
+        ) : (
+          <Menu className={styles.NavUser} mode="horizontal" items={items1} />
+        )}
       </ConfigProvider>
     </div>
   );

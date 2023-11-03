@@ -1,5 +1,5 @@
 import { Card } from "antd";
-
+import Discussion from "./Discussion";
 const Sidebar = () => {
   return (
     <div>
@@ -8,6 +8,7 @@ const Sidebar = () => {
       </Card>
       <Card>
         <div>채팅</div>
+        <Discussion></Discussion>
       </Card>
     </div>
   );
