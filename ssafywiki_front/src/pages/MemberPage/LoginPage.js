@@ -1,6 +1,6 @@
 import React from "react";
 import { Alert, Button, Checkbox, Form, Input, Space, Typography } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 
 import {
@@ -14,12 +14,14 @@ const { Link } = Typography;
 
 const Login = () => {
   const [errmsg, setErrMsg] = React.useState("");
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get("redirect"); //url에서 가져오기
 
   const navigate = useNavigate();
 
-  const doLogin = (e) => {
+  const doLogin = async (e) => {
     console.log(e);
-    let result = login(e.email, e.password);
+    let result = await login(e.email, e.password);
     if (result.state === 200) {
       //성공
       // 아이디 저장
@@ -28,7 +30,10 @@ const Login = () => {
       } else {
         removeRememberEmail();
       }
-      navigate("/userpage");
+
+      // 페이지 이동
+      if (!redirect) navigate("/userpage");
+      else navigate(redirect);
     } else {
       // 실패
       setErrMsg(result.msg);
