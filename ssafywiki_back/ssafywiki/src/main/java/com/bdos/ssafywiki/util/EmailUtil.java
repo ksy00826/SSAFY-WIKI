@@ -1,35 +1,30 @@
 package com.bdos.ssafywiki.util;
 
+import jakarta.mail.internet.MimeMessage;
 import java.util.concurrent.TimeUnit;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
-
-import javax.mail.*;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import java.util.Properties;
 import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
 public class EmailUtil {
 
+
     private final Logger log = LoggerFactory.getLogger(EmailUtil.class);
+    private final JavaMailSender javaMailSender;
     private final RedisTemplate<String, String> redisTemplate;
-    @Value("mail.username")
+
+    @Value("${spring.mail.username}")
     private String emailName;
-    @Value("mail.password")
-    private String emailPassword;
-    @Value("mail.host")
-    private String emailHost;
-    @Value("mail.port")
-    private String emailPort;
 
     private String makeRandomNumber() {
         Random random = new Random();        //랜덤 함수 선언
@@ -48,42 +43,14 @@ public class EmailUtil {
     }
 
     public int sendEmail(String email) {
-        Properties prop = new Properties();
-
-        prop.put("mail.smtp.host", emailHost);
-        prop.put("mail.smtp.port", emailPort);
-        prop.put("mail.smtp.auth", "true");
-        prop.put("mail.smtp.ssl.enable", "true");
-        prop.put("mail.smtp.ssl.trust", emailHost);
-
-        Session session = Session.getDefaultInstance(prop, new javax.mail.Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(emailName, emailPassword);
-            }
-        });
-        try {
-            MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(emailName));
-
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(email)); //수신자메일주소
-            message.setSubject("[SSAFY WIKI] 인증번호 전송");     //메일 제목을 입력
-            //randomNumber to Redis
-            String randomNumber = makeRandomNumber();
-            ValueOperations<String, String> vop = redisTemplate.opsForValue();
-            vop.set(email,randomNumber , 5 , TimeUnit.MINUTES);
-//            redisTemplateString.opsForList().rightPush(email, randomNumber);
-            message.setText("<h3>SSAFY WIKI 회원가입 인증번호 입니다.<h3>" + randomNumber);      //메일 내용을 입력
-
-            // send the message
-            Transport.send(message); ////전송
-            log.info("메세지 전송 성공");
-            return 1;
-        } catch (AddressException e) {
-            log.error(e.toString());
-        } catch (MessagingException e) {
-            log.error(e.toString());
-        }
-        return 0;
+        String randomNumber = makeRandomNumber();
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom(emailName);
+        message.setTo(email);
+        message.setSubject("SSAFYWIKI 인증번호 입니다.");
+        message.setText(randomNumber);
+        javaMailSender.send(message);
+        return 1;
     }
 
     public int authEmail(String email, String authCode) {
