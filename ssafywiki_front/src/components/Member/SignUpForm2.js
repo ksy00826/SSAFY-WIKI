@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   Alert,
   Button,
@@ -11,41 +11,65 @@ import {
   Tooltip,
   Select,
 } from "antd";
-import {
-  UserOutlined,
-  InfoCircleOutlined,
-  LockOutlined,
-} from "@ant-design/icons";
+import { LockOutlined } from "@ant-design/icons";
 import { checkSSAFYEmail } from "utils/UserApi";
+import { axiosInstance } from "utils/AxiosConfig";
+
+import { signup, sendEmail } from "utils/Authenticate";
+
 const { Search } = Input;
 
 const SignUp = ({ goNext, info }) => {
   const [checking, setChecking] = React.useState(false);
   const [emailBtn, setEmailBtn] = React.useState("이메일 확인");
   const [emailSuccess, setEmailSuccess] = React.useState(false);
+  const [emailFail, setEmailFail] = React.useState(false);
   const [authBtn, setAuthBtn] = React.useState("인증번호 전송");
   const [authSuccess, setAuthSuccess] = React.useState(false);
+  const [form] = Form.useForm();
 
   const finish = (e) => {
     console.log("finish????");
-    // axios 회원가입 처리
     console.log(e);
-    goNext();
+    console.log(info);
+
+    const responseBody = {
+      name: info.username,
+      nickname: info.nickname,
+      email: e.email,
+      password: e.password,
+      campus: info.campus,
+    };
+
+    if (info.roll === "학생") {
+      responseBody.number = info.number;
+      responseBody.role = info.roll2;
+    } else {
+      responseBody.role = info.roll;
+    }
+    console.log(responseBody);
+    // axios 회원가입 처리
+    signup(responseBody)
+      .then((response) => {
+        console.log(response);
+        goNext();
+      })
+      .catch((e) => console.error(e.message));
   };
 
   const checkEmail = (value) => {
     // 실제 SSAFY 이메일인지 검증
     //axios
     console.log("checking", value, info.roll);
+    setChecking(true);
 
     let result = true;
     if (info.roll === "학생") {
       checkSSAFYEmail(value).then((data) => {
-        setChecking(true);
+        console.log(data);
         if (data === "아이디가 존재하지 않습니다.") {
           result = false;
         }
-        setChecking(false);
         if (!result) {
           setEmailBtn("이메일 확인");
           setEmailSuccess(false);
@@ -54,14 +78,12 @@ const SignUp = ({ goNext, info }) => {
           setEmailSuccess(true);
         }
       });
-    }
-    else {
-      setChecking(true);
-      var emails = value.split('@');
-      if(emails[1] !== "multicampus.com") {
+    } else {
+      var emails = value.split("@");
+      if (!(emails[1] === "multicampus.com" || emails[1] === "ssafy.com")) {
         result = false;
       }
-      setChecking(false);
+      console.log(result);
       if (!result) {
         setEmailBtn("이메일 확인");
         setEmailSuccess(false);
@@ -70,20 +92,31 @@ const SignUp = ({ goNext, info }) => {
         setEmailSuccess(true);
       }
     }
+    if (!result) setEmailFail(true);
+    else setEmailFail(false);
+
+    setChecking(false);
   };
 
   const handleAuth = (value) => {
     if (authBtn === "인증번호 전송") {
-      sendEmail();
+      handleSendEmail(form.getFieldValue(["email"]));
     } else {
       validateEmail();
     }
   };
 
-  const sendEmail = () => {
-    console.log(11, "에 인증 메일을 보낸다.");
-    //axios
-    setAuthBtn("인증번호 확인");
+  const handleSendEmail = async (value) => {
+    console.log(value, "에 인증 메일을 보낸다.");
+
+    try {
+      sendEmail(value, info.roll).then((data) => {
+        console.log(data);
+        setAuthBtn("인증번호 확인");
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const validateEmail = () => {
@@ -93,29 +126,43 @@ const SignUp = ({ goNext, info }) => {
     setAuthSuccess(true);
   };
 
+  useEffect(() => {
+    console.log("s", emailSuccess, "f", emailFail);
+    form.validateFields(["email"]);
+  }, [emailSuccess, emailFail]);
+
   return (
     <Form
-      name="basic"
+      name="sing_up"
       initialValues={{
         remember: true,
       }}
       onFinish={finish}
       autoComplete="off"
+      form={form}
     >
       <Form.Item
         // label="이메일"
         name="email"
         rules={[
-          {
-            required: true,
-            message: "이메일을 입력해주세요.",
-          },
-          {
-            type: "email",
-            message: "이메일 형식이 올바르지 않습니다.",
-          },
           () => ({
-            validator() {
+            validator(_, value) {
+              if (!value) {
+                return Promise.reject(new Error("이메일을 입력해주세요."));
+              }
+              if (
+                /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/.test(value)
+              ) {
+                console.log("1");
+              } else {
+                setEmailFail(false);
+                return Promise.reject(
+                  new Error("이메일 형식이 올바르지 않습니다.")
+                );
+              }
+
+              if (emailFail)
+                return Promise.reject(new Error("SSAFY인증에 실패하였습니다."));
               if (emailSuccess) return Promise.resolve();
               return Promise.reject(new Error("이메일을 확인해주세요."));
             },
@@ -183,7 +230,7 @@ const SignUp = ({ goNext, info }) => {
 
       <Form.Item
         // label="비밀번호"
-        name="again"
+        name="password2"
         rules={[
           {
             required: true,

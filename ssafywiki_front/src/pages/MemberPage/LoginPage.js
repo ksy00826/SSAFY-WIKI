@@ -1,6 +1,6 @@
 import React from "react";
 import { Alert, Button, Checkbox, Form, Input, Space, Typography } from "antd";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 
 import {
@@ -14,25 +14,33 @@ const { Link } = Typography;
 
 const Login = () => {
   const [errmsg, setErrMsg] = React.useState("");
+  const [searchParams] = useSearchParams();
+  const redirect = searchParams.get("redirect"); //url에서 가져오기
 
   const navigate = useNavigate();
 
-  const doLogin = (e) => {
+  const doLogin = async (e) => {
     console.log(e);
-    let result = login(e.email, e.password);
-    if (result.state === 200) {
-      //성공
-      // 아이디 저장
-      if (e.remember) {
-        rememberEmail(e.email);
-      } else {
-        removeRememberEmail();
-      }
-      navigate("/userpage");
-    } else {
-      // 실패
-      setErrMsg(result.msg);
-    }
+    login(e.email, e.password)
+      .then((result) => {
+        if (result.state === 200) {
+          //성공
+          // 아이디 저장
+          if (e.remember) {
+            rememberEmail(e.email);
+          } else {
+            removeRememberEmail();
+          }
+
+          // 페이지 이동
+          if (!redirect) navigate("/userpage");
+          else navigate(redirect);
+        }
+      })
+      .catch((error) => {
+        console.log(error.response.data.message);
+        setErrMsg(error.response.data.message);
+      });
   };
 
   const goToSignUp = () => {

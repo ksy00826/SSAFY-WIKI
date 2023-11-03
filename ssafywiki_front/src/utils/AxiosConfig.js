@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getToken } from "./Authenticate";
 
 export const axiosInstance = axios.create({
   baseURL: process.env.REACT_APP_SERVER_API_URL,
@@ -6,6 +7,21 @@ export const axiosInstance = axios.create({
     "Content-Type": "application/json",
   },
   timeout: 5000,
+});
+
+export const axiosInstanceWithLogin = axios.create({
+  baseURL: process.env.REACT_APP_SERVER_API_URL,
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${getToken()}`,
+  },
+});
+
+export const axiosInstanceNoTimeout = axios.create({
+  baseURL: process.env.REACT_APP_SERVER_API_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 export const axiosSsafygitInstance = axios.create({
