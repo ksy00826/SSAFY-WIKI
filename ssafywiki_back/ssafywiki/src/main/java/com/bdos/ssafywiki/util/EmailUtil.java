@@ -22,13 +22,13 @@ public class EmailUtil {
 
     private final Logger log = LoggerFactory.getLogger(EmailUtil.class);
     private final RedisTemplate<String, String> redisTemplate;
-    @Value("mail.username")
+    @Value("${mail.username}")
     private String emailName;
-    @Value("mail.password")
+    @Value("${mail.password}")
     private String emailPassword;
-    @Value("mail.host")
+    @Value("${mail.host}")
     private String emailHost;
-    @Value("mail.port")
+    @Value("${mail.port}")
     private String emailPort;
 
     private String makeRandomNumber() {
