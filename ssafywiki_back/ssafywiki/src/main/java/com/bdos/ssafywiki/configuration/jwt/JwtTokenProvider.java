@@ -198,4 +198,9 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
+    public User getUserByToken(String token) {
+        String email = this.getUserEmail(token.substring(7));
+        return userDetailsService.loadUserByUsername(email);
+    }
+
 }

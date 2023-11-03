@@ -47,7 +47,6 @@ public class JwtFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
 
         String token = jwtTokenProvider.resolveToken(request);
-
         // 토큰 없는 경우 로직 종료
         if(token == null || !token.startsWith(TOKEN_PREFIX)) {
             filterChain.doFilter(request, response);
@@ -63,7 +62,7 @@ public class JwtFilter extends OncePerRequestFilter {
             if (jwtTokenProvider.validateToken(token)) {
                 Authentication auth = jwtTokenProvider.getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(auth);
-                log.info("[Token 인증] 사용자 인증 성공");
+                log.info("[Token 인증] 사용자 인증 성공"+auth);
             }
         }  catch (Exception e) {
             e.printStackTrace();
