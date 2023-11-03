@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Card, Pagination, List, Timeline, Radio, Button } from "antd";
-import { useParams } from "react-router-dom";
-import { getHistory, compareVersions } from "utils/RevisionApi"
+import { Card, Pagination, Timeline, Radio, Button } from "antd";
+import { useParams, useNavigate } from "react-router-dom";
+import { getHistory } from "utils/RevisionApi"
 import DocsNav from "./DocsNav";
 
 
 const History = () => {
   const params = useParams();
+  const navigate = useNavigate();
 
   const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -18,7 +19,7 @@ const History = () => {
 
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
-  const [selectedRevision, setSelectedRevision] = useState({ oldRev: null, rev: null });
+  const [selectedRevision, setSelectedRevision] = useState({ oldRev: null, rev: null, oldRevNum: null, revNum: null });
 
 
 
@@ -39,11 +40,13 @@ const History = () => {
     setPageSize(pageSize);
   };
 
-  const onSelectRevision = (id, type) => {
+  const onSelectRevision = (item, type) => {
     setSelectedRevision(prev => ({
       ...prev,
-      [type]: id === prev[type] ? null : id
+      [type]: item.id,
+      ...(type === 'oldRev' ? { oldRevNum: item.number } : { revNum: item.number })
     }));
+    console.log(selectedRevision);
   };
 
   const isOldRevDisabled = (item) => {
@@ -60,11 +63,11 @@ const History = () => {
         <div>
           {item.createdAt}&nbsp;
           <Radio.Group
-            onChange={({ target }) => onSelectRevision(item.id, target.value)}
+            onChange={({ target }) => onSelectRevision(item, target.value)}
             value={selectedRevision.oldRev === item.id ? 'oldRev' : selectedRevision.rev === item.id ? 'rev' : null}
           >
-            <Radio value="oldRev" disabled={isOldRevDisabled(item)}>Old Rev</Radio>
-            <Radio value="rev" disabled={isRevDisabled(item)}>Rev</Radio>
+            <Radio value="oldRev" disabled={isOldRevDisabled(item)}></Radio>
+            <Radio value="rev" disabled={isRevDisabled(item)}></Radio>
           </Radio.Group>
           {item.originNumber != null && <em>(r{item.originNumber}으로 되돌림)</em>}
           {<strong>r{item.number}</strong>}&nbsp;
@@ -76,17 +79,20 @@ const History = () => {
     )
   }));
 
-
+  const onClickDiff = (e) => {
+    navigate(`/res/diff/${params.title}?oldrev=${selectedRevision.oldRevNum}&rev=${selectedRevision.revNum}`,
+      { state: { oldRev: selectedRevision.oldRev, rev: selectedRevision.rev } });
+  };
 
   return (
     <div>
-      <h1>문서이름</h1>
+      <h1>{params.title}</h1>
       <DocsNav current="history" />
       <Card>
         <div>History</div>
       </Card>
       <Button
-        onClick={compareVersions}
+        onClick={onClickDiff}
       >
         버전 비교
       </Button>
