@@ -100,7 +100,7 @@ const SignUp = ({ goNext, info }) => {
 
   const handleAuth = (value) => {
     if (authBtn === "인증번호 전송") {
-      sendEmail(value);
+      sendEmail(form.getFieldValue(["email"]));
     } else {
       validateEmail();
     }
