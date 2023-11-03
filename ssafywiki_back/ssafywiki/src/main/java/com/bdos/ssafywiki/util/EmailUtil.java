@@ -87,10 +87,10 @@ public class EmailUtil {
     }
 
     public int authEmail(String email, String authCode) {
-//        ValueOperations<String, String> vop = redisTemplateString.opsForValue();
-//        if(vop.get(email).equals(authCode)){
-//            return 1;
-//        }
+        ValueOperations<String, String> vop = redisTemplate.opsForValue();
+        if(vop.get(email).equals(authCode)){
+            return 1;
+        }
 
 
         return 0;
