@@ -103,7 +103,7 @@ const SignUp = ({ goNext, info }) => {
     if (authBtn === "인증번호 전송") {
       handleSendEmail(form.getFieldValue(["email"]));
     } else {
-      validateEmail(value);
+      validateEmail(form.getFieldValue(["email"]),value);
     }
   };
 
@@ -120,10 +120,10 @@ const SignUp = ({ goNext, info }) => {
     }
   };
 
-  const validateEmail = (value) => {
+  const validateEmail = (email,value) => {
     console.log("인증번호를 확인한다.");
     let result = true;
-    authEmail(info.roll,info.roll,value).then((data) => {
+    authEmail(email,info.roll,value).then((data) => {
       console.log(data);
       if (data === "실패") {
         result = false;
