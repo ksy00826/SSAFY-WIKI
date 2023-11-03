@@ -137,7 +137,7 @@ public class JwtTokenProvider {
         String bearerToken = req.getHeader("Authorization");
         if (bearerToken != null && bearerToken.startsWith("Bearer")) {
             System.out.println(bearerToken);
-            return bearerToken.substring(7);
+            return bearerToken;
         }
         return null;
     }
