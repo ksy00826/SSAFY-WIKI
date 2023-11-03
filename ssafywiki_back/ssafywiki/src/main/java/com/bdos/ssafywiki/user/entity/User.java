@@ -30,12 +30,14 @@ public class User implements UserDetails {
     @Column(name = "user_email", nullable = false)
     private String email;
 
+    @Setter
     @Column(name = "user_password", nullable = false)
     private String password;
 
     @Column(name = "user_name", nullable = false)
     private String name;
 
+    @Setter
     @Column(name = "user_nickname", nullable = false)
     private String nickname;
 
