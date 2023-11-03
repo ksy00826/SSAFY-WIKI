@@ -31,14 +31,16 @@ public class UserService {
     }
 
     public String editUser(User user, Registration request) {
+        user = userRepository.findByEmail(user.getEmail()).get();
         user.setPassword(request.getPassword());
         user.setNickname(request.getNickname());
+        System.out.println(user.getPassword());
         if(userRepository.findByEmail(user.getEmail()).isEmpty()){
             return "변경 실패";
         }
         if(userRepository.findByEmail(user.getEmail()).get().getPassword().equals(request.getPassword())){
             return "변경 완료";
         }
-        return "변경 실패";
+        return "변경 않됨";
     }
 }
