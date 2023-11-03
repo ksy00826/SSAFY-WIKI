@@ -69,8 +69,9 @@ public class EmailUtil {
             message.setSubject("[SSAFY WIKI] 인증번호 전송");     //메일 제목을 입력
             //randomNumber to Redis
             String randomNumber = makeRandomNumber();
-            ValueOperations<String, String> vop = redisTemplateString.opsForValue();
-            vop.set(email,randomNumber , 5 , TimeUnit.MINUTES);
+//            ValueOperations<String, String> vop = redisTemplateString.opsForValue();
+//            vop.set(email,randomNumber , 5 , TimeUnit.MINUTES);
+            redisTemplateString.opsForList().rightPush(email, randomNumber);
             message.setText("<h3>SSAFY WIKI 회원가입 인증번호 입니다.<h3>" + randomNumber);      //메일 내용을 입력
 
             // send the message
