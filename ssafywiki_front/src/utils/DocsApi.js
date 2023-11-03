@@ -1,4 +1,4 @@
-import { axiosInstance } from "./AxiosConfig";
+import { axiosInstance, axiosInstanceWithLogin } from "./AxiosConfig";
 
 export const getDocsContent = async (id) => {
   try {
@@ -25,4 +25,4 @@ export const getDiscussList = async (docsId) => {
   } catch (error) {
     throw error;
   }
-}
+};
