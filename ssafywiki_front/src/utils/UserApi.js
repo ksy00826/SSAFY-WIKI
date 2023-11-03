@@ -104,6 +104,7 @@ export const getStarDocs = async (id) => {
 
 export const checkSSAFYEmail = async (id) => {
   try {
+    console.log(`{"usernameOrEmail":"${id}","password":"aaaaa"}`);
     let data = `{"usernameOrEmail":"${id}","password":"aaaaa"}`;
     const response = await axiosSsafygitInstance.post(`/signin`,data);
     return response.data;

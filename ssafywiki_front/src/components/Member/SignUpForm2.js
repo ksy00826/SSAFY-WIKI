@@ -42,6 +42,7 @@ const SignUp = ({ goNext, info }) => {
     let result = true;
     if (info.roll === "학생") {
       checkSSAFYEmail(value).then((data) => {
+        console.log(data);
         setChecking(true);
         if (data === "아이디가 존재하지 않습니다.") {
           result = false;
