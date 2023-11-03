@@ -62,6 +62,7 @@ public class EmailUtil {
             }
         });
         try {
+//            System.setProperty("https.protocols", "TLSv1,TLSv1.1,TLSv1.2");
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(emailName));
 
