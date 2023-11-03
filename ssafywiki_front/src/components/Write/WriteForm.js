@@ -27,20 +27,24 @@ const DocsList = () => {
     setViewType(e);
   };
 
-  const createDocs = () => {
+  const createDoc = () => {
     console.log(title, content);
     console.log(selectedClass);
     //여기서 Select값을 가져오고싶어
 
     // axios로 등록 데이터 넣어줘야함
-    // const result = createDocs({
-    //   title: title,
-    //   content: content,
-    // });
+    const result = createDocs({
+      title: title,
+      content: content,
+      categories: selectedClass,
+      readAuth: 0,
+      writeAuth: 0,
+    });
+    console.log(result);
 
     //완료하면 생성된 문서로 이동
-    let id = 1;
-    // navigate(`/res/content/${id}/${title}`);
+    let id = result.docsId;
+    navigate(`/res/content/${id}`);
   };
 
   const handleChange = (value) => {
@@ -99,7 +103,7 @@ const DocsList = () => {
         <MarkdownRenderer content={content}></MarkdownRenderer>
       )}
 
-      <Button type="primary" onClick={createDocs}>
+      <Button type="primary" onClick={createDoc}>
         등록
       </Button>
     </div>
