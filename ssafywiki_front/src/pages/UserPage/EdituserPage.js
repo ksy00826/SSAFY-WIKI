@@ -17,6 +17,9 @@ import {
   TreeSelect,
   Upload,
 } from "antd";
+import {
+  getUserProfile
+} from "utils/UserApi";
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
 const normFile = (e) => {
@@ -29,15 +32,11 @@ const EdituserPage = () => {
   const [componentDisabled, setComponentDisabled] = useState(true);
   const [docList, setdocList] = React.useState([]);
   // 처음 랜더링시 내용 가져오기
-  // React.useEffect(() => {
-  //   getContributedDocs().then((response) => {
-  //     setdocList(response.docs);
-  //   });
-  // }, []);
-
-  // const {
-  //   token: { colorBgContainer },
-  // } = theme.useToken();
+  React.useEffect(() => {
+    getUserProfile().then((response) => {
+      console.log(response);
+    });
+  }, []);
 
   return (
     <Layout
