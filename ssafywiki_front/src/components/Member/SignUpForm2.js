@@ -15,7 +15,7 @@ import { LockOutlined } from "@ant-design/icons";
 import { checkSSAFYEmail } from "utils/UserApi";
 import { axiosInstance } from "utils/AxiosConfig";
 
-import { signup } from "utils/Authenticate";
+import { signup, sendEmail } from "utils/Authenticate";
 
 const { Search } = Input;
 
@@ -100,29 +100,22 @@ const SignUp = ({ goNext, info }) => {
 
   const handleAuth = (value) => {
     if (authBtn === "인증번호 전송") {
-      sendEmail(form.getFieldValue(["email"]));
+      handleSendEmail(form.getFieldValue(["email"]));
     } else {
       validateEmail();
     }
   };
 
-  const sendEmail = async (value) => {
+  const handleSendEmail = async (value) => {
     console.log(value, "에 인증 메일을 보낸다.");
-    try {
-      const response = await axiosInstance
-        .post(`/api/members/email`, {
-          email: value,
-          role: info.roll,
-          authCode: "null",
-        })
-        .then((data) => {
-          console.log(data);
-        });
 
-      setAuthBtn("인증번호 확인");
-      return response.data;
+    try {
+      sendEmail(value, info.roll).then((data) => {
+        console.log(data);
+        setAuthBtn("인증번호 확인");
+      });
     } catch (error) {
-      throw error;
+      console.log(error);
     }
   };
 
