@@ -2,32 +2,43 @@ package com.bdos.ssafywiki.discussion.config;
 
 import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
 import com.bdos.ssafywiki.discussion.service.RedisSubscriber;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
+import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
+@Getter
 @Configuration
+@RequiredArgsConstructor
+@EnableRedisRepositories
 public class RedisConfig {
 
 
-//    @Value("${spring.redis.host}")
-//    private String host;
-//
-//    @Value("${spring.redis.port}")
-//    private int port;
-//
-//    @Bean
-//    public RedisConnectionFactory redisConnectionFactory() {
-//        return new LettuceConnectionFactory(host, port);
-//    }
+    @Value("${spring.redis.host}")
+    private String host;
+
+    @Value("${spring.redis.port}")
+    private int port;
+
+    @Bean
+    public RedisConnectionFactory redisConnectionFactory() {
+        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+        redisStandaloneConfiguration.setHostName(host);
+        redisStandaloneConfiguration.setPort(port);
+        return new LettuceConnectionFactory(redisStandaloneConfiguration);
+
+    }
 
 
     // redis 연결, redis 의 pub/sub 기능을 이용하기 위해 pub/sub 메시지를 처리하는 MessageListener 설정(등록)
@@ -51,14 +62,14 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, String> redisTemplateString(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, String> redisTemplateString = new RedisTemplate<>();
-        redisTemplateString.setConnectionFactory(connectionFactory);
-        redisTemplateString.setKeySerializer(new StringRedisSerializer());        // Key Serializer
-        redisTemplateString.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));      // Value Serializer
-
-        return redisTemplateString;
+    public RedisTemplate<String, Object> redisTemplate() {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new StringRedisSerializer());
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        return redisTemplate;
     }
+
 
     // Redis 에 메시지 내역을 저장하기 위한 RedisTemplate 을 설정
     @Bean
