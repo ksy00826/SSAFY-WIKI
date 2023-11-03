@@ -21,23 +21,26 @@ const Login = () => {
 
   const doLogin = async (e) => {
     console.log(e);
-    let result = await login(e.email, e.password);
-    if (result.state === 200) {
-      //성공
-      // 아이디 저장
-      if (e.remember) {
-        rememberEmail(e.email);
-      } else {
-        removeRememberEmail();
-      }
+    login(e.email, e.password)
+      .then((result) => {
+        if (result.state === 200) {
+          //성공
+          // 아이디 저장
+          if (e.remember) {
+            rememberEmail(e.email);
+          } else {
+            removeRememberEmail();
+          }
 
-      // 페이지 이동
-      if (!redirect) navigate("/userpage");
-      else navigate(redirect);
-    } else {
-      // 실패
-      setErrMsg(result.msg);
-    }
+          // 페이지 이동
+          if (!redirect) navigate("/userpage");
+          else navigate(redirect);
+        }
+      })
+      .catch((error) => {
+        console.log(error.response.data.message);
+        setErrMsg(error.response.data.message);
+      });
   };
 
   const goToSignUp = () => {
