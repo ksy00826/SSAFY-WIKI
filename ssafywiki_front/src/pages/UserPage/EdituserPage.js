@@ -29,8 +29,6 @@ const normFile = (e) => {
   return e?.fileList;
 };
 const EdituserPage = () => {
-  const [componentDisabled, setComponentDisabled] = useState(true);
-  const [docList, setdocList] = React.useState([]);
   // 처음 랜더링시 내용 가져오기
   React.useEffect(() => {
     getUserProfile().then((response) => {

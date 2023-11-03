@@ -1,29 +1,35 @@
+import React from "react";
 import { Button } from "antd";
 import { Layout } from "antd";
 
 import SerachTemplete from "components/Write/SearchTemplete";
+import WriteForm from "components/Write/WriteDocs";
 import WriteForm from "components/Write/WriteForm";
 import ImageUpload from "components/Write/ImageUpload";
 
-const { Sider, Content } = Layout;
+const { Content } = Layout;
 const WritePage = () => {
+  const [step, setStep] = React.useState(1);
+  const [content, setContent] = React.useState();
+  const next = (content) => {
+    setContent(content);
+    setStep(step + 1);
+  };
   return (
-    <Layout hasSider>
-      <Sider
-        style={{
-          backgroundColor: "white",
-        }}
-      >
-        <SerachTemplete />
-      </Sider>
+    <Layout>
       <Content
         style={{
           backgroundColor: "white",
           textAlign: "left",
+          padding: "2%",
         }}
       >
-        <WriteForm />
-        <ImageUpload />
+        {step == 1 ? (
+          <SerachTemplete next={next} />
+        ) : (
+          <WriteForm content={content} setContent={setContent} />
+          <ImageUpload />
+        )}
       </Content>
     </Layout>
   );
