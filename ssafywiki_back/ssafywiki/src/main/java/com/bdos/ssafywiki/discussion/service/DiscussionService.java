@@ -37,13 +37,18 @@ public class DiscussionService {
 
     // 구독 처리 서비스
     private final RedisSubscriber redisSubscriber;
+    private Map<String, ChannelTopic> topics;
     // 대화 저장
     private final UserRepository userRepository;
     private final DocumentRepository documentRepository;
-    public void saveMessage(DiscussionDto discussionDto, Long userId) {
+
+    @PostConstruct
+    private void init() {
+        topics = new HashMap<>();
+    }
+    public void saveMessage(DiscussionDto discussionDto, User user) {
         // DB 저장
         Discussion discuss = DiscussionMapper.INSTANCE.toDiscussion(discussionDto);
-        User user = userRepository.findById(userId).orElseThrow(()-> new NotFoundException("User Not Found"));
         Document document = documentRepository.findById(discussionDto.getDocsId()).orElseThrow(() -> new NotFoundException("Docs Not Found"));
         discuss.setUserAndDocument(user, document);
         discussionRepository.save(discuss);
@@ -63,6 +68,7 @@ public class DiscussionService {
         List<DiscussionDto> messageList = new ArrayList<>();
 
         // Redis 에서 해당 채팅방의 메시지 100개 가져오기
+        redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(DiscussionDto.class));
         List<DiscussionDto> redisMessageList = redisTemplateMessage.opsForList().range(docsId.toString(), 0, 99);
 
         // 4. Redis 에서 가져온 메시지가 없다면, DB 에서 메시지 100개 가져오기
@@ -84,4 +90,17 @@ public class DiscussionService {
         return messageList;
     }
 
+
+    public void enterChatRoom(String roomId) {
+        ChannelTopic topic = topics.get(roomId);
+        log.info("토픽 생성 :" + roomId);
+        if (topic == null) {
+            topic = new ChannelTopic(roomId);
+            redisMessageListener.addMessageListener(redisSubscriber, topic);
+            topics.put(roomId, topic);
+        }
+    }
+    public ChannelTopic getTopic(String roomId) {
+        return topics.get(roomId);
+    }
 }
