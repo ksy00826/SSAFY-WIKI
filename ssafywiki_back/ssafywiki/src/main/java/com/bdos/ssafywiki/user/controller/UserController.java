@@ -36,4 +36,13 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/info")
+    public ResponseEntity<String> editUserInfo(@RequestBody UserDto.Registration request,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+             ) {
+
+        String response = userService.editUser(userDetails.getUser() , request );
+        return ResponseEntity.ok(response);
+    }
+
 }
