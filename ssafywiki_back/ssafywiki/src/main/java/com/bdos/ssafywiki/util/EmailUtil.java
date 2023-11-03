@@ -11,6 +11,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Service;
 import java.util.Random;
 
@@ -44,12 +46,27 @@ public class EmailUtil {
 
     public int sendEmail(String email) {
         String randomNumber = makeRandomNumber();
+        ValueOperations<String, String> vop = redisTemplate.opsForValue();
+        vop.set(email,randomNumber , 5 , TimeUnit.MINUTES);
+
+
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(emailName);
         message.setTo(email);
         message.setSubject("SSAFYWIKI 인증번호 입니다.");
         message.setText(randomNumber);
         javaMailSender.send(message);
+
+//        MimeMessagePreparator mimeMessagePreparator = mimeMessage -> {
+//            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage,"UTF-8");
+//            String content = [위 화면에서의 HTML로 작성된 String ];
+//
+//            helper.setTo(email);
+//            helper.setFrom(emailName);
+//            helper.setSubject("SSAFYWIKI 인증번호 입니다.");
+//            helper.setText(content, true); //html 타입이므로, 두번째 파라미터에 true 설정
+//        };
+//        javaMailSender.send(mimeMessagePreparator);
         return 1;
     }
 
