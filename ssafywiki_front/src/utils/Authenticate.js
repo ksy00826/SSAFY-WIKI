@@ -107,3 +107,20 @@ export const sendEmail = async (email, role) => {
     throw error;
   }
 };
+
+export const authEmail = async (email, role , authCode) => {
+  try {
+    const response = await axiosInstanceNoTimeout
+      .post(`/api/members/email/auth`, {
+        email: email,
+        role: role,
+        authCode: authCode,
+      })
+      .then((data) => {
+        console.log(data);
+        return data;
+      });
+  } catch (error) {
+    throw error;
+  }
+};
