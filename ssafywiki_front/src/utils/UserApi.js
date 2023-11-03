@@ -1,25 +1,25 @@
 import { axiosInstance , axiosSsafygitInstance } from "./AxiosConfig";
 
-export const getUserProfile = async (id) => {
-  // try {
-  //   const response = await axiosInstance.get(`/api/user`);
-  //   return response.data;
-  // } catch (error) {
-  //   throw error;
-  // }
-  return {
-    profile: {
-      user_id: "id1",
-      user_email: "email1@naver.com",
-      user_password: "12345!k",
-      user_name: "name1",
-      user_nickname: "nickname1",
-      user_number: "user_number1",
-      user_campus: "user_campus1",
-      user_created_at: "2020-10-16",
-      user_modified_at: "2022-12-19",
-    },
-  };
+export const getUserProfile = async () => {
+  try {
+    const response = await axiosInstance.get(`/api/user/info`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+  // return {
+  //   profile: {
+  //     user_id: "id1",
+  //     user_email: "email1@naver.com",
+  //     user_password: "12345!k",
+  //     user_name: "name1",
+  //     user_nickname: "nickname1",
+  //     user_number: "user_number1",
+  //     user_campus: "user_campus1",
+  //     user_created_at: "2020-10-16",
+  //     user_modified_at: "2022-12-19",
+  //   },
+  // };
 };
 
 export const editUserProfile = async (nickname, passwordOld, passwordNew) => {
