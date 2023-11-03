@@ -21,7 +21,7 @@ import java.util.Random;
 public class EmailUtil {
 
     private final Logger log = LoggerFactory.getLogger(EmailUtil.class);
-    private final RedisTemplate<String, String > redisTemplateString;
+    private final RedisTemplate<String, String> redisTemplate;
     @Value("mail.username")
     private String emailName;
     @Value("mail.password")
@@ -69,9 +69,9 @@ public class EmailUtil {
             message.setSubject("[SSAFY WIKI] 인증번호 전송");     //메일 제목을 입력
             //randomNumber to Redis
             String randomNumber = makeRandomNumber();
-//            ValueOperations<String, String> vop = redisTemplateString.opsForValue();
-//            vop.set(email,randomNumber , 5 , TimeUnit.MINUTES);
-            redisTemplateString.opsForList().rightPush(email, randomNumber);
+            ValueOperations<String, String> vop = redisTemplate.opsForValue();
+            vop.set(email,randomNumber , 5 , TimeUnit.MINUTES);
+//            redisTemplateString.opsForList().rightPush(email, randomNumber);
             message.setText("<h3>SSAFY WIKI 회원가입 인증번호 입니다.<h3>" + randomNumber);      //메일 내용을 입력
 
             // send the message
@@ -87,10 +87,10 @@ public class EmailUtil {
     }
 
     public int authEmail(String email, String authCode) {
-        ValueOperations<String, String> vop = redisTemplateString.opsForValue();
-        if(vop.get(email).equals(authCode)){
-            return 1;
-        }
+//        ValueOperations<String, String> vop = redisTemplateString.opsForValue();
+//        if(vop.get(email).equals(authCode)){
+//            return 1;
+//        }
 
 
         return 0;
