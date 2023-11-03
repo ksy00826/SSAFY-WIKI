@@ -32,6 +32,9 @@ public class UserController {
 
     @GetMapping("/info")
     public ResponseEntity<User> getUserInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        System.out.println(userDetails.getUser());
+
+
         User response = userService.searchUser(userDetails.getUser().getEmail()).get();
         return ResponseEntity.ok(response);
     }
