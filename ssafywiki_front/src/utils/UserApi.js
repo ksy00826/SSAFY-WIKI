@@ -1,5 +1,5 @@
 import { axiosInstance ,axiosInstanceWithLogin, axiosSsafygitInstance } from "./AxiosConfig";
-
+import { getToken } from "./Authenticate";
 export const getUserProfile = async () => {
   try {
     const response = await axiosInstanceWithLogin.get(`/api/user/info`);

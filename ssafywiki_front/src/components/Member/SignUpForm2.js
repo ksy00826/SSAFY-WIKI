@@ -15,7 +15,7 @@ import { LockOutlined } from "@ant-design/icons";
 import { checkSSAFYEmail } from "utils/UserApi";
 import { axiosInstance } from "utils/AxiosConfig";
 
-import { signup, sendEmail } from "utils/Authenticate";
+import { signup, sendEmail, authEmail } from "utils/Authenticate";
 
 const { Search } = Input;
 
@@ -60,6 +60,7 @@ const SignUp = ({ goNext, info }) => {
   const checkEmail = (value) => {
     // 실제 SSAFY 이메일인지 검증
     //axios
+    console.log(info);
     console.log("checking", value, info.roll);
     setChecking(true);
 
@@ -102,7 +103,7 @@ const SignUp = ({ goNext, info }) => {
     if (authBtn === "인증번호 전송") {
       handleSendEmail(form.getFieldValue(["email"]));
     } else {
-      validateEmail();
+      validateEmail(form.getFieldValue(["email"]),value);
     }
   };
 
@@ -119,11 +120,23 @@ const SignUp = ({ goNext, info }) => {
     }
   };
 
-  const validateEmail = () => {
+  const validateEmail = (email,value) => {
     console.log("인증번호를 확인한다.");
-    //axios
-    setAuthBtn("인증번호 확인 완료");
-    setAuthSuccess(true);
+    let result = true;
+    authEmail(email,info.roll,value).then((data) => {
+      console.log(data);
+      if (data === "실패") {
+        result = false;
+      }
+      if (!result) {
+        setAuthBtn("인증번호 확인");
+        setAuthSuccess(false);
+      } else {
+        setAuthBtn("인증번호 확인 완료");
+        setAuthSuccess(true);
+      }
+    });
+    
   };
 
   useEffect(() => {
