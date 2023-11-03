@@ -1,6 +1,7 @@
 package com.bdos.ssafywiki.configuration;
 
 import java.util.Properties;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,18 +28,24 @@ public class MailConfig {
         javaMailSender.setPort(Integer.parseInt(emailPort));
 
         javaMailSender.setJavaMailProperties(getMailProperties());
-
+        printa();
         return javaMailSender;
     }
 
+    public void printa(){
+        System.out.println(emailName + " " + emailPassword + " AAAAAAA");
+    }
+
     private Properties getMailProperties() {
+
         Properties properties = new Properties();
-        properties.setProperty("mail.transport.protocol", "smtp");
+//        properties.setProperty("mail.transport.protocol", "smtp");
         properties.setProperty("mail.smtp.auth", "true");
         properties.setProperty("mail.smtp.starttls.enable", "true");
         properties.setProperty("mail.debug", "true");
-        properties.setProperty("mail.smtp.ssl.trust",emailHost);
-        properties.setProperty("mail.smtp.ssl.enable","true");
+//        properties.setProperty("mail.smtp.ssl.trust",emailHost);
+//        properties.setProperty("mail.smtp.ssl.enable","true");
+        properties.setProperty("mail","true");
         return properties;
     }
 }
