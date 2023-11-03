@@ -10,17 +10,12 @@ export const getDocsContent = async (id) => {
 };
 
 export const createDocs = async (docs) => {
-  // try {
-  //   const response = await axiosInstance.post(`/api/docs`);
-  //   return response.data;
-  // } catch (error) {
-  //   throw error;
-  // }
-  //결과 어떻게 나오는지 모름 그냥 일단
-  const result = {
-    res: 200,
-  };
-  return result;
+  try {
+    const response = await axiosInstance.post(`/api/docs`, docs);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getDiscussList = async (docsId) => {
@@ -30,4 +25,4 @@ export const getDiscussList = async (docsId) => {
   } catch (error) {
     throw error;
   }
-}
+};
