@@ -75,6 +75,7 @@ public class SecurityConfig {
                         .requestMatchers(mvcMatcherBuilder.pattern("/image/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/favicon.ico")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/error")).permitAll()
+                        .requestMatchers(mvcMatcherBuilder.pattern("/api/chatlist/**")).permitAll()
 
                 )
                 .authorizeHttpRequests((req) -> req
@@ -85,7 +86,8 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests((req) -> req
                         // 나머지는 인증이 필요한 곳
-                        .anyRequest().authenticated()
+//                        .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 )
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(unauthorizedEntryPoint)
