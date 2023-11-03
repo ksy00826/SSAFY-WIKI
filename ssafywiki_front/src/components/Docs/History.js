@@ -9,116 +9,74 @@ const History = () => {
   const params = useParams();
 
   const [data, setData] = useState([]);
-  const [history, setHistory] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
   const [pageSize, setPageSize] = useState(20);
 
-  const [selectedVersions, setSelectedVersions] = useState({
-    rev: null,
-    oldrev: null,
-  });
 
-  const [selected, setSelected] = useState({ value1: null, value2: null });
+  const [historyData, setHistoryData] = useState([]);
 
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const [selectedRevision, setSelectedRevision] = useState({ oldRev: null, rev: null });
+
+
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // Implement the actual getHistory function to fetch data
+      const result = await getHistory(params.docsId, currentPage, pageSize);
+      setHistoryData(result.content);
+      setTotalPages(result.totalPages);
+      setTotalElements(result.totalElements);
+    };
+
+    fetchData();
+  }, [params, currentPage, pageSize]);
 
   const handlePageChange = (page, pageSize) => {
     setCurrentPage(page);
     setPageSize(pageSize);
-    console.log(page);
   };
 
-  const handleVersionChange = (version, number) => {
-    console.log(version, number);
-    setSelectedVersions(prev => {
-      const newState = {
-        ...prev,
-        [number === 1 ? 'oldrev' : 'rev']: version
-      };
-      console.log("Updating state to:", newState);
-      return newState;
-    });
-
-    setSelected(prev => {
-      if (number === 1) {
-        return { ...prev, value1: version, value2: null };
-      } else {
-        return { ...prev, value1: null, value2: version };
-      }
-    });
+  const onSelectRevision = (id, type) => {
+    setSelectedRevision(prev => ({
+      ...prev,
+      [type]: id === prev[type] ? null : id
+    }));
   };
 
+  const isOldRevDisabled = (item) => {
+    return selectedRevision.rev !== null & item.id >= selectedRevision.rev;
+  };
 
-  const handleRadioDisabled = (version, number) => {
-    console.log(selectedVersions);
-    if (selectedVersions != null && number === 1 && version >= selectedVersions.rev) {
-      return true;
-    }
-    if (selectedVersions != null && number === 2 && version <= selectedVersions.oldrev) {
-      return true;
-    }
-
-    return false;
+  const isRevDisabled = (item) => {
+    return selectedRevision.oldRev !== null & item.id <= selectedRevision.oldRev;
   }
 
-  const handleVersionCompare = (selectedVersions) => {
-    if (selectedVersions.rev != null && selectedVersions.oldrev != null) {
-      compareVersions(selectedVersions.oldrev, selectedVersions.rev);
-    }
-  }
-
-  useEffect(() => {
-    getHistory(params.docsId, currentPage, pageSize).then((response) => {
-      console.log(response);
-      setData(response);
-      setHistory(response.content.map(item => ({
-        children: (
-          <p key={item.id}>
-            {item.createdAt}&nbsp;
-            <Radio.Group
-              onChange={e => handleVersionChange(item.id, e.target.value)}
-              value={selected.value1 === item.id ? 1 : selected.value2 === item.id ? 2 : null}
-            >
-              <Radio value={1} disabled={selected.value2 && item.id < selected.value2}></Radio>
-              <Radio value={2} disabled={selected.value1 && item.id > selected.value1}></Radio>
-            </Radio.Group>
-            {item.originNumber != null && <em>(r{item.originNumber}으로 되돌림)</em>}
-            {<strong>r{item.number}</strong>}&nbsp;
-            {'(' + item.diffAmount + ')'}&nbsp;
-            {item.user.nickname}..
-            {item.comment != null ? `(${item.comment})` : ''}
-          </p >
-        )
-      })));
-      setTotalItems(response.totalElements);
-      setSelectedVersions(null, null);
-      console.log(selectedVersions);
-    }).catch(err => {
-      console.error("Failed Fetch History: ", err);
-    });
-  }, [params, currentPage]);
-
-  useEffect(() => {
-    setHistory(data.content.map(item => ({
-      children: (
-        <p key={item.id}>
+  const timelineItems = historyData.map(item => ({
+    children: (
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div>
           {item.createdAt}&nbsp;
           <Radio.Group
-            onChange={e => handleVersionChange(item.id, e.target.value)}
-            value={selected.value1 === item.id ? 1 : selected.value2 === item.id ? 2 : null}
+            onChange={({ target }) => onSelectRevision(item.id, target.value)}
+            value={selectedRevision.oldRev === item.id ? 'oldRev' : selectedRevision.rev === item.id ? 'rev' : null}
           >
-            <Radio value={1} disabled={selected.value2 && item.id < selected.value2}></Radio>
-            <Radio value={2} disabled={selected.value1 && item.id > selected.value1}></Radio>
+            <Radio value="oldRev" disabled={isOldRevDisabled(item)}>Old Rev</Radio>
+            <Radio value="rev" disabled={isRevDisabled(item)}>Rev</Radio>
           </Radio.Group>
           {item.originNumber != null && <em>(r{item.originNumber}으로 되돌림)</em>}
           {<strong>r{item.number}</strong>}&nbsp;
           {'(' + item.diffAmount + ')'}&nbsp;
           {item.user.nickname}..
           {item.comment != null ? `(${item.comment})` : ''}
-        </p >
-      )
-    })));
-  }, [selected, data]);
+        </div>
+      </div>
+    )
+  }));
+
+
 
   return (
     <div>
@@ -133,17 +91,14 @@ const History = () => {
         버전 비교
       </Button>
       <div>
-
-        <Timeline style={{ marginLeft: '10%', marginRight: '10%', textAlign: 'left' }} items={history} />
-
+        <Timeline mode="left" items={timelineItems} />
+        <Pagination
+          current={currentPage}
+          pageSize={pageSize}
+          total={totalElements}
+          onChange={handlePageChange}
+        />
       </div>
-
-      <Pagination
-        current={currentPage}
-        pageSize={pageSize}
-        onChange={handleVersionCompare}
-        total={totalItems}
-      />
     </div>
 
   );
