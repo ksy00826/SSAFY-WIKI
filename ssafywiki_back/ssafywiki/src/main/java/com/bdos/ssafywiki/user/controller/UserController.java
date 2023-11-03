@@ -1,5 +1,6 @@
 package com.bdos.ssafywiki.user.controller;
 
+import com.bdos.ssafywiki.configuration.jwt.CustomUserDetails;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import com.bdos.ssafywiki.user.dto.UserDto;
 import com.bdos.ssafywiki.user.entity.User;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,10 +31,8 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/info")
-    public ResponseEntity<User> getUserInfo(Authentication authentication) {
-        System.out.println(authentication.getName());
-        System.out.println(authentication.getDetails());
-        User response = userService.searchUser(authentication.getName()).get();
+    public ResponseEntity<User> getUserInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
+        User response = userService.searchUser(userDetails.getUser().getEmail()).get();
         return ResponseEntity.ok(response);
     }
 
