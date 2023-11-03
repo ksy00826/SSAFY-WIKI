@@ -7,16 +7,12 @@ import WriteForm from "./WriteForm";
 import { createDocs } from "utils/DocsApi";
 import { openNotification } from "App";
 
-const { TextArea } = Input;
-
 const DocsList = ({ content, setContent }) => {
   const [searchParams] = useSearchParams();
   const title = searchParams.get("title"); //url에서 가져오기
 
   const [searchClass, setSearchClass] = React.useState([]);
   const [selectedClass, setSelectedClass] = React.useState([]);
-
-  const [viewType, setViewType] = React.useState(1);
 
   const navigate = useNavigate();
 
@@ -25,17 +21,19 @@ const DocsList = ({ content, setContent }) => {
     createDocs({
       title: title,
       content: content,
+      categories: selectedClass,
+      readAuth: 0,
+      writeAuth: 0,
     }).then((result) => {
       //완료
+      console.log(result);
       openNotification(
         "success",
         "문서작성 완료",
-        `${title}문서가 생성되었습니다.`
+        `${result.title}문서가 생성되었습니다.`
       );
 
-      let id = 1;
-      // navigate(`/res/content/${id}/${title}`);
-      navigate("/");
+      navigate(`/res/content/${result.docsId}/${result.title}`);
     });
   };
 

@@ -4,7 +4,6 @@ import { Layout } from "antd";
 
 import SerachTemplete from "components/Write/SearchTemplete";
 import WriteForm from "components/Write/WriteDocs";
-import WriteForm from "components/Write/WriteForm";
 import ImageUpload from "components/Write/ImageUpload";
 
 const { Content } = Layout;
@@ -27,8 +26,10 @@ const WritePage = () => {
         {step == 1 ? (
           <SerachTemplete next={next} />
         ) : (
-          <WriteForm content={content} setContent={setContent} />
-          <ImageUpload />
+          <div>
+            <WriteForm content={content} setContent={setContent} />
+            <ImageUpload />
+          </div>
         )}
       </Content>
     </Layout>
