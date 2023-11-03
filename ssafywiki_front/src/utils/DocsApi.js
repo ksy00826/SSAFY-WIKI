@@ -11,7 +11,7 @@ export const getDocsContent = async (id) => {
 
 export const createDocs = async (docs) => {
   try {
-    const response = await axiosInstance.post(`/api/docs`);
+    const response = await axiosInstance.post(`/api/docs`, docs);
     return response.data;
   } catch (error) {
     throw error;
