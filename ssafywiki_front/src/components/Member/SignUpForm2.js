@@ -98,12 +98,11 @@ const SignUp = ({ goNext, info }) => {
   };
 
   const handleAuth = (value) => {
-    // if (authBtn === "인증번호 전송") {
-    //   sendEmail(value);
-    // } else {
-    //   validateEmail();
-    // }
-    validateEmail();
+    if (authBtn === "인증번호 전송") {
+      sendEmail(value);
+    } else {
+      validateEmail();
+    }
   };
 
   const sendEmail = async (value) => {
