@@ -22,3 +22,12 @@ export const createDocs = async (docs) => {
   };
   return result;
 };
+
+export const getDiscussList = async (docsId) => {
+  try {
+    const response = await axiosInstance.get(`/api/chatlist/${docsId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}

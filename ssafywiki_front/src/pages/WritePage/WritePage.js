@@ -4,6 +4,8 @@ import { Layout } from "antd";
 
 import SerachTemplete from "components/Write/SearchTemplete";
 import WriteForm from "components/Write/WriteDocs";
+import WriteForm from "components/Write/WriteForm";
+import ImageUpload from "components/Write/ImageUpload";
 
 const { Content } = Layout;
 const WritePage = () => {
@@ -26,6 +28,7 @@ const WritePage = () => {
           <SerachTemplete next={next} />
         ) : (
           <WriteForm content={content} setContent={setContent} />
+          <ImageUpload />
         )}
       </Content>
     </Layout>
