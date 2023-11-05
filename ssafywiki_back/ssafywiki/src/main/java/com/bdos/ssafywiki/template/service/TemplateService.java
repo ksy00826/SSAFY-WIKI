@@ -26,9 +26,7 @@ public class TemplateService {
     private final UserRepository userRepository;
     private final TemplateMapper templateMapper;
 
-    public TemplateDto.Detail createTemplate(TemplateDto.Post post, CustomUserDetails userDetails) {
-        User user = userDetails.getUser();
-
+    public TemplateDto.Detail createTemplate(TemplateDto.Post post, User user) {
         Template template = Template.builder()
                 .title(post.getTitle())
                 .content(post.getContent())
@@ -40,19 +38,19 @@ public class TemplateService {
         return templateMapper.toDetail(template);
     }
 
-    public List<TemplateDto.Preview> readTemplateList(boolean isMyTemplate, Pageable pageable, CustomUserDetails userDetails) {
+    public List<TemplateDto.Preview> readTemplateList(boolean isMyTemplate, Pageable pageable, User user) {
         Page<Template> templateList = null;
         if (isMyTemplate){
             //임시 사용자
-            templateList = templateRepository.findAllWithAuthor(userDetails.getUser().getId(), pageable);
+            templateList = templateRepository.findAllWithAuthor(user.getId(), pageable);
         }
         else{
-            templateList = templateRepository.findAllNotWithAuthor(userDetails.getUser().getId(), pageable);
+            templateList = templateRepository.findAllNotWithAuthor(user.getId(), pageable);
         }
         return templateMapper.toPreviewList(templateList.getContent());
     }
 
-    public TemplateDto.Detail readTemplateDetail(Long templateId, CustomUserDetails userDetails) {
+    public TemplateDto.Detail readTemplateDetail(Long templateId, User user) {
         Template template = templateRepository.findById(templateId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.TEMPLATE_NOT_FOUND));
         return templateMapper.toDetail(template);
     }

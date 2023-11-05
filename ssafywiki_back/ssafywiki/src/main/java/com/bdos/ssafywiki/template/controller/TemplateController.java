@@ -1,8 +1,8 @@
 package com.bdos.ssafywiki.template.controller;
 
-import com.bdos.ssafywiki.configuration.jwt.CustomUserDetails;
 import com.bdos.ssafywiki.template.dto.TemplateDto;
 import com.bdos.ssafywiki.template.service.TemplateService;
+import com.bdos.ssafywiki.user.entity.User;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,7 +27,7 @@ public class TemplateController {
     @Operation(summary = "템플릿 생성하기", description = "탬플릿 하나를 생성합니다.")
     @PostMapping("/api/docs/template")
     public ResponseEntity<TemplateDto.Detail> createTemplate(@RequestBody TemplateDto.Post post,
-                                                            @AuthenticationPrincipal CustomUserDetails userDetails) {
+                                                            @AuthenticationPrincipal User userDetails) {
         TemplateDto.Detail detail = templateService.createTemplate(post,userDetails);
 
         return ResponseEntity.ok(detail);
@@ -36,7 +36,7 @@ public class TemplateController {
     @Operation(summary = "템플릿 목록 불러오기", description = "탬플릿 목록을 불러옵니다.")
     @GetMapping("/api/docs/template")
     public ResponseEntity<List<TemplateDto.Preview>> readTemplateList(@RequestParam("isMyTemplate") boolean isMyTemplate,
-                                                                      @AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                      @AuthenticationPrincipal User userDetails,
                                                                       @PageableDefault(size = 30, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         List<TemplateDto.Preview> list = templateService.readTemplateList(isMyTemplate, pageable, userDetails);
 
@@ -49,8 +49,8 @@ public class TemplateController {
     @Operation(summary = "템플릿 상세 불러오기", description = "탬플릿 상세를 불러옵니다.")
     @GetMapping("/api/docs/template/{templateId}")
     public ResponseEntity<TemplateDto.Detail> readTemplateDetail(@PathVariable Long templateId,
-                                                                 @AuthenticationPrincipal CustomUserDetails userDetails) {
-        TemplateDto.Detail templateDetail = templateService.readTemplateDetail(templateId, userDetails);
+                                                                 @AuthenticationPrincipal User user) {
+        TemplateDto.Detail templateDetail = templateService.readTemplateDetail(templateId, user);
 
         return ResponseEntity.ok(templateDetail);
     }
@@ -58,11 +58,11 @@ public class TemplateController {
     @Operation(summary = "템플릿 하나 삭제하기", description = "자신이 작성한 템플릿을 삭제합니다")
     @DeleteMapping("/api/docs/template/{templateId}")
     public ResponseEntity<List<TemplateDto.Preview>> deleteTemplate(@PathVariable Long templateId,
-                                                                    @AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                    @AuthenticationPrincipal User user,
                                                                     @PageableDefault(size = 30, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         templateService.deleteTemplate(templateId);
         //삭제 후 목록 반환하기
-        List<TemplateDto.Preview> list = templateService.readTemplateList(true, pageable, userDetails);
+        List<TemplateDto.Preview> list = templateService.readTemplateList(true, pageable, user);
         return ResponseEntity.ok(list);
     }
 

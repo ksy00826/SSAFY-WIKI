@@ -27,9 +27,8 @@ public class BookmarkService {
     private final DocumentRepository documentRepository;
     private final BookmarkMapper bookmarkMapper;
 
-    public void registBookmark(Long docsId, CustomUserDetails userDetails) {
+    public void registBookmark(Long docsId, User user) {
         //사용자, 문서 -> 북마크
-        User user = userDetails.getUser();
         Document document = documentRepository.findById(docsId)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
 
@@ -45,8 +44,7 @@ public class BookmarkService {
         bookmarkRepository.save(bookmark);
     }
 
-    public List<BookmarkDto.Detail> getBookmark(Pageable pageable, CustomUserDetails userDetails) {
-        User user = userDetails.getUser();
+    public List<BookmarkDto.Detail> getBookmark(Pageable pageable, User user) {
 
         //사용자의 북마크 불러오기
         Page<Bookmark> bookmarkList = bookmarkRepository.findAllByUserId(user.getId(), pageable);
