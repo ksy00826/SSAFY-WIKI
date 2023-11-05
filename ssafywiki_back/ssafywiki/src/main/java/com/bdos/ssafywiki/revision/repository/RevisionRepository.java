@@ -16,4 +16,8 @@ public interface RevisionRepository extends JpaRepository<Revision, Long> {
 
     @Query(value = "SELECT r FROM Revision r LEFT JOIN FETCH r.content LEFT JOIN FETCH r.document WHERE r.document.id = :docsId AND r.number = :number")
     Revision findByDocumentIdAndNumber(Long docsId, Long number);
+
+    @Query(value = "SELECT r FROM Revision r WHERE r.user.id = :userId")
+    Page<Revision> findAllByUser(Long userId, Pageable pageable);
+
 }

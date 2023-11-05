@@ -22,6 +22,7 @@ public class UserService {
         }
         User user = optionalUser.get();
         return UserDto.Registration.builder()
+                .name(user.getName())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
                 .role(user.getRole().name())
