@@ -30,7 +30,7 @@ public class RevisionController {
     @GetMapping("/{docs_id}")
     public ResponseEntity<List<RevisionDto.Version>> getHistory(
             @PathVariable("docs_id") long docsId,
-            @PageableDefault(size = 30, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+            @PageableDefault(size = 30, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Page<Revision> revisionPage = revisionService.getHistory(docsId, pageable);
 //        revisionPage.getTotalElements();
@@ -41,7 +41,7 @@ public class RevisionController {
 
     @Operation(summary = "버전 비교", description = "두개의 버전을 비교합니다.")
     @GetMapping("/compare")
-    public ResponseEntity getDiff(@RequestParam long rev, @RequestParam(name = "oldrev") long oldRev){
+    public ResponseEntity getDiff(@RequestParam long rev, @RequestParam(name = "oldrev") long oldRev) {
 //        revisionService.diff(rev, oldRev)
 //        revisionService.diffHtml(rev, oldRev)
         return new ResponseEntity(revisionService.diff(rev, oldRev), HttpStatus.OK);
@@ -53,7 +53,7 @@ public class RevisionController {
     @GetMapping("/{docs_id}/{rev_number}")
     public ResponseEntity<RevisionDto.Detail> getDetail(
             @PathVariable("docs_id") long docsId,
-            @PathVariable("rev_number") long revNumber){
+            @PathVariable("rev_number") long revNumber) {
 
         Revision revision = revisionService.getDetail(docsId, revNumber);
 
@@ -63,11 +63,17 @@ public class RevisionController {
     @Operation(summary = "버전 되돌리기", description = "해당 버전으로 되돌립니다.")
     @PostMapping("/revoke")
     public ResponseEntity revokeVersion(
-            @RequestParam(name = "select") long revId){
+            @RequestParam(name = "select") long revId) {
 
         revisionService.revokeVersion(revId);
 
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @Operation(summary = "버전 충돌 검사", description = "병합 후 버전 충돌난 곳을 표시합니다.")
+    @GetMapping("/merge")
+    public ResponseEntity merge() {
+
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }
