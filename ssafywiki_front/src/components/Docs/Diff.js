@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Row, Col, Typography } from "antd";
+import { Card, Row, Col, Typography, Table } from "antd";
 import { useParams, useLocation } from "react-router-dom";
 import { compareVersions } from "utils/RevisionApi";
 
@@ -19,22 +19,17 @@ const Diff = () => {
     fetchData();
   }, [state.oldRev, state.rev]);
 
-  const setTitle = () => (
-    <strong>r{queryParams.get('oldrev')} vs r{queryParams.get('rev')}</strong>
-  );
-
-  const getDiffStyle = (type) => {
-    switch (type) {
-      case 'CHANGE':
-        return { backgroundColor: '#ffffdd' };
-      case 'DELETE':
-        return { backgroundColor: '#ffdddd', textDecoration: 'line-through' };
-      case 'INSERT':
-        return { backgroundColor: '#ddffdd' };
-      default:
-        return {};
-    }
-  };
+  const diffsTolines = diffs.map(diff => ({
+    source: diff.source.lines.map((line, index) => ({
+      position: diff.source.position + index + 1,
+      line: line
+    })),
+    target: diff.target.lines.map((line, index) => ({
+      position: diff.target.position + index + 1,
+      line: line
+    })),
+    type: diff.type
+  }));
 
 
   return (
@@ -43,24 +38,28 @@ const Diff = () => {
       <Card>
         <strong>r{queryParams.get('oldrev')} vs r{queryParams.get('rev')}</strong>
       </Card>
-      
-      <Row gutter={16}>
-        <Col span={12}>
-          {diffs.map((diff, index) => (
-            <div key={`old-${index}`} style={getDiffStyle(diff.type)}>
-              <Text delete={diff.type === 'DELETE'}>{diff.source?.lines.join('\n') || ''}</Text>
-            </div>
+      <table>
+        <tbody>
+          {diffsTolines.map((diff, idx) => (
+            <>
+              {diff.source.map((item) => (
+                <tr>
+                  <th className="ant-table-cell">{item.position}</th>
+                  <th className="ant-table-cell"></th>
+                  <td bgcolor="#FCD2C9">{item.line}</td>
+                </tr>
+              ))}
+              {diff.target.map((item) => (
+                <tr>
+                  <th className="ant-table-cell"></th>
+                  <th className="ant-table-cell">{item.position}</th>
+                  <td bgcolor="#D8FCC9">{item.line}</td>
+                </tr>
+              ))}
+            </>
           ))}
-        </Col>
-        <Col span={12}>
-          {diffs.map((diff, index) => (
-            <div key={`new-${index}`} style={getDiffStyle(diff.type)}>
-              <Text>{diff.target?.lines.join('\n') || ''}</Text>
-            </div>
-          ))}
-        </Col>
-      </Row>
-
+        </tbody>
+      </table>
     </div >
   );
 };

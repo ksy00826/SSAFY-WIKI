@@ -10,7 +10,7 @@ const History = () => {
   const navigate = useNavigate();
 
   const [data, setData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
   const [pageSize, setPageSize] = useState(20);
 
