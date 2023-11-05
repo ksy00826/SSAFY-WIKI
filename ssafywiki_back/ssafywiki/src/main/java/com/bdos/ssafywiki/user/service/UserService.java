@@ -31,10 +31,9 @@ public class UserService {
     }
 
     public String editUser(User user, Registration request) {
-        user = userRepository.findByEmail(user.getEmail()).get();
         user.setPassword(request.getPassword());
         user.setNickname(request.getNickname());
-        System.out.println(user.getPassword());
+        userRepository.save(user);
         if(userRepository.findByEmail(user.getEmail()).isEmpty()){
             return "변경 실패";
         }
