@@ -1,9 +1,16 @@
 package com.bdos.ssafywiki.user.service;
 
+import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
+import com.bdos.ssafywiki.discussion.entity.Discussion;
+import com.bdos.ssafywiki.discussion.mapper.DiscussionMapper;
+import com.bdos.ssafywiki.discussion.repository.DiscussionRepository;
 import com.bdos.ssafywiki.user.dto.UserDto;
 import com.bdos.ssafywiki.user.dto.UserDto.Registration;
 import com.bdos.ssafywiki.user.entity.User;
 import com.bdos.ssafywiki.user.repository.UserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +20,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
-
+    private final DiscussionRepository discussionRepository;
 
     public UserDto.Registration checkUserInfo(String name) {
         Optional<User> optionalUser = userRepository.findByEmail(name);
@@ -42,5 +49,15 @@ public class UserService {
             return "변경 완료";
         }
         return "변경 않됨";
+    }
+
+    public List<DiscussionDto> getChats(User user) {
+        List<Discussion> dbMessageList = discussionRepository.findAllByUser(user.getId());
+        List<DiscussionDto> messageList = new ArrayList<>();
+        for (Discussion discussion : dbMessageList) {
+            DiscussionDto discussionDto = DiscussionMapper.INSTANCE.toDto(discussion);
+            messageList.add(discussionDto);
+        }
+        return messageList;
     }
 }
