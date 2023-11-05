@@ -52,6 +52,11 @@ public class RevisionService {
         return revisionRepository.findByDocumentIdAndNumber(docsId, revNumber);
     }
 
+    public Page<Revision> getUserHistory(long userId, Pageable pageable) {
+
+        return revisionRepository.findAllByUser(userId, pageable);
+    }
+
     @Transactional
     public void revokeVersion(long revId) {
         // revoke를 한 user
