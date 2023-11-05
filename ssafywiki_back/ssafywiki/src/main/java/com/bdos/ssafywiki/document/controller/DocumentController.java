@@ -4,6 +4,8 @@ import com.bdos.ssafywiki.discussion.service.DiscussionService;
 import com.bdos.ssafywiki.document.dto.DocumentDto;
 import com.bdos.ssafywiki.document.service.DocumentService;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
+import com.bdos.ssafywiki.user.entity.CurrentUser;
+import com.bdos.ssafywiki.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +30,10 @@ public class DocumentController {
 
     @Operation(summary = "문서 상세 조회하기", description = "문서 하나의 상세를 조회합니다.")
     @GetMapping("/api/docs/{docsId}")
-    public ResponseEntity<RevisionDto.Response> readDocs(@PathVariable Long docsId){
+    public ResponseEntity<RevisionDto.Response> readDocs(@PathVariable Long docsId,
+                                                         @CurrentUser User userDetails){
         discussionService.enterChatRoom(docsId.toString());
-        RevisionDto.Response response = documentService.readDocs(docsId);
+        RevisionDto.Response response = documentService.readDocs(docsId, userDetails);
 
         return ResponseEntity.ok(response);
     }

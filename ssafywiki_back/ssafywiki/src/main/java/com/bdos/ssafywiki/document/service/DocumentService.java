@@ -21,9 +21,11 @@ import com.bdos.ssafywiki.revision.repository.CommentRepository;
 import com.bdos.ssafywiki.revision.repository.ContentRepository;
 import com.bdos.ssafywiki.revision.repository.RevisionRepository;
 import com.bdos.ssafywiki.user.entity.User;
+import com.bdos.ssafywiki.user.enums.Privilege;
 import com.bdos.ssafywiki.user.enums.Role;
 import com.bdos.ssafywiki.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class DocumentService {
 
     private final DocumentRepository documentRepository;
@@ -117,14 +120,35 @@ public class DocumentService {
         return revisionMapper.toResponse(revision);
     }
 
-    public RevisionDto.Response readDocs(Long docsId) {
-        //유저의 권한과 문서의 권한을 체크해서 처리
+    public RevisionDto.Response readDocs(Long docsId, User user) {
 
         //해당 문서 엔티티 찾기
         Document document = documentRepository.findById(docsId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
+
+
+        //유저의 권한과 문서의 권한을 체크해서 처리
+        log.info(user.toString());
+        boolean result = false;
+        if(document.getReadAuth() < 4) {
+            result = user.getRole().havePrivilege(Privilege.getOptionLv('R',document.getReadAuth()));
+        }
+        else {  // private 문서
+            result = checkReadAuth(document.getReadAuth(), user.getRole(), user.getId());
+        }
+
+        // 권한이 없으면 error
+        if(!result)  throw new BusinessLogicException(ExceptionCode.DOCUMENT_NO_ACCESS);
+
+        // 권한이 있으면
         //docsId에 해당하는 가장 최신 버전의 문서를 찾아서 리턴 (revision 엔티티 찾기)
         Revision revision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
         return revisionMapper.toResponse(revision);
+    }
+
+    private boolean checkReadAuth(Long readAuth, Role role, Long id) {
+        // 권한테이블에서 권한있는지 체크
+
+        return true;
     }
 
     public RevisionDto.Response updateDocs(DocumentDto.Put put) {
