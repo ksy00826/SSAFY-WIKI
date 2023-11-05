@@ -50,8 +50,8 @@ public class UserController {
         String response = userService.editUser(user , request );
         return ResponseEntity.ok(response);
     }
-    @GetMapping("/info/{user_id}")
-    public ResponseEntity<List<RevisionDto.Version>> getHistory(
+    @GetMapping("/info/contributeDocs")
+    public ResponseEntity<List<RevisionDto.Version>> contributeDocs(
             @PathVariable("user_id") long userId,
             @PageableDefault(size = 30, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
 
@@ -64,10 +64,10 @@ public class UserController {
 //        return new ResponseEntity(list, HttpStatus.OK);
 //    }
 
-//    @GetMapping("/info/contributeChats")
-//    public ResponseEntity<?> getContributeChats(@AuthenticationPrincipal User user) {
-//        List<DiscussionDto> list = userService.getChats(user);
-//        return new ResponseEntity(list, HttpStatus.OK);
-//    }
+    @GetMapping("/info/contributeChats")
+    public ResponseEntity<?> getContributeChats(@AuthenticationPrincipal User user) {
+        List<DiscussionDto> list = userService.getChats(user);
+        return new ResponseEntity(list, HttpStatus.OK);
+    }
 
 }
