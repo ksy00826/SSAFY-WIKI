@@ -6,14 +6,13 @@ import com.bdos.ssafywiki.discussion.mapper.DiscussionMapper;
 import com.bdos.ssafywiki.discussion.repository.DiscussionRepository;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.document.repository.DocumentRepository;
-import com.bdos.ssafywiki.revision.entity.Revision;
+
 import com.bdos.ssafywiki.user.entity.User;
 import com.bdos.ssafywiki.user.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
@@ -21,7 +20,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
-import java.nio.file.attribute.UserPrincipalNotFoundException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +41,7 @@ public class DiscussionService {
     private final RedisSubscriber redisSubscriber;
     private Map<String, ChannelTopic> topics;
     // 대화 저장
-    private final UserRepository userRepository;
+    private final DiscussionMapper discussionMapper;
     private final DocumentRepository documentRepository;
 
     @PostConstruct
@@ -51,7 +50,7 @@ public class DiscussionService {
     }
     public void saveMessage(DiscussionDto discussionDto, User user) {
         // DB 저장
-        Discussion discuss = DiscussionMapper.INSTANCE.toDiscussion(discussionDto);
+        Discussion discuss = discussionMapper.toDiscussion(discussionDto);
         Document document = documentRepository.findById(discussionDto.getDocsId()).orElseThrow(() -> new NotFoundException("Docs Not Found"));
         discuss.setUserAndDocument(user, document);
         discussionRepository.save(discuss);
@@ -80,7 +79,7 @@ public class DiscussionService {
             List<Discussion> dbMessageList = discussionRepository.findTop100ByDocumentIdOrderByCreatedAtAsc(docsId);
 
             for (Discussion discussion : dbMessageList) {
-                DiscussionDto discussionDto = DiscussionMapper.INSTANCE.toDto(discussion);
+                DiscussionDto discussionDto = discussionMapper.toDto(discussion);
                 messageList.add(discussionDto);
                 redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(DiscussionDto.class));      // 직렬화
                 redisTemplateMessage.opsForList().rightPush(docsId.toString(), discussionDto);                                // redis 저장

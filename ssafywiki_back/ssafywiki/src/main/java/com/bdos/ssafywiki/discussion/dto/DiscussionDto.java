@@ -15,15 +15,16 @@ import java.time.LocalDateTime;
 public class DiscussionDto {
     private Long docsId;
     private String nickname;
+    private String email;
     private String content;
     private String createdAt;
 
     @Builder
-    public DiscussionDto(Long docsId, String nickname, String content, LocalDateTime createdAt) {
+    public DiscussionDto(Long docsId, String nickname, String email, String content, String createdAt) {
         this.docsId = docsId;
         this.nickname = nickname;
+        this.email = email;
         this.content = content;
-        this.createdAt = createdAt.toString();
+        this.createdAt = createdAt;
     }
-
 }
