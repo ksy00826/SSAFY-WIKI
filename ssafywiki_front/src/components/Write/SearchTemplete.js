@@ -50,6 +50,7 @@ const SearchTemplete = ({ next }) => {
       setData(res);
       setList(res);
       setInitLoading(false);
+      setLastPage(false);
     });
   }, []);
 
@@ -60,10 +61,15 @@ const SearchTemplete = ({ next }) => {
       setPageNum(1); //페이지 초기화
       setData(res);
       setList(res);
+      setLastPage(false);
 
       //비동기적 실행
       setActiveKey(key);
       console.log("change", activeKey);
+    });
+    getTemplate(1, key == 1 ? true : false).then((res) => {
+      console.log(res == []);
+      if (res == []) setLastPage(true);
     });
   };
 
