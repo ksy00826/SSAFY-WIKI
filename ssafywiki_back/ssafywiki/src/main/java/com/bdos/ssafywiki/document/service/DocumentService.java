@@ -1,7 +1,7 @@
 package com.bdos.ssafywiki.document.service;
 
 import ch.qos.logback.core.spi.ErrorCodes;
-import com.bdos.ssafywiki.diff.DiffMatchPatch;
+import com.bdos.ssafywiki.diff.MyDiffUtils;
 import com.bdos.ssafywiki.docs_category.entity.Category;
 import com.bdos.ssafywiki.docs_category.entity.DocsCategory;
 import com.bdos.ssafywiki.docs_category.repository.CategoryRepository;
@@ -25,6 +25,7 @@ import com.bdos.ssafywiki.user.entity.User;
 import com.bdos.ssafywiki.user.enums.Privilege;
 import com.bdos.ssafywiki.user.enums.Role;
 import com.bdos.ssafywiki.user.repository.UserRepository;
+import com.github.difflib.DiffUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
@@ -51,7 +52,7 @@ public class DocumentService {
     //mapstruct
     private final RevisionMapper revisionMapper;
 
-    private final DiffMatchPatch diffMatchPatch;
+    private final MyDiffUtils myDiffUtils;
 
     @Transactional
     public RevisionDto.DocsResponse writeDocs(DocumentDto.Post post, User user) {
@@ -97,7 +98,7 @@ public class DocumentService {
         //@@@@@@@2. Revision entity 생성
         Revision revision = Revision.builder()
                 .number(1L)
-                .diffAmount((long)diffMatchPatch.diff_length(diffMatchPatch.diff_main("", post.getContent())))
+                .diffAmount((long) myDiffUtils.diffLength(DiffUtils.diff(myDiffUtils.splitIntoLines(""), myDiffUtils.splitIntoLines(post.getContent()))))
                 .build();
 
         //2.1 Content entity 생성 + Comment entity 생성
@@ -119,29 +120,28 @@ public class DocumentService {
     }
 
     public RevisionDto.DocsResponse readDocs(Long docsId, Long revId, User user) {
-        if(user == null) user = new GuestUser();
+        if (user == null) user = new GuestUser();
 
         //해당 문서 엔티티 찾기
         Document document = documentRepository.findById(docsId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
-        if(document.isDeleted()) throw new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND);
+        if (document.isDeleted()) throw new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND);
 
         //유저의 권한과 문서의 권한을 체크해서 처리
         log.info(user.toString());
         boolean result = false;
-        if(document.getReadAuth() < 4) {
-            result = user.getRole().havePrivilege(Privilege.getOptionLv('R',document.getReadAuth()));
-        }
-        else {  // private 문서
+        if (document.getReadAuth() < 4) {
+            result = user.getRole().havePrivilege(Privilege.getOptionLv('R', document.getReadAuth()));
+        } else {  // private 문서
             result = checkReadAuth(document.getReadAuth(), user.getRole(), user.getId());
         }
 
         // 권한이 없으면 error
-        if(!result)  throw new BusinessLogicException(ExceptionCode.DOCUMENT_NO_ACCESS);
+        if (!result) throw new BusinessLogicException(ExceptionCode.DOCUMENT_NO_ACCESS);
 
         // 권한이 있으면
         //docsId에 해당하는 가장 최신 버전의 문서를 찾아서 리턴 (revision 엔티티 찾기)
         Revision revision;
-        if(revId == null) revision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
+        if (revId == null) revision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
         else revision = revisionRepository.findByDocumentIdAndNumber(docsId, revId);
 
         return revisionMapper.toResponse(revision);
@@ -155,7 +155,7 @@ public class DocumentService {
 
 
     public RevisionDto.CheckUpdateResponse checkUpdateDocs(Long docsId, User user) {
-        if(user == null) user = new GuestUser();
+        if (user == null) user = new GuestUser();
 
         //해당 문서 엔티티 찾기
         Document document = documentRepository.findById(docsId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
@@ -163,17 +163,16 @@ public class DocumentService {
         //유저의 권한과 문서의 권한을 체크해서 처리
         boolean canUpdate = false;
         boolean canRead = false;
-        if(document.getWriteAuth() < 4) {
-            canRead = user.getRole().havePrivilege(Privilege.getOptionLv('R',document.getReadAuth()));
-            canUpdate = user.getRole().havePrivilege(Privilege.getOptionLv('W',document.getReadAuth()));
-        }
-        else {  // private 문서
+        if (document.getWriteAuth() < 4) {
+            canRead = user.getRole().havePrivilege(Privilege.getOptionLv('R', document.getReadAuth()));
+            canUpdate = user.getRole().havePrivilege(Privilege.getOptionLv('W', document.getReadAuth()));
+        } else {  // private 문서
             canRead = checkReadAuth(document.getReadAuth(), user.getRole(), user.getId());
             canUpdate = checkReadAuth(document.getReadAuth(), user.getRole(), user.getId());
         }
 
         // Read 권한이 없으면 error
-        if(!canRead)  throw new BusinessLogicException(ExceptionCode.DOCUMENT_NO_ACCESS);
+        if (!canRead) throw new BusinessLogicException(ExceptionCode.DOCUMENT_NO_ACCESS);
 
         // docsId에 해당하는 가장 최신 버전의 문서를 찾아서 리턴 (revision 엔티티 찾기)
         // 수정할 수 없으면 update false로 보냄.
@@ -196,7 +195,7 @@ public class DocumentService {
         Revision preRevision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
 
         //그 외 : 텍스트 증감 수, 문서 버전 번호
-        Long textDiff = (long)diffMatchPatch.diff_length(diffMatchPatch.diff_main(preRevision.getContent().getText(), put.getContent()));
+        Long textDiff = (long) myDiffUtils.diffLength(DiffUtils.diff(myDiffUtils.splitIntoLines(preRevision.getContent().getText()), myDiffUtils.splitIntoLines(put.getContent())));
         Long newVersionNo = preRevision.getNumber() + 1;
 
         Revision revision = new Revision(textDiff, newVersionNo);
