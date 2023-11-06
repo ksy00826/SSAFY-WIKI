@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +22,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final DiscussionRepository discussionRepository;
-
+    private final PasswordEncoder passwordEncoder;
     public UserDto.Registration checkUserInfo(String name) {
         Optional<User> optionalUser = userRepository.findByEmail(name);
         if(optionalUser.isEmpty()){
@@ -39,16 +40,17 @@ public class UserService {
     }
 
     public String editUser(User user, Registration request) {
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setNickname(request.getNickname());
         userRepository.save(user);
         if(userRepository.findByEmail(user.getEmail()).isEmpty()){
             return "변경 실패";
         }
-        if(userRepository.findByEmail(user.getEmail()).get().getPassword().equals(request.getPassword())){
+        boolean result = passwordEncoder.matches(request.getPassword(), user.getPassword());
+        if(result){
             return "변경 완료";
         }
-        return "변경 않됨";
+        return "변경 안됨";
     }
 
     public List<DiscussionDto> getChats(User user) {
