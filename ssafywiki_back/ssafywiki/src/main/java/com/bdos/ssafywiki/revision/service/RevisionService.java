@@ -7,6 +7,7 @@ import com.bdos.ssafywiki.diff.MergeResult;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.exception.BusinessLogicException;
 import com.bdos.ssafywiki.exception.ExceptionCode;
+import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import com.bdos.ssafywiki.revision.entity.Content;
 import com.bdos.ssafywiki.revision.entity.Revision;
 import com.bdos.ssafywiki.revision.repository.ContentRepository;
@@ -52,9 +53,9 @@ public class RevisionService {
         return revisionRepository.findByDocumentIdAndNumber(docsId, revNumber);
     }
 
-    public Page<Revision> getUserHistory(long userId, Pageable pageable) {
+    public List<RevisionDto.Version> getUserHistory(long userId) {
 
-        return revisionRepository.findAllByUser(userId, pageable);
+        return revisionRepository.findAllByUser(userId);
     }
 
     @Transactional

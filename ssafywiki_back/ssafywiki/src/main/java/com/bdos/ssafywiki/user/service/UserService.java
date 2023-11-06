@@ -1,11 +1,19 @@
 package com.bdos.ssafywiki.user.service;
 
+import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
+import com.bdos.ssafywiki.discussion.entity.Discussion;
+import com.bdos.ssafywiki.discussion.mapper.DiscussionMapper;
+import com.bdos.ssafywiki.discussion.repository.DiscussionRepository;
 import com.bdos.ssafywiki.user.dto.UserDto;
 import com.bdos.ssafywiki.user.dto.UserDto.Registration;
 import com.bdos.ssafywiki.user.entity.User;
 import com.bdos.ssafywiki.user.repository.UserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -13,8 +21,8 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
-
-
+    private final DiscussionRepository discussionRepository;
+    private final PasswordEncoder passwordEncoder;
     public UserDto.Registration checkUserInfo(String name) {
         Optional<User> optionalUser = userRepository.findByEmail(name);
         if(optionalUser.isEmpty()){
@@ -32,15 +40,26 @@ public class UserService {
     }
 
     public String editUser(User user, Registration request) {
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setNickname(request.getNickname());
         userRepository.save(user);
         if(userRepository.findByEmail(user.getEmail()).isEmpty()){
             return "변경 실패";
         }
-        if(userRepository.findByEmail(user.getEmail()).get().getPassword().equals(request.getPassword())){
+        boolean result = passwordEncoder.matches(request.getPassword(), user.getPassword());
+        if(result){
             return "변경 완료";
         }
-        return "변경 않됨";
+        return "변경 안됨";
+    }
+
+    public List<DiscussionDto> getChats(User user) {
+        List<Discussion> dbMessageList = discussionRepository.findAllByUser(user.getId());
+        List<DiscussionDto> messageList = new ArrayList<>();
+        for (Discussion discussion : dbMessageList) {
+            DiscussionDto discussionDto = DiscussionMapper.INSTANCE.toDto(discussion);
+            messageList.add(discussionDto);
+        }
+        return messageList;
     }
 }
