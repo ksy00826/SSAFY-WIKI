@@ -2,15 +2,34 @@ import React, { useState, useParams } from "react";
 import UserNavbar from "components/Common/UserNavbar";
 import { Layout, theme, Card, Col, Row } from "antd";
 import { getContributedChats } from "utils/UserApi";
-
+import { useNavigate, useLocation, Link } from "react-router-dom";
 const { Header, Content, Footer } = Layout;
 
 const UserChatsPage = () => {
+  const [chatc, setchatc] = React.useState([]);
   const [chatList, setchatList] = React.useState([]);
+  const navigate = useNavigate();
+  const handleDocument = (id,content) => {
+    console.log(id,content);
+    navigate(`/res/content/${id}/${content}`);
+  };
   // 처음 랜더링시 내용 가져오기
   React.useEffect(() => {
     getContributedChats().then((response) => {
-      setchatList(response.docs);
+      setchatList(response);
+      setchatc(response.map((chat) => (
+        <Col key={chat.docsId} span={8} >
+          <Card 
+            onClick={() =>  {handleDocument(chat.docsId,chat.content)}}
+            title={chat.content}
+            // extra={chat.createdAt}
+            headStyle={{ backgroundColor: "lightblue", border: 0 }}
+            bodyStyle={{ backgroundColor: "white", border: 0 }}
+          >
+            {chat.createdAt}
+          </Card>
+        </Col>
+      )))
     });
   }, []);
 
@@ -18,18 +37,7 @@ const UserChatsPage = () => {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const chatc = chatList.map((chat) => (
-    <Col key={chat.docs_title} span={8}>
-      <Card
-        title={chat.docs_title}
-        extra={chat.discuss_created_at}
-        headStyle={{ backgroundColor: "lightblue", border: 0 }}
-        bodyStyle={{ backgroundColor: "white", border: 0 }}
-      >
-        {chat.discuss_content}
-      </Card>
-    </Col>
-  ));
+  
   return (
     <Layout
       style={{

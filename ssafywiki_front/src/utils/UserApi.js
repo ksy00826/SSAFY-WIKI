@@ -20,7 +20,18 @@ export const editUserProfile = async (info) => {
 
 export const getContributedDocs = async (id) => {
   try {
-    const response = await axiosInstance.get(`/api/mypage/writedocs`);
+    const response = await axiosInstanceWithLogin.get(`/api/user/info/contributeDocs`);
+    if(response == null) {
+      return [{
+        docsId: null,
+        author: null,
+        title: "작성한 문서가 없어요",
+        content: null,
+        createdAt: "ㅠㅠ",
+        modifiedAt: null,
+        categoryList: null
+    },];
+    }
     return response.data;
   } catch (error) {
     throw error;
@@ -55,7 +66,15 @@ export const getContributedDocs = async (id) => {
 
 export const getContributedChats = async (id) => {
   try {
-    const response = await axiosInstance.get(`/api/mypage/writechats`);
+    const response = await axiosInstanceWithLogin.get(`/api/user/info/contributeChats`);
+    if(response == null) {
+      return [{
+        docsId: 1,
+        nickname: "",
+        content: "채팅이 없어요",
+        createdAt: "NOTIME"
+      },];
+    }
     return response.data;
   } catch (error) {
     throw error;
