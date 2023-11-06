@@ -16,6 +16,6 @@ public interface DiscussionRepository extends JpaRepository<Discussion, Long> {
 
     Discussion findTopByDocumentIdOrderByCreatedAtDesc(Long docsId);
 
-    @Query(value = "SELECT d FROM Discussion d WHERE d.user.id = :userId GROUP BY d.id")
+    @Query(value = "SELECT d FROM Discussion d WHERE d.user.id = :userId GROUP BY d.document.id")
     List<Discussion> findAllByUser(Long userId);
 }
