@@ -69,9 +69,10 @@ public class TemplateController {
     @Operation(summary = "템플릿 검색하기", description = "이름에 키워드가 포함된 템플릿을 검색합니다")
     @GetMapping("/api/docs/template/search")
     public ResponseEntity<List<TemplateDto.Preview>> searchTemplate(@RequestParam("keyword") String keyword,
+                                                                    @AuthenticationPrincipal User user,
                                                                     @RequestParam("isMyTemplate") boolean isMyTemplate,
                                                                     @PageableDefault(size = 30, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
-        List<TemplateDto.Preview> list = templateService.searchTemplate(keyword, isMyTemplate, pageable);
+        List<TemplateDto.Preview> list = templateService.searchTemplate(keyword, isMyTemplate, pageable, user);
 
         return ResponseEntity.ok(list);
     }
