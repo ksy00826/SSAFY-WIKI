@@ -59,7 +59,7 @@ public class RevisionService {
     }
 
     @Transactional
-    public void revokeVersion(User user, long revId) {
+    public void revertVersion(User user, long revId) {
 
         // 일단 유저를 다른 곳에 연관관계로 등록하기 위해 임시로 저장
         userRepository.save(user);
