@@ -35,7 +35,7 @@ const DocsList = ({
               }}
               placeholder="분류"
               onChange={handleChange}
-              options={selectedClass}
+              options={[]}
             />
           </Col>
         </Row>

@@ -1,15 +1,11 @@
-import React, { useEffect } from "react";
-import { Input, Tabs, Button, Select, Col, Row } from "antd";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import React from "react";
+import { Input, Tabs } from "antd";
 
 import MarkdownRenderer from "components/Common/MarkDownRenderer";
 
 const { TextArea } = Input;
 
 const WriteForm = ({ content, setContent, isdisabled }) => {
-  const [searchParams] = useSearchParams();
-  const title = searchParams.get("title"); //url에서 가져오기
-
   const [viewType, setViewType] = React.useState(1);
 
   const onChange = (e) => {
