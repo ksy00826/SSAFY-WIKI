@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Space, Alert, Tooltip } from "antd";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 import { FormOutlined, WarningTwoTone } from "@ant-design/icons";
 
@@ -20,6 +20,11 @@ const Content = () => {
   const [modifiedAt, setModifedAt] = React.useState("");
   const [modifyCnt, setModifyCnt] = React.useState(0);
   const navigate = useNavigate();
+  
+  const location = useLocation();
+  const state = location != null ? location.state : null;
+  const queryParams = location != null ? location.search != null ? new URLSearchParams(location.search) : null : null;
+
 
   // 처음 랜더링시 내용 가져오기
   React.useEffect(() => {
@@ -45,13 +50,14 @@ const Content = () => {
 
   return (
     <div>
-      <h1>{title}</h1>
+      <h1>{title} {state != null && <small style={{fontWeight: "normal"}}>(r{queryParams.get("rev")} 판)</small>}</h1>
       <DocsNav current="content" />
       <Card
         style={{
           textAlign: "left",
         }}
       >
+        
         <div className={styles.contentHeader}>
           <Space>
             <p>마지막 수정일: {modifiedAt}</p>
