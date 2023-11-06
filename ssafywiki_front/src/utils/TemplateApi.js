@@ -12,13 +12,54 @@ export const getTemplate = async (page, isMyTemplate) => {
   }
 };
 
-export const getTemplateDetail = async (id) => {
-  const dummyData = {
-    templateId: 1,
-    title: "title1",
-    content: "content1",
-    secret: false,
-  };
+export const getTemplateDetail = async (templateId) => {
+  try {
+    const response = await axiosInstance.get(
+      `/api/docs/template/${templateId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
 
-  return dummyData;
+export const searchTemplateWithKeyword = async (
+  page,
+  isMyTemplate,
+  keyword
+) => {
+  try {
+    const response = await axiosInstanceWithLogin.get(
+      `/api/docs/template/search?isMyTemplate=${isMyTemplate}&keyword=${keyword}&page=${page}&size=5`
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getTemplateList = async (page, isMyTemplate, keyword) => {
+  if (keyword === "") {
+    try {
+      const response = await axiosInstanceWithLogin.get(
+        `/api/docs/template?isMyTemplate=${isMyTemplate}&page=${page}&size=5`
+      );
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  } else {
+    try {
+      const response = await axiosInstanceWithLogin.get(
+        `/api/docs/template/search?isMyTemplate=${isMyTemplate}&keyword=${keyword}&page=${page}&size=5`
+      );
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 };
