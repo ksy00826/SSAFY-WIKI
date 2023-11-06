@@ -37,9 +37,12 @@ public class UserController {
     private final RevisionMapper revisionMapper;
 
     @GetMapping("/info")
-    public ResponseEntity<UserDto.Registration> getUserInfo(@AuthenticationPrincipal User user) {
+    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal User user) {
+        if(user.equals(null)) {
+            return ResponseEntity.ok("false");
+        }
         UserDto.Registration response = userService.checkUserInfo(user.getId());
-        return ResponseEntity.ok(null);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/info")
@@ -51,11 +54,11 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
     @GetMapping("/info/contributeDocs")
-    public ResponseEntity<List<RevisionDto.Version>> contributeDocs(
+    public ResponseEntity<List<RevisionDto.DocsResponse>> contributeDocs(
             @AuthenticationPrincipal User user){
 
-        List<RevisionDto.Version> revisions = revisionService.getUserHistory(user.getId());
-        return new ResponseEntity(revisionMapper, HttpStatus.OK);
+        List<RevisionDto.DocsResponse> revisions = revisionService.getUserHistory(user.getId());
+        return new ResponseEntity(revisions, HttpStatus.OK);
     }
 //    @GetMapping("/info/contributeDocs")
 //    public ResponseEntity<?> getContributeDocs(@AuthenticationPrincipal User user) {

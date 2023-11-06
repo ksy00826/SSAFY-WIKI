@@ -4,12 +4,16 @@ import com.bdos.ssafywiki.diff.Conflict;
 import com.bdos.ssafywiki.diff.Diff;
 import com.bdos.ssafywiki.diff.DiffMatchPatch;
 import com.bdos.ssafywiki.diff.MergeResult;
+import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
+import com.bdos.ssafywiki.discussion.entity.Discussion;
+import com.bdos.ssafywiki.discussion.mapper.DiscussionMapper;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.exception.BusinessLogicException;
 import com.bdos.ssafywiki.exception.ExceptionCode;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import com.bdos.ssafywiki.revision.entity.Content;
 import com.bdos.ssafywiki.revision.entity.Revision;
+import com.bdos.ssafywiki.revision.mapper.RevisionMapper;
 import com.bdos.ssafywiki.revision.repository.ContentRepository;
 import com.bdos.ssafywiki.revision.repository.RevisionRepository;
 import com.bdos.ssafywiki.user.entity.User;
@@ -53,9 +57,18 @@ public class RevisionService {
         return revisionRepository.findByDocumentIdAndNumber(docsId, revNumber);
     }
 
-    public List<RevisionDto.Version> getUserHistory(long userId) {
+    public List<RevisionDto.DocsResponse> getUserHistory(long userId) {
 
-        return revisionRepository.findAllByUser(userId);
+        List<Revision> revisionList = revisionRepository.findAllByUser(userId);
+        List<RevisionDto.DocsResponse> responseList = new ArrayList<>();
+        for (Revision revision : revisionList) {
+            RevisionDto.DocsResponse revisionDto = RevisionDto.DocsResponse.builder()
+                    .title(revision.getDocument().getTitle())
+                    .createdAt(revision.getCreatedAt())
+                    .build();
+            responseList.add(revisionDto);
+        }
+        return responseList;
     }
 
     @Transactional
