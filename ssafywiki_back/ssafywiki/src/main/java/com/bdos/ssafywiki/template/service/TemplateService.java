@@ -57,14 +57,14 @@ public class TemplateService {
         templateRepository.delete(template);
     }
 
-    public List<TemplateDto.Preview> searchTemplate(String keyword, boolean isMyTemplate, Pageable pageable) {
+    public List<TemplateDto.Preview> searchTemplate(String keyword, boolean isMyTemplate, Pageable pageable, User user) {
         Page<Template> templateList = null;
         if (isMyTemplate){
             //임시 : JWT
-            templateList = templateRepository.findAllWithAuthorAndKeyword(keyword, 1L, pageable);
+            templateList = templateRepository.findAllWithAuthorAndKeyword(keyword, user.getId(), pageable);
         }
         else{
-            templateList = templateRepository.findAllWithNotAuthorAndKeyword(keyword, 1L, pageable);
+            templateList = templateRepository.findAllWithNotAuthorAndKeyword(keyword, user.getId(), pageable);
         }
         return templateMapper.toPreviewList(templateList.getContent());
     }
