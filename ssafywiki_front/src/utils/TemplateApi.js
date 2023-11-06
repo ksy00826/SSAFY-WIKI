@@ -1,9 +1,9 @@
 import { axiosInstance, axiosInstanceWithLogin } from "./AxiosConfig";
 
-export const getTemplate = async (page) => {
+export const getTemplate = async (page, isMyTemplate) => {
   try {
     const response = await axiosInstanceWithLogin.get(
-      `/api/docs/template?isMyTemplate=true&page=${page}&size=5`
+      `/api/docs/template?isMyTemplate=${isMyTemplate}&page=${page}&size=5`
     );
     return response.data;
   } catch (error) {

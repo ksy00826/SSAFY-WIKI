@@ -1,10 +1,19 @@
 import React from "react";
-import { Button, Modal, Card, Input, Row, Col, List, Skeleton } from "antd";
+import { AndroidOutlined, AppleOutlined } from "@ant-design/icons";
+import {
+  Button,
+  Modal,
+  Card,
+  Input,
+  Row,
+  Col,
+  List,
+  Skeleton,
+  Tabs,
+} from "antd";
 import MarkdownRenderer from "components/Common/MarkDownRenderer";
 
 import { getTemplate, getTemplateDetail } from "utils/TemplateApi";
-
-// const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`;
 
 const SearchTemplete = ({ next }) => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -13,9 +22,11 @@ const SearchTemplete = ({ next }) => {
 
   const [initLoading, setInitLoading] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
-  const [data, setData] = React.useState([]);
-  const [list, setList] = React.useState([]);
-  const [count, setCount] = React.useState(0);
+  const [templateData, setData] = React.useState([]);
+  const [templateList, setList] = React.useState([]);
+  const [pageNum, setPageNum] = React.useState(0);
+
+  const [activeKey, setActiveKey] = React.useState(1);
 
   const makeTemplate = () => {
     console.log("make로 이동");
@@ -33,41 +44,42 @@ const SearchTemplete = ({ next }) => {
 
   // 첫 랜더링시 초기 템플릿 가져오기
   React.useEffect(() => {
-    getTemplate(count).then((res) => {
-      setCount(count + 1);
+    getTemplate(pageNum, activeKey == 1 ? true : false).then((res) => {
+      setPageNum(pageNum + 1);
       setData(res);
       setList(res);
       setInitLoading(false);
     });
   }, []);
 
+  //탭 바꾸면 템플릿 가져오기
+  const changeTap = (key) => {
+    console.log("key", key);
+    getTemplate(0, key == 1 ? true : false).then((res) => {
+      setPageNum(1); //페이지 초기화
+      setData(res);
+      setList(res);
+      setInitLoading(false);
+    });
+    setActiveKey(key);
+    console.log("change", activeKey);
+  };
+
   const onLoadMore = () => {
     setLoading(true);
     setList(
-      data.concat(
-        [...new Array(count * 2)].map(() => ({
+      templateData.concat(
+        [...new Array(pageNum * 2)].map(() => ({
           loading: true,
           name: {},
           picture: {},
         }))
       )
     );
-    // fetch(fakeDataUrl)
-    //   .then((res) => res.json())
-    //   .then((res) => {
-    //     const newData = data.concat(res.results);
-    //     setData(newData);
-    //     setList(newData);
-    //     setLoading(false);
-    //     // Resetting window's offsetTop so as to display react-virtualized demo underfloor.
-    //     // In real scene, you can using public method of react-virtualized:
-    //     // https://stackoverflow.com/questions/46700726/how-to-use-public-method-updateposition-of-react-virtualized
-    //     window.dispatchEvent(new Event("resize"));
-    //   });
 
-    getTemplate(count).then((res) => {
-      const newData = data.concat(res);
-      setCount(count + 1);
+    getTemplate(pageNum, activeKey == 1 ? true : false).then((res) => {
+      const newData = templateData.concat(res);
+      setPageNum(pageNum + 1);
       setData(newData);
       setList(newData);
       setLoading(false);
@@ -114,28 +126,48 @@ const SearchTemplete = ({ next }) => {
         </Col>
       </Row>
 
-      <List
-        className="demo-loadmore-list"
-        loading={initLoading}
-        itemLayout="horizontal"
-        loadMore={loadMore}
-        dataSource={list}
-        renderItem={(item) => (
-          <List.Item
-            actions={[
-              <a key="list-loadmore-show" onClick={showTemplate}>
-                미리보기
-              </a>,
-            ]}
-          >
-            <Skeleton title={false} loading={item.loading} active>
-              <List.Item.Meta
-                title={<a onClick={showTemplate}>{item.title}</a>}
-                description={item.author}
+      <Tabs
+        activeKey={activeKey}
+        defaultActiveKey="1"
+        onChange={changeTap}
+        items={[AppleOutlined, AndroidOutlined].map((Icon, i) => {
+          const taps = ["", "My Template", "Others"];
+          i++;
+          return {
+            label: (
+              <span>
+                <Icon />
+                {taps[i]}
+              </span>
+            ),
+            key: i,
+            children: (
+              <List
+                className="demo-loadmore-list"
+                loading={initLoading}
+                itemLayout="horizontal"
+                loadMore={loadMore}
+                dataSource={templateList}
+                renderItem={(item) => (
+                  <List.Item
+                    actions={[
+                      <a key="list-loadmore-show" onClick={showTemplate}>
+                        미리보기
+                      </a>,
+                    ]}
+                  >
+                    <Skeleton title={false} loading={item.loading} active>
+                      <List.Item.Meta
+                        title={<a onClick={showTemplate}>{item.title}</a>}
+                        description={item.author}
+                      />
+                    </Skeleton>
+                  </List.Item>
+                )}
               />
-            </Skeleton>
-          </List.Item>
-        )}
+            ),
+          };
+        })}
       />
 
       <Modal
