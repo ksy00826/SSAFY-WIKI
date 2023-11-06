@@ -17,3 +17,12 @@ export const compareVersions = async (oldrev, rev) => {
         throw err;
     }
 };
+
+export const getConflict = async () => {
+    try {
+        const response = await axiosInstance.get(`/api/version/merge`);
+        return response.data;
+    } catch (err) {
+        throw err;
+    }
+}
