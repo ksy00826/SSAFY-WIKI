@@ -4,8 +4,7 @@ import MarkdownRenderer from "components/Common/MarkDownRenderer";
 
 import { getTemplate, getTemplateDetail } from "utils/TemplateApi";
 
-const count = 3;
-const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`;
+// const fakeDataUrl = `https://randomuser.me/api/?results=${count}&inc=name,gender,email,nat,picture&noinfo`;
 
 const SearchTemplete = ({ next }) => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -16,6 +15,7 @@ const SearchTemplete = ({ next }) => {
   const [loading, setLoading] = React.useState(false);
   const [data, setData] = React.useState([]);
   const [list, setList] = React.useState([]);
+  const [count, setCount] = React.useState(0);
 
   const makeTemplate = () => {
     console.log("make로 이동");
@@ -33,15 +33,8 @@ const SearchTemplete = ({ next }) => {
 
   // 첫 랜더링시 초기 템플릿 가져오기
   React.useEffect(() => {
-    // 예제코드
-    // fetch(fakeDataUrl)
-    //   .then((res) => res.json())
-    //   .then((res) => {
-    //     setInitLoading(false);
-    //     setData(res.results);
-    //     setList(res.results);
-    //   });
-    getTemplate().then((res) => {
+    getTemplate(count).then((res) => {
+      setCount(count + 1);
       setData(res);
       setList(res);
       setInitLoading(false);
@@ -52,7 +45,7 @@ const SearchTemplete = ({ next }) => {
     setLoading(true);
     setList(
       data.concat(
-        [...new Array(count)].map(() => ({
+        [...new Array(count * 2)].map(() => ({
           loading: true,
           name: {},
           picture: {},
@@ -72,10 +65,12 @@ const SearchTemplete = ({ next }) => {
     //     window.dispatchEvent(new Event("resize"));
     //   });
 
-    getTemplate().then((res) => {
+    getTemplate(count).then((res) => {
       const newData = data.concat(res);
+      setCount(count + 1);
       setData(newData);
       setList(newData);
+      setLoading(false);
       setInitLoading(false);
       window.dispatchEvent(new Event("resize"));
     });
