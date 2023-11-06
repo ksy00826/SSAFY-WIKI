@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Col, Row, Space, Alert } from "antd";
+import { Card, Space, Alert, Tooltip } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
 
 import { FormOutlined, WarningTwoTone } from "@ant-design/icons";
@@ -55,8 +55,12 @@ const Content = () => {
         <div className={styles.contentHeader}>
           <Space>
             <p>마지막 수정일: {modifiedAt}</p>
-            <FormOutlined onClick={handleModify} />
-            <WarningTwoTone twoToneColor={red} onClick={handleReport} />
+            <Tooltip placement="bottom" title="문서 편집">
+              <FormOutlined onClick={handleModify} />
+            </Tooltip>
+            <Tooltip placement="bottom" title="신고하기">
+              <WarningTwoTone twoToneColor={red} onClick={handleReport} />
+            </Tooltip>
           </Space>
         </div>
         {modifyCnt > 0 ? (
