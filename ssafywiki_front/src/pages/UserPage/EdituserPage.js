@@ -18,7 +18,8 @@ import {
   Upload,
 } from "antd";
 import {
-  getUserProfile
+  getUserProfile,
+  editUserProfile
 } from "utils/UserApi";
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
@@ -30,9 +31,11 @@ const normFile = (e) => {
 };
 const EdituserPage = () => {
   // 처음 랜더링시 내용 가져오기
+  const [data, setData] = useState();
   React.useEffect(() => { 
     getUserProfile().then((response) => {
       console.log(response);
+      setData(response);
     });
   }, []);
 
@@ -70,6 +73,12 @@ const EdituserPage = () => {
             </Radio.Group>
           </Form.Item> */}
           <Form.Item label="아이디">
+            <Input disabled>${data.email}</Input>
+          </Form.Item>
+          <Form.Item label="닉네임">
+            <Input>data.nickname</Input>
+          </Form.Item>
+          <Form.Item label="소속캠퍼스">
             <Input disabled />
           </Form.Item>
           <Form.Item label="비밀번호">
@@ -78,15 +87,18 @@ const EdituserPage = () => {
           <Form.Item label="비밀번호 확인">
             <Input.Password placeholder="비밀번호 확인" />
           </Form.Item>
-          <Form.Item label="소속캠퍼스">
-            <Select>
+          <Form.Item label="회원종류">
+            <Input disabled />
+          </Form.Item>
+          {/* <Form.Item label="소속캠퍼스">
+            <Select disabled>
               <Select.Option value="부울경">부울경</Select.Option>
               <Select.Option value="서울">서울</Select.Option>
               <Select.Option value="구미">구미</Select.Option>
               <Select.Option value="광주">광주</Select.Option>
               <Select.Option value="대전">대전</Select.Option>
             </Select>
-          </Form.Item>
+          </Form.Item> */}
           {/* <Form.Item label="TreeSelect">
             <TreeSelect
               treeData={[
@@ -103,7 +115,7 @@ const EdituserPage = () => {
               ]}
             />
           </Form.Item> */}
-          <Form.Item label="Cascader">
+          {/* <Form.Item label="Cascader">
             <Cascader
               options={[
                 {
@@ -157,7 +169,7 @@ const EdituserPage = () => {
           </Form.Item>
           <Form.Item label="Slider">
             <Slider />
-          </Form.Item>
+          </Form.Item> */}
         </Form>
       </Layout>
     </Layout>
