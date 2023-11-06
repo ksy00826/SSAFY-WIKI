@@ -52,11 +52,10 @@ public class UserController {
     }
     @GetMapping("/info/contributeDocs")
     public ResponseEntity<List<RevisionDto.Version>> contributeDocs(
-            @PathVariable("user_id") long userId,
-            @PageableDefault(size = 30, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable){
+            @AuthenticationPrincipal User user){
 
-        Page<Revision> revisionPage = revisionService.getUserHistory(userId, pageable);
-        return new ResponseEntity(revisionMapper.toVersionPage(revisionPage), HttpStatus.OK);
+        List<RevisionDto.Version> revisions = revisionService.getUserHistory(user.getId());
+        return new ResponseEntity(revisionMapper, HttpStatus.OK);
     }
 //    @GetMapping("/info/contributeDocs")
 //    public ResponseEntity<?> getContributeDocs(@AuthenticationPrincipal User user) {
