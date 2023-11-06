@@ -104,3 +104,12 @@ export const checkSSAFYEmail = async (id) => {
     return error;
   }
 };
+
+export const getUserInfo = async () => {
+  try {
+    const response = await axiosInstanceWithLogin.get(`/api/user/userinfo`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
