@@ -63,6 +63,7 @@ public class RevisionService {
         List<RevisionDto.DocsResponse> responseList = new ArrayList<>();
         for (Revision revision : revisionList) {
             RevisionDto.DocsResponse revisionDto = RevisionDto.DocsResponse.builder()
+                    .docsId(revision.getId())
                     .title(revision.getDocument().getTitle())
                     .createdAt(revision.getCreatedAt())
                     .build();
