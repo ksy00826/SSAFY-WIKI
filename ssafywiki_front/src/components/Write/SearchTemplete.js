@@ -69,15 +69,6 @@ const SearchTemplete = ({ next }) => {
 
   const onLoadMore = () => {
     setLoading(true);
-    // setList(
-    //   templateData.concat(
-    //     [...new Array(pageNum * 2)].map(() => ({
-    //       loading: true,
-    //       name: {},
-    //       picture: {},
-    //     }))
-    //   )
-    // );
 
     getTemplate(pageNum, activeKey == 1 ? true : false).then((res) => {
       console.log(res == []);
