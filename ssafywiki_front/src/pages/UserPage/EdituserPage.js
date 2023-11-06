@@ -73,7 +73,7 @@ const EdituserPage = () => {
             </Radio.Group>
           </Form.Item> */}
           <Form.Item label="아이디">
-            <Input disabled>${data.email}</Input>
+            <Input disabled>{data.email}</Input>
           </Form.Item>
           <Form.Item label="닉네임">
             <Input>data.nickname</Input>
