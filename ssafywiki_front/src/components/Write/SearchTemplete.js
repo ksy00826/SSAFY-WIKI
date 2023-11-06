@@ -12,6 +12,7 @@ import {
   Tabs,
 } from "antd";
 import MarkdownRenderer from "components/Common/MarkDownRenderer";
+import { useNavigate } from "react-router-dom";
 
 import {
   getTemplate,
@@ -33,12 +34,11 @@ const SearchTemplete = ({ next }) => {
 
   const [activeKey, setActiveKey] = React.useState(1);
   const [searchKeyword, setSearchKeyword] = React.useState("");
+  const navigate = useNavigate();
 
   const makeTemplate = () => {
-    console.log("make로 이동");
-  };
-  const showModal = () => {
-    setIsModalOpen(true);
+    // console.log("make로 이동");
+    navigate(`/wrt/template`);
   };
   const handleOk = () => {
     setIsModalOpen(false);
