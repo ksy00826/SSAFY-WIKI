@@ -118,7 +118,7 @@ public class DocumentService {
         return revisionMapper.toResponse(revision);
     }
 
-    public RevisionDto.DocsResponse readDocs(Long docsId, User user) {
+    public RevisionDto.DocsResponse readDocs(Long docsId, Long revId, User user) {
         if(user == null) user = new GuestUser();
 
         //해당 문서 엔티티 찾기
@@ -140,7 +140,10 @@ public class DocumentService {
 
         // 권한이 있으면
         //docsId에 해당하는 가장 최신 버전의 문서를 찾아서 리턴 (revision 엔티티 찾기)
-        Revision revision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
+        Revision revision;
+        if(revId == null) revision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
+        else revision = revisionRepository.findByDocumentIdAndNumber(docsId, revId);
+
         return revisionMapper.toResponse(revision);
     }
 

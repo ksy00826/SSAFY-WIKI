@@ -52,11 +52,6 @@ public class RevisionService {
         return revisionRepository.findAllByDocumentJoinComment(docsId, pageable);
     }
 
-    public Revision getDetail(long docsId, long revNumber) {
-
-        return revisionRepository.findByDocumentIdAndNumber(docsId, revNumber);
-    }
-
     public List<RevisionDto.DocsResponse> getUserHistory(long userId) {
 
         List<Revision> revisionList = revisionRepository.findAllByUser(userId);
