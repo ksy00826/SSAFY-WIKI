@@ -32,9 +32,9 @@ public class DocumentController {
     }
 
     @Operation(summary = "문서 상세 조회하기", description = "문서 하나의 상세를 조회합니다.")
-    @GetMapping(value = {"/api/docs/{docsId}", "/api/docs/{docsId}/{revId}"})
+    @GetMapping("/api/docs/{docsId}")
     public ResponseEntity<RevisionDto.DocsResponse> readDocs(@PathVariable Long docsId,
-                                                             @PathVariable(required = false) Long revId,
+                                                             @RequestParam(required = false) Long revId,
                                                              @AuthenticationPrincipal User userDetails){
         RevisionDto.DocsResponse response = documentService.readDocs(docsId, revId, userDetails);
 
