@@ -87,7 +87,7 @@ const History = () => {
 
   return (
     <div>
-      <h1>{params.title} <small>(문서 역사)</small></h1>
+      <h1>{params.title} <small style={{fontWeight: "normal"}}>(문서 역사)</small></h1>
       <DocsNav current="history" />
       <Card>
         <div>History</div>
@@ -98,7 +98,7 @@ const History = () => {
         버전 비교
       </Button>
       <div>
-        <Timeline mode="left" items={timelineItems} />
+        <Timeline mode="left" items={historyData != null && timelineItems} />
         <Pagination
           current={currentPage}
           pageSize={pageSize}

@@ -1,6 +1,8 @@
 import { PlusOutlined } from "@ant-design/icons";
 import UserNavbar from "components/Common/UserNavbar";
 import React, { useState } from "react";
+import { LockOutlined } from "@ant-design/icons";
+import { openNotification } from "App";
 import {
   Layout,
   Button,
@@ -17,27 +19,47 @@ import {
   TreeSelect,
   Upload,
 } from "antd";
-import {
-  getUserProfile,
-  editUserProfile
-} from "utils/UserApi";
+import { getUserProfile, editUserProfile } from "utils/UserApi";
 const { RangePicker } = DatePicker;
 const { TextArea } = Input;
-const normFile = (e) => {
-  if (Array.isArray(e)) {
-    return e;
-  }
-  return e?.fileList;
-};
+
 const EdituserPage = () => {
   // 처음 랜더링시 내용 가져오기
-  const [data, setData] = useState();
-  React.useEffect(() => { 
+  const [email, setEmail] = React.useState("email");
+  const [nickname, setNickname] = React.useState("nickname");
+  const [campus, setCampus] = React.useState("campus");
+  const [name, setName] = React.useState("name");
+  const [number, setNumber] = React.useState("number");
+  const [password, setPassword] = React.useState("");
+  React.useEffect(() => {
     getUserProfile().then((response) => {
       console.log(response);
-      setData(response);
+      setEmail(response.email);
+      setNickname(response.nickname);
+      setCampus(response.campus);
+      setName(response.name);
+      setNumber(response.number);
     });
   }, []);
+
+  const handleNicknameChange = (e) => {
+    console.log(e.target.value);
+    setNickname(e.target.value);
+  };
+
+  const finish = (e) => {
+    const responseBody = {
+      nickname: nickname,
+      password: e.password,
+    };
+    console.log(responseBody);
+    editUserProfile(responseBody)
+      .then((response) => {
+        console.log(response);
+        openNotification("success", "회원정보 수정 완료");
+      })
+      .catch((e) => console.error(e.message));
+  };
 
   return (
     <Layout
@@ -47,7 +69,6 @@ const EdituserPage = () => {
     >
       <UserNavbar selectedKey="2"></UserNavbar>
       <Layout>
-        
         <Form
           labelCol={{
             span: 4,
@@ -59,117 +80,84 @@ const EdituserPage = () => {
           style={{
             maxWidth: 1200,
           }}
+          onFinish={finish}
+          autoComplete="off"
         >
-          {/* <Form.Item label="Checkbox" name="disabled" valuePropName="checked">
-            <Checkbox>Checkbox</Checkbox>
-          </Form.Item> */}
-          {/* <Form.Item label="소속 캠퍼스">
-            <Radio.Group>
-              <Radio value="부울경"> 부울경 </Radio>
-              <Radio value="서울"> 서울 </Radio>
-              <Radio value="광주"> 광주 </Radio>
-              <Radio value="대전"> 대전 </Radio>
-              <Radio value="구미"> 구미 </Radio>
-            </Radio.Group>
-          </Form.Item> */}
           <Form.Item label="아이디">
-            <Input disabled>{data.email}</Input>
+            <Input disabled placeholder={email}></Input>
           </Form.Item>
           <Form.Item label="닉네임">
-            <Input>data.nickname</Input>
+            <Input
+              autoComplete="false"
+              placeholder={nickname}
+              value={nickname}
+              onChange={handleNicknameChange}
+            ></Input>
           </Form.Item>
           <Form.Item label="소속캠퍼스">
-            <Input disabled />
-          </Form.Item>
-          <Form.Item label="비밀번호">
-            <Input.Password placeholder="비밀번호" />
-          </Form.Item>
-          <Form.Item label="비밀번호 확인">
-            <Input.Password placeholder="비밀번호 확인" />
-          </Form.Item>
-          <Form.Item label="회원종류">
-            <Input disabled />
-          </Form.Item>
-          {/* <Form.Item label="소속캠퍼스">
-            <Select disabled>
-              <Select.Option value="부울경">부울경</Select.Option>
-              <Select.Option value="서울">서울</Select.Option>
-              <Select.Option value="구미">구미</Select.Option>
-              <Select.Option value="광주">광주</Select.Option>
-              <Select.Option value="대전">대전</Select.Option>
-            </Select>
-          </Form.Item> */}
-          {/* <Form.Item label="TreeSelect">
-            <TreeSelect
-              treeData={[
-                {
-                  title: "Light",
-                  value: "light",
-                  children: [
-                    {
-                      title: "Bamboo",
-                      value: "bamboo",
-                    },
-                  ],
-                },
-              ]}
-            />
-          </Form.Item> */}
-          {/* <Form.Item label="Cascader">
-            <Cascader
-              options={[
-                {
-                  value: "zhejiang",
-                  label: "Zhejiang",
-                  children: [
-                    {
-                      value: "hangzhou",
-                      label: "Hangzhou",
-                    },
-                  ],
-                },
-              ]}
-            />
-          </Form.Item>
-          <Form.Item label="DatePicker">
-            <DatePicker />
-          </Form.Item>
-          <Form.Item label="RangePicker">
-            <RangePicker />
-          </Form.Item>
-          <Form.Item label="InputNumber">
-            <InputNumber />
-          </Form.Item>
-          <Form.Item label="TextArea">
-            <TextArea rows={4} />
-          </Form.Item>
-          <Form.Item label="Switch" valuePropName="checked">
-            <Switch />
+            <Input disabled placeholder={campus}></Input>
           </Form.Item>
           <Form.Item
-            label="Upload"
-            valuePropName="fileList"
-            getValueFromEvent={normFile}
+            // label="비밀번호"
+            name="password"
+            rules={[
+              {
+                required: true,
+                message: "비밀번호를 입력해주세요.",
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  let regex = new RegExp("^(?=.*[a-zA-Z])(?=.*[0-9]).{8,25}$");
+                  if (regex.test(value)) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("영문 숫자 조합 8자리 이상 입력해주세요.")
+                  );
+                },
+              }),
+            ]}
           >
-            <Upload action="/upload.do" listType="picture-card">
-              <div>
-                <PlusOutlined />
-                <div
-                  style={{
-                    marginTop: 8,
-                  }}
-                >
-                  Upload
-                </div>
-              </div>
-            </Upload>
+            <Input.Password
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              placeholder="비밀번호"
+            />
           </Form.Item>
-          <Form.Item label="Button">
-            <Button>Button</Button>
+
+          <Form.Item
+            // label="비밀번호"
+            name="password2"
+            rules={[
+              {
+                required: true,
+                message: "비밀번호를 입력해주세요.",
+              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("password") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("비밀번호를 일치시켜주세요.")
+                  );
+                },
+              }),
+            ]}
+          >
+            <Input.Password
+              prefix={<LockOutlined className="site-form-item-icon" />}
+              placeholder="비밀번호 확인"
+            />
           </Form.Item>
-          <Form.Item label="Slider">
-            <Slider />
-          </Form.Item> */}
+
+          <Form.Item label="학번">
+            <Input disabled placeholder={number} />
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              완료
+            </Button>
+          </Form.Item>
         </Form>
       </Layout>
     </Layout>
