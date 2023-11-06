@@ -53,13 +53,13 @@ public class RevisionController {
 
 
     @Operation(summary = "버전 되돌리기", description = "해당 버전으로 되돌립니다.")
-    @PostMapping("/revoke")
-    public ResponseEntity revokeVersion(
+    @PostMapping("/revert")
+    public ResponseEntity revertVersion(
             @AuthenticationPrincipal User user,
             @RequestParam(name = "select") long revId) {
 
         System.out.println(user);
-        revisionService.revokeVersion(user, revId);
+        revisionService.revertVersion(user, revId);
 
         return new ResponseEntity(HttpStatus.OK);
     }
