@@ -46,3 +46,12 @@ export const updateDocs = async (docs) => {
     throw error;
   }
 };
+
+export const getDocsVersionContent = async (docsId, revId) => {
+  try {
+    const response = await axiosInstanceWithLogin.get(`/api/docs/${docsId}?revId=${revId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
