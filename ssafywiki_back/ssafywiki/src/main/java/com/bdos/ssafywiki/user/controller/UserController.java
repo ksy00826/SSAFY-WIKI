@@ -9,6 +9,8 @@ import com.bdos.ssafywiki.revision.mapper.RevisionMapper;
 import com.bdos.ssafywiki.revision.service.RevisionService;
 import com.bdos.ssafywiki.user.dto.UserDto;
 import com.bdos.ssafywiki.user.entity.User;
+import com.bdos.ssafywiki.user.mapper.UserMapper;
+import com.bdos.ssafywiki.user.mapper.UserMapperImpl;
 import com.bdos.ssafywiki.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -32,10 +34,9 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final JwtTokenProvider jwtTokenProvider;
     private final RevisionService revisionService;
     private final RevisionMapper revisionMapper;
-
+    private final UserMapper userMapper;
     @GetMapping("/info")
     public ResponseEntity<UserDto.Registration> getUserInfo(@AuthenticationPrincipal User user) {
         UserDto.Registration response = userService.checkUserInfo(user.getEmail());
@@ -69,4 +70,8 @@ public class UserController {
         return new ResponseEntity(list, HttpStatus.OK);
     }
 
+    @GetMapping("/userinfo")
+    public ResponseEntity<?> getUserEmailAndId(@AuthenticationPrincipal User user) {
+        return new ResponseEntity<>(userMapper.toVersion(user), HttpStatus.OK);
+    }
 }

@@ -39,9 +39,8 @@ public class DiscussionController {
         System.out.println(token);
         User user = jwtTokenProvider.getUserByToken(token) ;
         log.info(user.toString());
-//        String nickname = userDetails.getUser().getNickname();
-        String nickname = user.getNickname();
-        discussionDto.setNickname(nickname);
+        discussionDto.setNickname(user.getNickname());
+        discussionDto.setEmail(user.getEmail());
         discussionDto.setCreatedAt(LocalDateTime.now().toString());
         System.out.println(discussionDto);
         redisPublisher.publish(discussionService.getTopic(discussionDto.getDocsId().toString()), discussionDto);

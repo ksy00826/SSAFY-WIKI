@@ -20,6 +20,7 @@ public class UserDto {
     public static class Version{
         private Long id;
         private String nickname;
+        private String email;
     }
 
     @Getter

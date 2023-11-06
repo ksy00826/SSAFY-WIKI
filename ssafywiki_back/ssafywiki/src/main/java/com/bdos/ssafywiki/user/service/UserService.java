@@ -23,6 +23,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final DiscussionRepository discussionRepository;
     private final PasswordEncoder passwordEncoder;
+    private final DiscussionMapper discussionMapper;
     public UserDto.Registration checkUserInfo(String name) {
         Optional<User> optionalUser = userRepository.findByEmail(name);
         if(optionalUser.isEmpty()){
@@ -57,7 +58,7 @@ public class UserService {
         List<Discussion> dbMessageList = discussionRepository.findAllByUser(user.getId());
         List<DiscussionDto> messageList = new ArrayList<>();
         for (Discussion discussion : dbMessageList) {
-            DiscussionDto discussionDto = DiscussionMapper.INSTANCE.toDto(discussion);
+            DiscussionDto discussionDto = discussionMapper.toDto(discussion);
             messageList.add(discussionDto);
         }
         return messageList;
