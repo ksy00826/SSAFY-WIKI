@@ -12,17 +12,21 @@ import {
   Tabs,
 } from "antd";
 import MarkdownRenderer from "components/Common/MarkDownRenderer";
+import { useNavigate } from "react-router-dom";
 
 import {
   getTemplate,
   getTemplateDetail,
   getTemplateList,
+  deleteTemplate,
 } from "utils/TemplateApi";
+// import { openNotification } from "App";
 
 const SearchTemplete = ({ next }) => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [templateContent, setTemplateContent] = React.useState("# 내용");
   const [templateTitle, setTemplateTitle] = React.useState("타이틀");
+  const [templateId, setTemplateId] = React.useState("템플릿 아이디");
 
   const [initLoading, setInitLoading] = React.useState(true);
   const [loading, setLoading] = React.useState(false);
@@ -33,12 +37,11 @@ const SearchTemplete = ({ next }) => {
 
   const [activeKey, setActiveKey] = React.useState(1);
   const [searchKeyword, setSearchKeyword] = React.useState("");
+  const navigate = useNavigate();
 
   const makeTemplate = () => {
-    console.log("make로 이동");
-  };
-  const showModal = () => {
-    setIsModalOpen(true);
+    // console.log("make로 이동");
+    navigate(`/wrt/template`);
   };
   const handleOk = () => {
     setIsModalOpen(false);
@@ -46,6 +49,21 @@ const SearchTemplete = ({ next }) => {
   };
   const handleCancel = () => {
     setIsModalOpen(false);
+  };
+  const handleDelete = () => {
+    setIsModalOpen(false);
+
+    console.log("delete", templateId);
+    deleteTemplate(templateId).then(() => {
+      window.location.reload();
+      // setTimeout(() => {
+      //   openNotification(
+      //     "success",
+      //     "템플릿 삭제 완료",
+      //     `${templateTitle} 템플릿이 삭제되었습니다.`
+      //   );
+      // }, 5000);
+    });
   };
 
   // 첫 랜더링시 초기 템플릿 가져오기
@@ -118,6 +136,7 @@ const SearchTemplete = ({ next }) => {
     console.log(templateId);
     getTemplateDetail(templateId).then((res) => {
       console.log(res);
+      setTemplateId(res.templateId);
       setTemplateTitle(res.title);
       setTemplateContent(res.content);
       setIsModalOpen(true);
@@ -240,11 +259,7 @@ const SearchTemplete = ({ next }) => {
                   >
                     <Skeleton title={false} loading={item.loading} active>
                       <List.Item.Meta
-                        title={
-                          <a onClick={() => showTemplate(item.templateId)}>
-                            {item.title}
-                          </a>
-                        }
+                        title={<a onClick={showTemplate}>{item.title}</a>}
                         description={item.author}
                       />
                     </Skeleton>
@@ -261,14 +276,22 @@ const SearchTemplete = ({ next }) => {
         open={isModalOpen}
         onOk={handleOk}
         onCancel={handleCancel}
-        footer={[
-          <Button key="back" onClick={handleCancel}>
-            취소
-          </Button>,
-          <Button key="submit" type="primary" onClick={handleOk}>
-            선택
-          </Button>,
-        ]}
+        footer={
+          activeKey === 1
+            ? [
+                <Button type="primary" danger onClick={handleDelete}>
+                  삭제
+                </Button>,
+                <Button key="submit" type="primary" onClick={handleOk}>
+                  선택
+                </Button>,
+              ]
+            : [
+                <Button key="submit" type="primary" onClick={handleOk}>
+                  선택
+                </Button>,
+              ]
+        }
       >
         <Card>
           <MarkdownRenderer content={templateContent} />
