@@ -23,8 +23,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final DiscussionRepository discussionRepository;
     private final PasswordEncoder passwordEncoder;
-    public UserDto.Registration checkUserInfo(String name) {
-        Optional<User> optionalUser = userRepository.findByEmail(name);
+    public UserDto.Registration checkUserInfo(Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
         if(optionalUser.isEmpty()){
             return null;
         }
