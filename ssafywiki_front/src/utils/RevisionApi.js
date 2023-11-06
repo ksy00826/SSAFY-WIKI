@@ -1,8 +1,9 @@
-import { axiosInstance } from "./AxiosConfig";
+import { async } from "q";
+import { axiosInstance, axiosInstanceWithLogin } from "./AxiosConfig";
 
 export const getHistory = async (docsId, page, size) => {
     try {
-        const response = await axiosInstance.get(`/api/version/${docsId}?page=${page}&size=${size}`);
+        const response = await axiosInstanceWithLogin.get(`/api/version/${docsId}?page=${page}&size=${size}`);
         return response.data;
     } catch (err) {
         throw err;
@@ -11,18 +12,27 @@ export const getHistory = async (docsId, page, size) => {
 
 export const compareVersions = async (oldrev, rev) => {
     try {
-        const response = await axiosInstance.get(`/api/version/compare?rev=${rev}&oldrev=${oldrev}`);
+        const response = await axiosInstanceWithLogin.get(`/api/version/compare?rev=${rev}&oldrev=${oldrev}`);
         return response.data;
     } catch (err) {
         throw err;
     }
 };
 
-export const getConflict = async () => {
+export const revertVersion = async (revId) => {
     try {
-        const response = await axiosInstance.get(`/api/version/merge`);
+        const response = await axiosInstanceWithLogin.get(`/api/version/revert?select=${revId}`);
         return response.data;
     } catch (err) {
         throw err;
     }
 }
+
+export const getConflict = async () => {
+    try {
+        const response = await axiosInstanceWithLogin.get(`/api/version/merge`);
+        return response.data;
+    } catch (err) {
+        throw err;
+    }
+};
