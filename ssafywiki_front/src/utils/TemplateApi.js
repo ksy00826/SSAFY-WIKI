@@ -22,3 +22,43 @@ export const getTemplateDetail = async (id) => {
 
   return dummyData;
 };
+
+export const searchTemplateWithKeyword = async (
+  page,
+  isMyTemplate,
+  keyword
+) => {
+  try {
+    const response = await axiosInstanceWithLogin.get(
+      `/api/docs/template/search?isMyTemplate=${isMyTemplate}&keyword=${keyword}&page=${page}&size=5`
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+export const getTemplateList = async (page, isMyTemplate, keyword) => {
+  if (keyword === "") {
+    try {
+      const response = await axiosInstanceWithLogin.get(
+        `/api/docs/template?isMyTemplate=${isMyTemplate}&page=${page}&size=5`
+      );
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  } else {
+    try {
+      const response = await axiosInstanceWithLogin.get(
+        `/api/docs/template/search?isMyTemplate=${isMyTemplate}&keyword=${keyword}&page=${page}&size=5`
+      );
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+};
