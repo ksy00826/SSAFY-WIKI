@@ -4,6 +4,7 @@ import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import com.bdos.ssafywiki.revision.entity.Revision;
 import com.bdos.ssafywiki.revision.mapper.RevisionMapper;
 import com.bdos.ssafywiki.revision.service.RevisionService;
+import com.bdos.ssafywiki.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -49,23 +51,15 @@ public class RevisionController {
 //        return new ResponseEntity(revisionService.diffTest(), HttpStatus.OK);
     }
 
-    @Operation(summary = "버전 디테일", description = "해당 버전의 내용을 확인합니다.")
-    @GetMapping("/{docs_id}/{rev_number}")
-    public ResponseEntity<RevisionDto.Detail> getDetail(
-            @PathVariable("docs_id") long docsId,
-            @PathVariable("rev_number") long revNumber) {
-
-        Revision revision = revisionService.getDetail(docsId, revNumber);
-
-        return new ResponseEntity(revisionMapper.toDetail(revision), HttpStatus.OK);
-    }
 
     @Operation(summary = "버전 되돌리기", description = "해당 버전으로 되돌립니다.")
-    @PostMapping("/revoke")
-    public ResponseEntity revokeVersion(
+    @PostMapping("/revert")
+    public ResponseEntity revertVersion(
+            @AuthenticationPrincipal User user,
             @RequestParam(name = "select") long revId) {
 
-        revisionService.revokeVersion(revId);
+        System.out.println(user);
+        revisionService.revertVersion(user, revId);
 
         return new ResponseEntity(HttpStatus.OK);
     }

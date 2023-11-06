@@ -21,6 +21,6 @@ public interface RevisionRepository extends JpaRepository<Revision, Long> {
     Revision findByDocumentIdAndNumber(Long docsId, Long number);
 
     @Query(value = "SELECT r FROM Revision r WHERE r.user.id = :userId")
-    List<RevisionDto.Version> findAllByUser(Long userId);
+    List<Revision> findAllByUser(Long userId);
 
 }

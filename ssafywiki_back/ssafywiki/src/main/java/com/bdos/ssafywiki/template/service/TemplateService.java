@@ -1,6 +1,5 @@
 package com.bdos.ssafywiki.template.service;
 
-import com.bdos.ssafywiki.configuration.jwt.CustomUserDetails;
 import com.bdos.ssafywiki.exception.BusinessLogicException;
 import com.bdos.ssafywiki.exception.ExceptionCode;
 import com.bdos.ssafywiki.template.dto.TemplateDto;
@@ -9,11 +8,9 @@ import com.bdos.ssafywiki.template.mapper.TemplateMapper;
 import com.bdos.ssafywiki.template.repository.TemplateRepository;
 import com.bdos.ssafywiki.user.entity.User;
 import com.bdos.ssafywiki.user.repository.UserRepository;
-import com.bdos.ssafywiki.util.UserUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -60,14 +57,14 @@ public class TemplateService {
         templateRepository.delete(template);
     }
 
-    public List<TemplateDto.Preview> searchTemplate(String keyword, boolean isMyTemplate, Pageable pageable) {
+    public List<TemplateDto.Preview> searchTemplate(String keyword, boolean isMyTemplate, Pageable pageable, User user) {
         Page<Template> templateList = null;
         if (isMyTemplate){
             //임시 : JWT
-            templateList = templateRepository.findAllWithAuthorAndKeyword(keyword, 1L, pageable);
+            templateList = templateRepository.findAllWithAuthorAndKeyword(keyword, user.getId(), pageable);
         }
         else{
-            templateList = templateRepository.findAllWithNotAuthorAndKeyword(keyword, 1L, pageable);
+            templateList = templateRepository.findAllWithNotAuthorAndKeyword(keyword, user.getId(), pageable);
         }
         return templateMapper.toPreviewList(templateList.getContent());
     }
