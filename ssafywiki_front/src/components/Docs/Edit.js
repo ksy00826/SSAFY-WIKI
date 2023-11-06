@@ -67,9 +67,6 @@ const Edit = () => {
 
   return (
     <div>
-      <h1>{title}</h1>
-      <DocsNav current="edit" />
-
       <Card>
         {errmsg === "" ? (
           <></>
@@ -78,6 +75,7 @@ const Edit = () => {
         )}
 
         <WriteForm
+          title={title}
           content={content}
           setContent={setContent}
           disabled={disabled}
