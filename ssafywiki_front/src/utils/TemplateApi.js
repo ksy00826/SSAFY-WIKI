@@ -63,3 +63,17 @@ export const getTemplateList = async (page, isMyTemplate, keyword) => {
     }
   }
 };
+
+export const createTemplate = async (template) => {
+  console.log(template);
+  try {
+    const response = await axiosInstanceWithLogin.post(
+      `/api/docs/template`,
+      template
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
