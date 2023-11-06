@@ -38,7 +38,7 @@ public class UserController {
 
     @GetMapping("/info")
     public ResponseEntity<UserDto.Registration> getUserInfo(@AuthenticationPrincipal User user) {
-        UserDto.Registration response = userService.checkUserInfo(user.getEmail());
+        UserDto.Registration response = userService.checkUserInfo(user.getId());
         return ResponseEntity.ok(response);
     }
 
