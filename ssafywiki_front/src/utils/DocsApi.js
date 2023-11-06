@@ -1,8 +1,17 @@
-import { axiosInstance } from "./AxiosConfig";
+import { axiosInstance, axiosInstanceWithLogin } from "./AxiosConfig";
 
 export const getDocsContent = async (id) => {
   try {
-    const response = await axiosInstance.get(`/api/docs/${id}`);
+    const response = await axiosInstanceWithLogin.get(`/api/docs/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUpdateContent = async (id) => {
+  try {
+    const response = await axiosInstanceWithLogin.get(`/api/docs/update/${id}`);
     return response.data;
   } catch (error) {
     throw error;
@@ -11,7 +20,7 @@ export const getDocsContent = async (id) => {
 
 export const createDocs = async (docs) => {
   try {
-    const response = await axiosInstance.post(`/api/docs`, docs);
+    const response = await axiosInstanceWithLogin.post(`/api/docs`, docs);
     return response.data;
   } catch (error) {
     throw error;
@@ -20,7 +29,18 @@ export const createDocs = async (docs) => {
 
 export const getDiscussList = async (docsId) => {
   try {
-    const response = await axiosInstance.get(`/api/chatlist/${docsId}`);
+    const response = await axiosInstanceWithLogin.get(
+      `/api/chatlist/${docsId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const updateDocs = async (docs) => {
+  try {
+    const response = await axiosInstanceWithLogin.put(`/api/docs`, docs);
     return response.data;
   } catch (error) {
     throw error;
