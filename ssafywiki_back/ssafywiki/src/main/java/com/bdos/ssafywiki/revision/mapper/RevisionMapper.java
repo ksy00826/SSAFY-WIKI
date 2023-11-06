@@ -19,7 +19,7 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface RevisionMapper {
 
-    default RevisionDto.Response toResponse(Revision revision){
+    default RevisionDto.DocsResponse toResponse(Revision revision){
         List<CategoryDto.Detail> categoryList = new ArrayList<>();
         for (DocsCategory docsCategory : revision.getDocument().getCategoryList()){
             Category category = docsCategory.getCategory();
@@ -29,17 +29,34 @@ public interface RevisionMapper {
             categoryList.add(detail);
         }
 
-        RevisionDto.Response response = RevisionDto.Response.builder()
+        RevisionDto.DocsResponse response = RevisionDto.DocsResponse.builder()
                 .categoryList(categoryList)
                 .docsId(revision.getDocument().getId())
                 .author(revision.getDocument().getUser().getName())
                 .title(revision.getDocument().getTitle())
                 .content(revision.getContent().getText())
-                .deleted(revision.getDocument().isDeleted())
                 .createdAt(revision.getDocument().getCreatedAt())
                 .modifiedAt(revision.getModifiedAt())
-                .readAuth(revision.getDocument().getReadAuth())
-                .writeAuth(revision.getDocument().getWriteAuth())
+                .build();
+
+        return response;
+    }
+
+    default RevisionDto.CheckUpdateResponse toCheckUpdateResponse(Revision revision, boolean canUpdate) {
+        List<CategoryDto.Detail> categoryList = new ArrayList<>();
+        for (DocsCategory docsCategory : revision.getDocument().getCategoryList()){
+            Category category = docsCategory.getCategory();
+            CategoryDto.Detail detail = CategoryDto.Detail.builder()
+                    .categoryId(category.getId())
+                    .categoryName(category.getName()).build();
+            categoryList.add(detail);
+        }
+        RevisionDto.CheckUpdateResponse response = RevisionDto.CheckUpdateResponse.builder()
+                .categoryList(categoryList)
+                .docsId(revision.getDocument().getId())
+                .title(revision.getDocument().getTitle())
+                .content(revision.getContent().getText())
+                .canUpdate(canUpdate)
                 .build();
 
         return response;

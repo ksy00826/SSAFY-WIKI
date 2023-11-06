@@ -4,12 +4,12 @@ import com.bdos.ssafywiki.discussion.service.DiscussionService;
 import com.bdos.ssafywiki.document.dto.DocumentDto;
 import com.bdos.ssafywiki.document.service.DocumentService;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
-import com.bdos.ssafywiki.user.entity.CurrentUser;
 import com.bdos.ssafywiki.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -22,26 +22,36 @@ public class DocumentController {
     private final DiscussionService discussionService;
     @Operation(summary = "문서 작성하기", description = "문서 하나를 작성합니다.")
     @PostMapping("/api/docs")
-    public ResponseEntity<RevisionDto.Response> writeDocs(@RequestBody DocumentDto.Post post){
-        RevisionDto.Response response = documentService.writeDocs(post);
+    public ResponseEntity<RevisionDto.DocsResponse> writeDocs(@RequestBody DocumentDto.Post post,
+                                                              @AuthenticationPrincipal User userDetails){
+        RevisionDto.DocsResponse response = documentService.writeDocs(post, userDetails);
 
         return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "문서 상세 조회하기", description = "문서 하나의 상세를 조회합니다.")
     @GetMapping("/api/docs/{docsId}")
-    public ResponseEntity<RevisionDto.Response> readDocs(@PathVariable Long docsId,
-                                                         @CurrentUser User userDetails){
+    public ResponseEntity<RevisionDto.DocsResponse> readDocs(@PathVariable Long docsId,
+                                                             @AuthenticationPrincipal User userDetails){
         discussionService.enterChatRoom(docsId.toString());
-        RevisionDto.Response response = documentService.readDocs(docsId, userDetails);
+        RevisionDto.DocsResponse response = documentService.readDocs(docsId, userDetails);
 
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "문서 수정 권한 체크", description = "문서 하나의 수정 권한이 있는지 여부를 확인합니다.")
+    @GetMapping("/api/docs/update/{docsId}")
+    public ResponseEntity<RevisionDto.CheckUpdateResponse> checkUpdateDocs(@PathVariable Long docsId,
+                                                                           @AuthenticationPrincipal User userDetails){
+        RevisionDto.CheckUpdateResponse response = documentService.checkUpdateDocs(docsId, userDetails);
         return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "문서 수정하기", description = "문서 하나를 수정합니다.")
     @PutMapping("/api/docs")
-    public ResponseEntity<RevisionDto.Response> updateDocs(@RequestBody DocumentDto.Put put){
-        RevisionDto.Response response = documentService.updateDocs(put);
+    public ResponseEntity<RevisionDto.DocsResponse> updateDocs(@RequestBody DocumentDto.Put put,
+                                                               @AuthenticationPrincipal User userDetails){
+        RevisionDto.DocsResponse response = documentService.updateDocs(put, userDetails);
 
         return ResponseEntity.ok(response);
     }
