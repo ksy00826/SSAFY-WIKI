@@ -12,15 +12,16 @@ export const getTemplate = async (page, isMyTemplate) => {
   }
 };
 
-export const getTemplateDetail = async (id) => {
-  const dummyData = {
-    templateId: 1,
-    title: "title1",
-    content: "content1",
-    secret: false,
-  };
-
-  return dummyData;
+export const getTemplateDetail = async (templateId) => {
+  try {
+    const response = await axiosInstance.get(
+      `/api/docs/template/${templateId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
 
 export const searchTemplateWithKeyword = async (

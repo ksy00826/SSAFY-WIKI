@@ -114,8 +114,10 @@ const SearchTemplete = ({ next }) => {
     );
   };
 
-  const showTemplate = (id) => {
-    getTemplateDetail(id).then((res) => {
+  const showTemplate = (templateId) => {
+    console.log(templateId);
+    getTemplateDetail(templateId).then((res) => {
+      console.log(res);
       setTemplateTitle(res.title);
       setTemplateContent(res.content);
       setIsModalOpen(true);
@@ -207,14 +209,21 @@ const SearchTemplete = ({ next }) => {
                 renderItem={(item) => (
                   <List.Item
                     actions={[
-                      <a key="list-loadmore-show" onClick={showTemplate}>
+                      <a
+                        key="list-loadmore-show"
+                        onClick={() => showTemplate(item.templateId)}
+                      >
                         미리보기
                       </a>,
                     ]}
                   >
                     <Skeleton title={false} loading={item.loading} active>
                       <List.Item.Meta
-                        title={<a onClick={showTemplate}>{item.title}</a>}
+                        title={
+                          <a onClick={() => showTemplate(item.templateId)}>
+                            {item.title}
+                          </a>
+                        }
                         description={item.author}
                       />
                     </Skeleton>
