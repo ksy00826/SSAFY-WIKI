@@ -144,6 +144,26 @@ const SearchTemplete = ({ next }) => {
 
     setSearchKeyword(value);
   };
+  const changeKeyword = (e) => {
+    console.log(e.target.value);
+    const value = e.target.value;
+    getTemplateList(0, activeKey == 1 ? true : false, value).then((res) => {
+      // const newData = templateData.concat(res);
+      setPageNum(1);
+      setData(res);
+      setList(res);
+      setLastPage(false);
+      setLoading(false);
+      console.log(res);
+
+      getTemplateList(1, activeKey == 1 ? true : false, value).then((res2) => {
+        console.log(res2.length == 0);
+        if (res2.length == 0) setLastPage(true);
+      });
+    });
+
+    setSearchKeyword(value);
+  };
   //!initLoading && !loading &&
   const loadMore = !lastPage ? (
     <div
@@ -177,6 +197,7 @@ const SearchTemplete = ({ next }) => {
             placeholder="템플릿 검색"
             enterButton
             onSearch={onSearch}
+            onChange={changeKeyword}
           />
         </Col>
         <Col>
