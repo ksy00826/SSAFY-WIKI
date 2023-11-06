@@ -3,7 +3,10 @@ import * as StompJs from '@stomp/stompjs';
 import { getDiscussList } from "utils/DocsApi";
 import { useLocation } from 'react-router-dom';
 import cookie from "react-cookies";
-
+import styles from "./Discussion.module.css";
+import { getUserInfo } from "utils/UserApi";
+import { Button, Input, Space } from 'antd';
+import { WechatOutlined } from '@ant-design/icons'
 function Discussion() {
   const [chatList, setChatList] = useState([]);
   const [chat, setChat] = useState('');
@@ -11,9 +14,17 @@ function Discussion() {
   const location = useLocation();
   const client = useRef({});
   const token = cookie.load('token');
-
+  const scrollRef = useRef(null);
+  const [email, setEmail] = useState('');
   useEffect(() => {
     // URL 경로를 분석하여 docsId를 추출합니다.
+    if (token) {
+      getUserInfo().then((response) => {
+        setEmail(response.email);
+      })
+      console.error('인증 토큰이 누락되었습니다');
+    }
+    
     const match = location.pathname.match(/\/(history|edit|auth|content)\/(\d+)\/?/);
     if (match && match[2]) {
       const currentDocsId = parseInt(match[2], 10); // 현재 문서 ID를 추출합니다.
@@ -28,6 +39,24 @@ function Discussion() {
     return () => disconnect();
   }, [location]);
 
+
+  useEffect(() => {
+    // 채팅 목록의 변화를 감지하고 스크롤을 맨 아래로 이동시키는 함수
+    const scrollToBottom = () => {
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }
+    };
+
+    // 첫 마운트시 스크롤 맨 아래로 이동
+    scrollToBottom();
+
+    // 채팅 목록의 변화가 있을 때마다 스크롤을 맨 아래로 이동
+    const chatListLength = chatList.length;
+    if (chatListLength > 0) {
+      scrollToBottom();
+    }
+  }, [chatList]);
 
   const connect = () => {
 
@@ -59,7 +88,7 @@ function Discussion() {
 
   const publish = (chat) => {
     if (!client.current.connected || chat.length == 0) return;
-    console.log('pub', chat, docsId)
+    console.log('pub', chat, docsId, email);
     client.current.publish({
       destination: '/pub/chat',
       headers: { 'Authorization': `Bearer ${token}` },
@@ -67,7 +96,6 @@ function Discussion() {
         "nickname" : null,
         "docsId" : docsId,
         "content" : chat,
-        "createdAt" : null
       }),
     });
 
@@ -103,22 +131,53 @@ function Discussion() {
     publish(chat);
   };
   
+  const formatTime = (dateString, flag) => {
+    const date = new Date(dateString);
+    
 
-
+    // 한 자리 숫자일 경우 앞에 '0'을 붙여줌
+    if (flag === 'time') {
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      hours = hours < 10 ? `0${hours}` : hours;
+      minutes = minutes < 10 ? `0${minutes}` : minutes;
+    
+      return `${hours}:${minutes}`;
+    }else{
+      let year = date.getFullYear();
+      let month = date.getMonth();
+      let day = date.getDay();
+      day = day < 10 ? `0${day}` : day;
+      return `${year}-${month}-${day}`
+    }
+  };
   return (
-    <div>
-      <div className={'chat-list'}>
+    <div >
+      <div className={styles.ChatCard} ref={scrollRef}>
         {chatList.map((chatMessage, index) => (
-          <div key={index}>
-            <p>{chatMessage.nickname}: {chatMessage.content}</p>
+          <div key={index} >
+            
+            {(index === 0 || formatTime(chatList[index - 1].createdAt, 'date') !== formatTime(chatMessage.createdAt, 'date')) && (
+            <div className={styles.DateBox}><span className={styles.Date}>{formatTime(chatMessage.createdAt, 'date')}</span><hr/></div>
+              
+            )}
+            {(index === 0 || chatList[index - 1].nickname !== chatMessage.nickname) && (
+              <p className={email === chatMessage.email ? styles.NicknameRight : styles.Nickname}>{chatMessage.nickname}</p>
+            )}
+            <div className={email === chatMessage.email ? styles.DiscussionDivRight : styles.DiscussionDiv}>
+              <div className={email === chatMessage.email ? styles.DiscussionBoxRight : styles.DiscussionBox}>{chatMessage.content}</div>
+              <div className={styles.Time}>{formatTime(chatMessage.createdAt, 'time')}</div>
+            </div>
+            
+            
           </div>
         ))}
       </div>
       <form onSubmit={(event) => handleSubmit(event, chat)}>
-        <div>
-          <input type={'text'} name={'chatInput'} onChange={handleChange} value={chat} />
-        </div>
-        <input type={'submit'} value={'의견 보내기'} />
+        <Space.Compact style={{ width: '100%' }}>
+          <Input type={'text'} name={'chatInput'} onChange={handleChange} value={chat} />
+          <Button type="default" htmlType="submit"><WechatOutlined /></Button>
+        </Space.Compact>
       </form>
     </div>
   );
