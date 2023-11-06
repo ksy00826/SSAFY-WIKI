@@ -25,6 +25,7 @@ const SearchTemplete = ({ next }) => {
   const [templateData, setData] = React.useState([]);
   const [templateList, setList] = React.useState([]);
   const [pageNum, setPageNum] = React.useState(0);
+  const [lastPage, setLastPage] = React.useState(false);
 
   const [activeKey, setActiveKey] = React.useState(1);
 
@@ -59,32 +60,38 @@ const SearchTemplete = ({ next }) => {
       setPageNum(1); //페이지 초기화
       setData(res);
       setList(res);
-      setInitLoading(false);
+
+      //비동기적 실행
+      setActiveKey(key);
+      console.log("change", activeKey);
     });
-    setActiveKey(key);
-    console.log("change", activeKey);
   };
 
   const onLoadMore = () => {
     setLoading(true);
-    setList(
-      templateData.concat(
-        [...new Array(pageNum * 2)].map(() => ({
-          loading: true,
-          name: {},
-          picture: {},
-        }))
-      )
-    );
+    // setList(
+    //   templateData.concat(
+    //     [...new Array(pageNum * 2)].map(() => ({
+    //       loading: true,
+    //       name: {},
+    //       picture: {},
+    //     }))
+    //   )
+    // );
 
     getTemplate(pageNum, activeKey == 1 ? true : false).then((res) => {
+      console.log(res == []);
+      if (res == []) setLastPage(true);
       const newData = templateData.concat(res);
       setPageNum(pageNum + 1);
       setData(newData);
       setList(newData);
       setLoading(false);
-      setInitLoading(false);
       window.dispatchEvent(new Event("resize"));
+    });
+    getTemplate(pageNum + 1, activeKey == 1 ? true : false).then((res) => {
+      console.log(res == []);
+      if (res == []) setLastPage(true);
     });
   };
 
@@ -97,7 +104,7 @@ const SearchTemplete = ({ next }) => {
   };
 
   const loadMore =
-    !initLoading && !loading ? (
+    !initLoading && !loading && !lastPage ? (
       <div
         style={{
           textAlign: "center",
