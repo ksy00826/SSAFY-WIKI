@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, Pagination, Timeline, Radio, Button } from "antd";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { getHistory } from "utils/RevisionApi"
 import DocsNav from "./DocsNav";
 
@@ -62,6 +62,7 @@ const History = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           {item.createdAt}&nbsp;
+          {"( "}<Link to={`/res/content/${params.docsId}/${params.title}?rev=${item.number}`} state={{revId: item.id}}>보기</Link>{" | "}<Link to="">RAW</Link>{" | "}<Link>이 리비전으로 되돌리기</Link>{" ) "}
           <Radio.Group
             onChange={({ target }) => onSelectRevision(item, target.value)}
             value={selectedRevision.oldRev === item.id ? 'oldRev' : selectedRevision.rev === item.id ? 'rev' : null}
@@ -86,7 +87,7 @@ const History = () => {
 
   return (
     <div>
-      <h1>{params.title}</h1>
+      <h1>{params.title} <small style={{fontWeight: "normal"}}>(문서 역사)</small></h1>
       <DocsNav current="history" />
       <Card>
         <div>History</div>
@@ -97,7 +98,7 @@ const History = () => {
         버전 비교
       </Button>
       <div>
-        <Timeline mode="left" items={timelineItems} />
+        <Timeline mode="left" items={historyData != null && timelineItems} />
         <Pagination
           current={currentPage}
           pageSize={pageSize}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { AndroidOutlined, AppleOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -13,7 +13,11 @@ import {
 } from "antd";
 import MarkdownRenderer from "components/Common/MarkDownRenderer";
 
-import { getTemplate, getTemplateDetail } from "utils/TemplateApi";
+import {
+  getTemplate,
+  getTemplateDetail,
+  getTemplateList,
+} from "utils/TemplateApi";
 
 const SearchTemplete = ({ next }) => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -28,6 +32,7 @@ const SearchTemplete = ({ next }) => {
   const [lastPage, setLastPage] = React.useState(false);
 
   const [activeKey, setActiveKey] = React.useState(1);
+  const [searchKeyword, setSearchKeyword] = React.useState("");
 
   const makeTemplate = () => {
     console.log("make로 이동");
@@ -50,74 +55,150 @@ const SearchTemplete = ({ next }) => {
       setData(res);
       setList(res);
       setInitLoading(false);
+      setLastPage(false);
     });
   }, []);
 
   //탭 바꾸면 템플릿 가져오기
   const changeTap = (key) => {
     console.log("key", key);
-    getTemplate(0, key == 1 ? true : false).then((res) => {
+    console.log("changeTab", searchKeyword);
+
+    getTemplateList(0, key == 1 ? true : false, searchKeyword).then((res) => {
       setPageNum(1); //페이지 초기화
       setData(res);
       setList(res);
+      setLastPage(false);
 
       //비동기적 실행
       setActiveKey(key);
       console.log("change", activeKey);
+      console.log(res);
+
+      getTemplateList(1, key == 1 ? true : false, searchKeyword).then(
+        (res2) => {
+          if (res2.length == 0) setLastPage(true);
+        }
+      );
     });
   };
+
+  useEffect(() => {
+    console.log("useEffect: ", lastPage);
+  }, [lastPage]);
 
   const onLoadMore = () => {
     setLoading(true);
+    console.log("onLoadMore", searchKeyword, pageNum);
 
-    getTemplate(pageNum, activeKey == 1 ? true : false).then((res) => {
-      console.log(res == []);
-      if (res == []) setLastPage(true);
-      const newData = templateData.concat(res);
-      setPageNum(pageNum + 1);
-      setData(newData);
-      setList(newData);
-      setLoading(false);
-      window.dispatchEvent(new Event("resize"));
-    });
-    getTemplate(pageNum + 1, activeKey == 1 ? true : false).then((res) => {
-      console.log(res == []);
-      if (res == []) setLastPage(true);
-    });
+    getTemplateList(pageNum, activeKey == 1 ? true : false, searchKeyword).then(
+      (res) => {
+        const newData = templateData.concat(res);
+        setPageNum(pageNum + 1);
+        setData(newData);
+        setList(newData);
+        // setLoading(false);
+        window.dispatchEvent(new Event("resize"));
+        console.log(res);
+
+        getTemplateList(
+          pageNum + 1, //비동기로 나중에 바뀌기 때문에 +1
+          activeKey == 1 ? true : false,
+          searchKeyword
+        ).then((res2) => {
+          console.log(res2.length == 0);
+          console.log(res2);
+          if (res2.length == 0) setLastPage(true);
+        });
+      }
+    );
   };
 
-  const showTemplate = (id) => {
-    getTemplateDetail(id).then((res) => {
+  const showTemplate = (templateId) => {
+    console.log(templateId);
+    getTemplateDetail(templateId).then((res) => {
+      console.log(res);
       setTemplateTitle(res.title);
       setTemplateContent(res.content);
       setIsModalOpen(true);
     });
   };
 
-  const loadMore =
-    !initLoading && !loading && !lastPage ? (
-      <div
-        style={{
-          textAlign: "center",
-          marginTop: 12,
-          height: 32,
-          lineHeight: "32px",
-        }}
-      >
-        <Button onClick={onLoadMore}>더 보기</Button>
-      </div>
-    ) : null;
+  const onSearch = (value) => {
+    // console.log(value, _e, info); e(에러), info(입력 소스?)
+
+    getTemplateList(0, activeKey == 1 ? true : false, value).then((res) => {
+      // const newData = templateData.concat(res);
+      setPageNum(1);
+      setData(res);
+      setList(res);
+      setLastPage(false);
+      setLoading(false);
+      console.log(res);
+
+      getTemplateList(1, activeKey == 1 ? true : false, value).then((res2) => {
+        console.log(res2.length == 0);
+        if (res2.length == 0) setLastPage(true);
+      });
+    });
+
+    setSearchKeyword(value);
+  };
+  const changeKeyword = (e) => {
+    console.log(e.target.value);
+    const value = e.target.value;
+    getTemplateList(0, activeKey == 1 ? true : false, value).then((res) => {
+      // const newData = templateData.concat(res);
+      setPageNum(1);
+      setData(res);
+      setList(res);
+      setLastPage(false);
+      setLoading(false);
+      console.log(res);
+
+      getTemplateList(1, activeKey == 1 ? true : false, value).then((res2) => {
+        console.log(res2.length == 0);
+        if (res2.length == 0) setLastPage(true);
+      });
+    });
+
+    setSearchKeyword(value);
+  };
+  //!initLoading && !loading &&
+  const loadMore = !lastPage ? (
+    <div
+      style={{
+        textAlign: "center",
+        marginTop: 12,
+        height: 32,
+        lineHeight: "32px",
+      }}
+    >
+      <Button onClick={onLoadMore}>더 보기</Button>
+    </div>
+  ) : null;
 
   return (
     <div>
-      <h2>템플릿 선택</h2>
-      <Button type="primary" onClick={next}>
-        건너뛰기
-      </Button>
+      <Row>
+        <Col flex={8}>
+          <h2>템플릿 선택</h2>
+        </Col>
+        <Col>
+          <Button type="primary" onClick={next}>
+            건너뛰기
+          </Button>
+        </Col>
+      </Row>
 
       <Row>
         <Col flex={5}>
-          <Input.Search placeholder="템플릿 검색" enterButton />
+          <Input.Search
+            placeholder="템플릿 검색"
+            enterButton
+            onSearch={onSearch}
+            onChange={changeKeyword}
+          />
         </Col>
         <Col>
           <Button onClick={makeTemplate}>템플릿 만들기</Button>
@@ -149,14 +230,21 @@ const SearchTemplete = ({ next }) => {
                 renderItem={(item) => (
                   <List.Item
                     actions={[
-                      <a key="list-loadmore-show" onClick={showTemplate}>
+                      <a
+                        key="list-loadmore-show"
+                        onClick={() => showTemplate(item.templateId)}
+                      >
                         미리보기
                       </a>,
                     ]}
                   >
                     <Skeleton title={false} loading={item.loading} active>
                       <List.Item.Meta
-                        title={<a onClick={showTemplate}>{item.title}</a>}
+                        title={
+                          <a onClick={() => showTemplate(item.templateId)}>
+                            {item.title}
+                          </a>
+                        }
                         description={item.author}
                       />
                     </Skeleton>
