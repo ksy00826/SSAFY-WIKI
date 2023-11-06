@@ -22,19 +22,30 @@ public class RevisionDto {
     @AllArgsConstructor
     @ToString
     @Builder
-    public static class Response {
+    public static class DocsResponse {
         private Long docsId;
         private String author;
         private String title;
         private String content;
-        private boolean deleted;
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime createdAt;
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime modifiedAt;
         private List<CategoryDto.Detail> categoryList;
-        private Long readAuth;
-        private Long writeAuth;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    @Builder
+    public static class CheckUpdateResponse {
+        private Long docsId;
+        private String title;
+        private String content;
+        private List<CategoryDto.Detail> categoryList;
+        private boolean canUpdate;
     }
 
     @Getter

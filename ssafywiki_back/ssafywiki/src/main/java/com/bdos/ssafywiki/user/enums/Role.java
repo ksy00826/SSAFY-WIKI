@@ -44,4 +44,8 @@ public enum Role {
         return null;
     }
 
+    public boolean havePrivilege (Privilege pri) {
+        return this.privileges.contains(pri);
+    }
+
 }
