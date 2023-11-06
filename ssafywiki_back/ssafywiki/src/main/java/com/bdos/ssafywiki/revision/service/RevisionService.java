@@ -59,9 +59,8 @@ public class RevisionService {
     }
 
     @Transactional
-    public void revokeVersion(long revId) {
-        // revoke를 한 user
-        User user = new User("qqq@naver.com", "pwpw", "조현덕", "hd", Role.USER9, "010", "buk", "token");
+    public void revokeVersion(User user, long revId) {
+
         // 일단 유저를 다른 곳에 연관관계로 등록하기 위해 임시로 저장
         userRepository.save(user);
 
