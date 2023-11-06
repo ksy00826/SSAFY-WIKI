@@ -77,3 +77,15 @@ export const createTemplate = async (template) => {
     throw error;
   }
 };
+
+export const deleteTemplate = async (templateId) => {
+  try {
+    const response = await axiosInstanceWithLogin.delete(
+      `/api/docs/template/${templateId}`
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
