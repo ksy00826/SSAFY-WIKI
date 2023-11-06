@@ -1,12 +1,15 @@
-import { axiosInstance } from "./AxiosConfig";
+import { axiosInstance, axiosInstanceWithLogin } from "./AxiosConfig";
 
-export const getTemplate = async (page) => {
-  const dummyData = [
-    { templateId: 1, title: "title1", author: "1" },
-    { templateId: 2, title: "title2", author: "2" },
-    { templateId: 3, title: "title3", author: "3" },
-  ];
-  return dummyData;
+export const getTemplate = async (page, isMyTemplate) => {
+  try {
+    const response = await axiosInstanceWithLogin.get(
+      `/api/docs/template?isMyTemplate=${isMyTemplate}&page=${page}&size=5`
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 };
 
 export const getTemplateDetail = async (id) => {
