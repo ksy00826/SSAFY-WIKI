@@ -58,6 +58,7 @@ public class UserService {
         List<DiscussionDto> messageList = new ArrayList<>();
         for (Discussion discussion : dbMessageList) {
             DiscussionDto discussionDto = DiscussionMapper.INSTANCE.toDto(discussion);
+            discussionDto.setContent(discussion.getDocument().getTitle());
             messageList.add(discussionDto);
         }
         return messageList;
