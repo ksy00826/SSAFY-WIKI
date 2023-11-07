@@ -8,7 +8,8 @@ const { TextArea } = Input;
 const WriteForm = ({ content, setContent, isdisabled }) => {
   const [viewType, setViewType] = React.useState(1);
 
-  const onChange = (e) => {
+  const changeContent = (e) => {
+    console.log(e.target.value);
     setContent(e.target.value);
   };
 
@@ -16,6 +17,9 @@ const WriteForm = ({ content, setContent, isdisabled }) => {
     setViewType(e);
   };
 
+  React.useEffect(() => {
+    console.log(content);
+  }, [content]);
   return (
     <div
       style={{
@@ -46,7 +50,7 @@ const WriteForm = ({ content, setContent, isdisabled }) => {
           autoSize={{
             minRows: 12,
           }}
-          onChange={onChange}
+          onChange={changeContent}
           readOnly={isdisabled}
         />
       ) : (

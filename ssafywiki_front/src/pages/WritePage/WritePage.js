@@ -8,24 +8,29 @@ import ImageUpload from "components/Write/ImageUpload";
 
 import { createDocs } from "utils/DocsApi";
 import { openNotification } from "App";
+import { remove } from "react-cookies";
 
 const { Content } = Layout;
 const WritePage = () => {
   const [searchParams] = useSearchParams();
-  const [title, setTitle] = React.useState();
+  const [title, setTitle] = React.useState("");
   const [step, setStep] = React.useState(1);
-  const [content, setContent] = React.useState();
+  const [content, setContent] = React.useState("");
   const [selectedClass, setSelectedClass] = React.useState([]);
+  const [addRedirect, setAddRedirect] = React.useState([]);
+  const [removeRedirect, setRemoveRedirect] = React.useState([]);
 
   const navigate = useNavigate();
 
-  const next = (content) => {
-    setContent(content);
+  const next = () => {
+    // setContent(content);
     setStep(step + 1);
   };
 
   React.useEffect(() => {
-    setTitle(searchParams.get("title")); //url에서 가져오기
+    const title = searchParams.get("title");
+    setTitle(title == undefined ? "문서 제목" : title); //url에서 가져오기
+    setContent("");
   }, []);
 
   const create = () => {
@@ -34,8 +39,8 @@ const WritePage = () => {
       title: title,
       content: content,
       categories: selectedClass,
-      readAuth: 0,
-      writeAuth: 0,
+      readAuth: 1,
+      writeAuth: 1,
     }).then((result) => {
       //완료
       console.log(result);
@@ -70,6 +75,10 @@ const WritePage = () => {
               completeLogic={create}
               selectedClass={selectedClass}
               setSelectedClass={setSelectedClass}
+              addRedirect={addRedirect}
+              setAddRedirect={setAddRedirect}
+              removeRedirect={removeRedirect}
+              setRemoveRedirect={setRemoveRedirect}
             />
             <Divider orientation="left" orientationMargin="0">
               <b>이미지 링크</b>
