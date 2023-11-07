@@ -1,15 +1,18 @@
 package com.bdos.ssafywiki.document.service;
 
 import com.bdos.ssafywiki.diff.MyDiffUtils;
+import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
 import com.bdos.ssafywiki.docs_category.entity.Category;
 import com.bdos.ssafywiki.docs_category.entity.DocsCategory;
 import com.bdos.ssafywiki.docs_category.repository.CategoryRepository;
 import com.bdos.ssafywiki.docs_category.repository.DocsCategoryRepository;
 import com.bdos.ssafywiki.document.dto.DocumentDto;
 import com.bdos.ssafywiki.document.entity.Document;
+import com.bdos.ssafywiki.document.mapper.DocumentMapper;
 import com.bdos.ssafywiki.document.repository.DocumentRepository;
 import com.bdos.ssafywiki.exception.BusinessLogicException;
 import com.bdos.ssafywiki.exception.ExceptionCode;
+import com.bdos.ssafywiki.redis.service.RedisPublisher;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import com.bdos.ssafywiki.revision.entity.Comment;
 import com.bdos.ssafywiki.revision.entity.Content;
@@ -26,10 +29,15 @@ import com.bdos.ssafywiki.user.repository.UserRepository;
 import com.github.difflib.DiffUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.mapstruct.factory.Mappers;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +57,8 @@ public class DocumentService {
     private final RevisionMapper revisionMapper;
 
     private final MyDiffUtils myDiffUtils;
-
+    private final RedisTemplate<String, DocumentDto.Recent> redisTemplateDocument;
+    private final DocumentMapper documentMapper;
     @Transactional
     public RevisionDto.DocsResponse writeDocs(DocumentDto.Post post, User user) {
         //일단 유저를 다른 곳에 연관관계로 등록하기 위해 임시로 저장
@@ -204,9 +213,42 @@ public class DocumentService {
         revision.setParent(preRevision);
 
         revisionRepository.save(revision);
-
+        saveRecentDocsToRedis(document);
         //문서 상세 내용 리턴
         return revisionMapper.toResponse(revision);
     }
 
+    public void saveRecentDocsToRedis(Document document) {
+        DocumentDto.Recent recentDocs = documentMapper.documentToRecent(document);
+        // 1. 직렬화
+        redisTemplateDocument.setValueSerializer(new Jackson2JsonRedisSerializer<>(DocumentDto.Recent.class));
+
+        // 2. redis 저장
+        redisTemplateDocument.opsForList().rightPush("recent", recentDocs);
+
+        // 3. expire 을 이용해서, Key 를 만료시킬 수 있음
+        redisTemplateDocument.expire("recent", 10, TimeUnit.MINUTES);
+    }
+
+    public List<DocumentDto.Recent> loadRecentDocsList() {
+        List<DocumentDto.Recent> recentsDocsList = new ArrayList<>();
+
+        redisTemplateDocument.setValueSerializer(new Jackson2JsonRedisSerializer<>(DocumentDto.Recent.class));
+        List<DocumentDto.Recent> redisDocsList = redisTemplateDocument.opsForList().range("recent", 0, 10);
+
+        if (redisDocsList == null || redisDocsList.isEmpty()) {
+            List<Document> dbDocumentList = documentRepository.findTop10ByOrderByModifiedAtDesc();
+            System.out.println(dbDocumentList);
+            for (Document docs : dbDocumentList) {
+                DocumentDto.Recent recentDocs = documentMapper.documentToRecent(docs);
+                recentsDocsList.add(recentDocs);
+                redisTemplateDocument.setValueSerializer(new Jackson2JsonRedisSerializer<>(DocumentDto.Recent.class));      // 직렬화
+                redisTemplateDocument.opsForList().rightPush("recent", recentDocs);
+            }
+        } else {
+            recentsDocsList.addAll(redisDocsList);
+        }
+
+        return recentsDocsList;
+    }
 }

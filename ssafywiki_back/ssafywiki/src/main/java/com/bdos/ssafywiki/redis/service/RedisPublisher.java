@@ -1,4 +1,4 @@
-package com.bdos.ssafywiki.discussion.service;
+package com.bdos.ssafywiki.redis.service;
 
 import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 public class RedisPublisher {
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void publish(ChannelTopic topic, DiscussionDto message) {
-        redisTemplate.convertAndSend(topic.getTopic(), message);
+    public void publish(ChannelTopic topic, Object object) {
+        redisTemplate.convertAndSend(topic.getTopic(), object);
     }
+
 }

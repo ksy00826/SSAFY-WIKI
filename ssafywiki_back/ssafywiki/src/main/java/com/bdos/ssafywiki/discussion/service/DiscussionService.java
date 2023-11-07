@@ -7,8 +7,8 @@ import com.bdos.ssafywiki.discussion.repository.DiscussionRepository;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.document.repository.DocumentRepository;
 
+import com.bdos.ssafywiki.redis.service.RedisSubscriber;
 import com.bdos.ssafywiki.user.entity.User;
-import com.bdos.ssafywiki.user.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,19 +35,13 @@ public class DiscussionService {
     private final DiscussionRepository discussionRepository;
 
     // 쪽지방(topic)에 발행되는 메시지 처리하는 리스너
-    private final RedisMessageListenerContainer redisMessageListener;
 
-    // 구독 처리 서비스
-    private final RedisSubscriber redisSubscriber;
-    private Map<String, ChannelTopic> topics;
+
     // 대화 저장
     private final DiscussionMapper discussionMapper;
     private final DocumentRepository documentRepository;
 
-    @PostConstruct
-    private void init() {
-        topics = new HashMap<>();
-    }
+
     public void saveMessage(DiscussionDto discussionDto, User user) {
         // DB 저장
         Discussion discuss = discussionMapper.toDiscussion(discussionDto);
@@ -62,7 +56,7 @@ public class DiscussionService {
         redisTemplateMessage.opsForList().rightPush(discussionDto.getDocsId().toString(), discussionDto);
 
         // 3. expire 을 이용해서, Key 를 만료시킬 수 있음
-        redisTemplateMessage.expire(discussionDto.getDocsId().toString(), 1, TimeUnit.MINUTES);
+        redisTemplateMessage.expire(discussionDto.getDocsId().toString(), 10, TimeUnit.MINUTES);
     }
 
     // 6. 대화 조회 - Redis & DB
@@ -93,16 +87,5 @@ public class DiscussionService {
     }
 
 
-    public void enterChatRoom(String roomId) {
-        ChannelTopic topic = topics.get(roomId);
-        log.info("토픽 생성 :" + roomId);
-        if (topic == null) {
-            topic = new ChannelTopic(roomId);
-            redisMessageListener.addMessageListener(redisSubscriber, topic);
-            topics.put(roomId, topic);
-        }
-    }
-    public ChannelTopic getTopic(String roomId) {
-        return topics.get(roomId);
-    }
+
 }

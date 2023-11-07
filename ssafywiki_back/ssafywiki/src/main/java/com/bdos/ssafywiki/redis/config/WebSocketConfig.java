@@ -1,4 +1,4 @@
-package com.bdos.ssafywiki.discussion.config;
+package com.bdos.ssafywiki.redis.config;
 
 
 import lombok.RequiredArgsConstructor;
