@@ -1,27 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { Card, Pagination, Timeline, Radio, Button } from "antd";
+import { Card, Pagination, Timeline, Radio, Button, Modal } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { getHistory } from "utils/RevisionApi"
+import { getHistory, revertVersion } from "utils/RevisionApi"
 import DocsNav from "./DocsNav";
+import { ExclamationCircleFilled } from '@ant-design/icons';
 
 
 const History = () => {
   const params = useParams();
   const navigate = useNavigate();
+  const { confirm, error } = Modal;
 
-  const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalItems, setTotalItems] = useState(0);
   const [pageSize, setPageSize] = useState(20);
-
-
   const [historyData, setHistoryData] = useState([]);
 
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
   const [selectedRevision, setSelectedRevision] = useState({ oldRev: null, rev: null, oldRevNum: null, revNum: null });
-
-
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,7 +29,7 @@ const History = () => {
     };
 
     fetchData();
-  }, [params, currentPage, pageSize]);
+  }, [params, currentPage]);
 
   const handlePageChange = (page, pageSize) => {
     setCurrentPage(page);
@@ -57,12 +53,36 @@ const History = () => {
     return selectedRevision.oldRev !== null & item.id <= selectedRevision.oldRev;
   }
 
+  const showConfirm = (e, revId, revNum) => {
+    e.preventDefault();
+    confirm({
+      title: `정말 r${revNum} 버전으로 되돌릴건가요?`,
+      icon: <ExclamationCircleFilled />,
+      async onOk() {
+        revertVersion(revId).then((response) => {
+          navigate(`/res/content/${params.docsId}/${params.title}`);
+        }).catch((err) => {
+          if (err.response.data.status == 402) {
+            error({
+              title: "권한이 없습니다."
+            })
+          }
+        })
+      },
+      onCancel() { },
+    })
+  }
+
   const timelineItems = historyData.map(item => ({
     children: (
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           {item.createdAt}&nbsp;
-          {"( "}<Link to={`/res/content/${params.docsId}/${params.title}?rev=${item.number}`} state={{revId: item.id}}>보기</Link>{" | "}<Link to="">RAW</Link>{" | "}<Link>이 리비전으로 되돌리기</Link>{" ) "}
+          {"( "}
+          <Link to={`/res/content/${params.docsId}/${params.title}?rev=${item.number}`} state={{ revId: item.id }}>보기</Link>{" | "}
+          <Link to={`/res/raw/${params.title}?rev=${item.number}`} state={{ revId: item.id, docsId: params.docsId }}>RAW</Link>{" | "}
+          <Link to="#" onClick={(e) => showConfirm(e, item.id, item.number)}>이 리비전으로 되돌리기</Link>
+          {" ) "}
           <Radio.Group
             onChange={({ target }) => onSelectRevision(item, target.value)}
             value={selectedRevision.oldRev === item.id ? 'oldRev' : selectedRevision.rev === item.id ? 'rev' : null}
@@ -87,16 +107,14 @@ const History = () => {
 
   return (
     <div>
-      <h1>{params.title} <small style={{fontWeight: "normal"}}>(문서 역사)</small></h1>
+      <h1>{params.title} <small style={{ fontWeight: "normal" }}>(문서 역사)</small></h1>
       <DocsNav current="history" />
-      <Card>
-        <div>History</div>
-      </Card>
-      <Button
-        onClick={onClickDiff}
-      >
-        버전 비교
-      </Button>
+
+        <Button
+          onClick={onClickDiff}
+        >
+          버전 비교
+        </Button>
       <div>
         <Timeline mode="left" items={historyData != null && timelineItems} />
         <Pagination
