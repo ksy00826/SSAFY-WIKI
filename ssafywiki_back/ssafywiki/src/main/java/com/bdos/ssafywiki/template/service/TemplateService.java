@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -67,5 +68,12 @@ public class TemplateService {
             templateList = templateRepository.findAllWithNotAuthorAndKeyword(keyword, user.getId(), pageable);
         }
         return templateMapper.toPreviewList(templateList.getContent());
+    }
+
+    @Transactional
+    public void modifyAuthority(Long templateId, Boolean newSecret) {
+        Template template = templateRepository.findById(templateId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.TEMPLATE_NOT_FOUND));
+        template.setSecret(newSecret);
+//        templateRepository.save(template);
     }
 }
