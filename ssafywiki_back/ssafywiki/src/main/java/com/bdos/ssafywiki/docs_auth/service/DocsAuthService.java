@@ -56,7 +56,7 @@ public class DocsAuthService {
         return builder.build();
     }
 
-    public Boolean updateAuth(DocsAuthDto.AuthRequest request, User userDetails) {
+    public DocsAuthDto.AuthResponse updateAuth(DocsAuthDto.AuthRequest request, User userDetails) {
         // 사용자 확인.
 
         // 문서 찾기
@@ -80,7 +80,9 @@ public class DocsAuthService {
 
         document.setAuth(request.getRead(), request.getWrite());
         documentRepository.save(document);
-        return true;
+        return DocsAuthDto.AuthResponse.builder()
+                .read(document.getReadAuth())
+                .write(document.getWriteAuth()).build();
     }
 
     public Boolean inviteMember(DocsAuthDto.MemberInviteRequest request, User userDetails) {
