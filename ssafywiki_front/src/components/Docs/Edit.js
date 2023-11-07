@@ -20,6 +20,7 @@ const Edit = () => {
   const [modifyCnt, setModifyCnt] = React.useState(0);
   const navigate = useNavigate();
   const [disabled, setDisabled] = React.useState("");
+  const [revisionId, setRevisionId] = React.useState(0);
 
   // 처음 랜더링시 내용과 권한 가져오기
   React.useEffect(() => {
@@ -29,7 +30,7 @@ const Edit = () => {
       setTitle(response.title);
       setClasses(response.categoryList);
       setDocsId(response.docsId);
-
+      setRevisionId(response.revId);
       // 권한이 있으면 수정가능
       //없으면 에러메세지
       if (!response.canUpdate) {
@@ -50,6 +51,7 @@ const Edit = () => {
       content: content,
       categories: classes,
       comment: "test",
+      revId: revisionId,
       readAuth: 0,
       writeAuth: 0,
     }).then((result) => {
