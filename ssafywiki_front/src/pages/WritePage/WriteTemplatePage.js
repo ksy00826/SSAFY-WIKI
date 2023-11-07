@@ -51,12 +51,13 @@ const WritePage = () => {
         <div>
           <WriteTemplate
             title=""
+            content={content}
+            setContent={setContent}
             setTitle={setTitle}
             button="템플릿 생성"
             completeLogic={create}
             selectedClass={selectedClass}
             setSelectedClass={setSelectedClass}
-            setContent={setContent}
           />
         </div>
       </Content>
