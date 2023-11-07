@@ -12,7 +12,7 @@ const Authority = () => {
   const [loading, setLoading] = React.useState(true);
   const [read, setRead] = React.useState();
   const [write, setWrite] = React.useState();
-  const [users, setUsers] = React.useState();
+  const [users, setUsers] = React.useState([]);
   const [info, setInfo] = React.useState();
 
   const invite = (value) => {
@@ -26,7 +26,9 @@ const Authority = () => {
       console.log(response);
       setRead(response.read);
       setWrite(response.write);
-      setUsers(response.users);
+      if (response.user !== undefined){
+        setUsers(response.users);
+      }
       setLoading(false);
 
       setInfo(response);
