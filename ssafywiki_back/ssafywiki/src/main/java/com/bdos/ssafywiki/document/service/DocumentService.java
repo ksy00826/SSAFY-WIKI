@@ -37,7 +37,9 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -214,6 +216,7 @@ public class DocumentService {
                     .title(document.getTitle())
                     .content(threeWayMergeResult.getResult()).exceptionCode(threeWayMergeResult.getExceptionCode()).build();
         } else {
+            document.setModifiedAt(LocalDateTime.now());
 
             //엔티티 : 코멘트, 내용 -> 버전
             Comment comment = new Comment(put.getComment());
@@ -257,7 +260,7 @@ public class DocumentService {
         redisTemplateDocument.setValueSerializer(new Jackson2JsonRedisSerializer<>(DocumentDto.Recent.class));
 
         // 2. redis 저장
-        redisTemplateDocument.opsForList().rightPush("recent", recentDocs);
+        redisTemplateDocument.opsForList().leftPush("recent", recentDocs);
 
         // 3. expire 을 이용해서, Key 를 만료시킬 수 있음
         redisTemplateDocument.expire("recent", 10, TimeUnit.MINUTES);
@@ -267,7 +270,7 @@ public class DocumentService {
         List<DocumentDto.Recent> recentsDocsList = new ArrayList<>();
 
         redisTemplateDocument.setValueSerializer(new Jackson2JsonRedisSerializer<>(DocumentDto.Recent.class));
-        List<DocumentDto.Recent> redisDocsList = redisTemplateDocument.opsForList().range("recent", 0, 10);
+        List<DocumentDto.Recent> redisDocsList = redisTemplateDocument.opsForList().range("recent", 0, 9);
 
         if (redisDocsList == null || redisDocsList.isEmpty()) {
             List<Document> dbDocumentList = documentRepository.findTop10ByOrderByModifiedAtDesc();
@@ -281,7 +284,6 @@ public class DocumentService {
         } else {
             recentsDocsList.addAll(redisDocsList);
         }
-
         return recentsDocsList;
     }
 }
