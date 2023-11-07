@@ -285,12 +285,18 @@ const SearchTemplete = ({ next }) => {
                         title={<a onClick={showTemplate}>{item.title}</a>}
                         description={item.author}
                       />
-                      <Button
-                        type="default"
-                        icon={item.secret ? <LockFilled /> : <UnlockOutlined />}
-                        // loading={loadings[2]}
-                        onClick={() => changeAuthority(item)}
-                      />
+                      {activeKey === 1 ? (
+                        <Button
+                          type="default"
+                          icon={
+                            item.secret ? <LockFilled /> : <UnlockOutlined />
+                          }
+                          // loading={loadings[2]}
+                          onClick={() => changeAuthority(item)}
+                        />
+                      ) : (
+                        <></>
+                      )}
                     </Skeleton>
                   </List.Item>
                 )}
