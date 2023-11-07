@@ -45,4 +45,16 @@ public class DocumentDto {
         private String title;
         // parent, children 추가 해야 할듯
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    @Builder
+    public static class Recent{
+        private Long docsId;
+        private String title;
+        private String modifiedAt;
+    }
 }
