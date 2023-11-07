@@ -35,6 +35,7 @@ const Login = () => {
           // 페이지 이동
           if (!redirect) navigate("/userpage");
           else navigate(redirect);
+          window.location.reload();
         }
       })
       .catch((error) => {
