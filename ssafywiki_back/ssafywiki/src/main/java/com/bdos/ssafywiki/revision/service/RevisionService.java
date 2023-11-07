@@ -68,7 +68,7 @@ public class RevisionService {
     }
 
     @Transactional
-    public void revokeVersion(User user, long revId) {
+    public void revertVersion(User user, long revId) {
         if(user == null) user = new GuestUser();
 
         Revision revokeRev = revisionRepository.findById(revId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.REVISION_NOT_FOUND));
