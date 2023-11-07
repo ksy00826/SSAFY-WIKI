@@ -46,6 +46,7 @@ public class RevisionDto {
         private String content;
         private List<CategoryDto.Detail> categoryList;
         private boolean canUpdate;
+        private Long revId;
     }
 
     @Getter

@@ -57,6 +57,7 @@ public interface RevisionMapper {
                 .title(revision.getDocument().getTitle())
                 .content(revision.getContent().getText())
                 .canUpdate(canUpdate)
+                .revId(revision.getId())
                 .build();
 
         return response;
