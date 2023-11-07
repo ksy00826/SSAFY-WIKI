@@ -36,6 +36,7 @@ public class DocumentController {
     public ResponseEntity<RevisionDto.DocsResponse> readDocs(@PathVariable Long docsId,
                                                              @RequestParam(required = false) Long revId,
                                                              @AuthenticationPrincipal User userDetails){
+        discussionService.enterChatRoom(docsId.toString());
         RevisionDto.DocsResponse response = documentService.readDocs(docsId, revId, userDetails);
 
         return ResponseEntity.ok(response);
