@@ -36,6 +36,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -237,7 +238,7 @@ public class DocumentService {
         List<DocumentDto.Recent> redisDocsList = redisTemplateDocument.opsForList().range("recent", 0, 10);
 
         if (redisDocsList == null || redisDocsList.isEmpty()) {
-            List<Document> dbDocumentList = documentRepository.findTop10ByOrderByModifiedAtDesc();
+            List<Document> dbDocumentList = documentRepository.findTop10ByOrderByModifiedAtAsc();
             System.out.println(dbDocumentList);
             for (Document docs : dbDocumentList) {
                 DocumentDto.Recent recentDocs = documentMapper.documentToRecent(docs);
@@ -248,7 +249,7 @@ public class DocumentService {
         } else {
             recentsDocsList.addAll(redisDocsList);
         }
-
+        Collections.reverse(recentsDocsList);
         return recentsDocsList;
     }
 }
