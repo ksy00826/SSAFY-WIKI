@@ -35,6 +35,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -196,7 +197,7 @@ public class DocumentService {
         contentRepository.save(content);
 
         Document document = documentRepository.findById(put.getDocsId()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
-
+        document.setModifiedAt(LocalDateTime.now());
         //연관관계 : 수정 유저, 이전 버전id, 문서id
         Revision preRevision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
 
@@ -225,7 +226,7 @@ public class DocumentService {
         redisTemplateDocument.setValueSerializer(new Jackson2JsonRedisSerializer<>(DocumentDto.Recent.class));
 
         // 2. redis 저장
-        redisTemplateDocument.opsForList().rightPush("recent", recentDocs);
+        redisTemplateDocument.opsForList().leftPush("recent", recentDocs);
 
         // 3. expire 을 이용해서, Key 를 만료시킬 수 있음
         redisTemplateDocument.expire("recent", 10, TimeUnit.MINUTES);
@@ -235,10 +236,10 @@ public class DocumentService {
         List<DocumentDto.Recent> recentsDocsList = new ArrayList<>();
 
         redisTemplateDocument.setValueSerializer(new Jackson2JsonRedisSerializer<>(DocumentDto.Recent.class));
-        List<DocumentDto.Recent> redisDocsList = redisTemplateDocument.opsForList().range("recent", 0, 10);
+        List<DocumentDto.Recent> redisDocsList = redisTemplateDocument.opsForList().range("recent", 0, 9);
 
         if (redisDocsList == null || redisDocsList.isEmpty()) {
-            List<Document> dbDocumentList = documentRepository.findTop10ByOrderByModifiedAtAsc();
+            List<Document> dbDocumentList = documentRepository.findTop10ByOrderByModifiedAtDesc();
             System.out.println(dbDocumentList);
             for (Document docs : dbDocumentList) {
                 DocumentDto.Recent recentDocs = documentMapper.documentToRecent(docs);
@@ -249,7 +250,6 @@ public class DocumentService {
         } else {
             recentsDocsList.addAll(redisDocsList);
         }
-        Collections.reverse(recentsDocsList);
         return recentsDocsList;
     }
 }
