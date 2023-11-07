@@ -8,6 +8,7 @@ import com.bdos.ssafywiki.docs_category.repository.CategoryRepository;
 import com.bdos.ssafywiki.docs_category.repository.DocsCategoryRepository;
 import com.bdos.ssafywiki.document.dto.DocumentDto;
 import com.bdos.ssafywiki.document.entity.Document;
+import com.bdos.ssafywiki.document.mapper.DocumentMapper;
 import com.bdos.ssafywiki.document.repository.DocumentRepository;
 import com.bdos.ssafywiki.exception.BusinessLogicException;
 import com.bdos.ssafywiki.exception.ExceptionCode;
