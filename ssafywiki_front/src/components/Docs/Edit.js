@@ -5,7 +5,6 @@ import { getUpdateContent } from "utils/DocsApi";
 
 import WriteForm from "components/Write/WriteDocs";
 import ImageUpload from "components/Write/ImageUpload";
-import DocsNav from "./DocsNav";
 
 import { openNotification } from "App";
 import { updateDocs } from "utils/DocsApi";
@@ -22,6 +21,7 @@ const Edit = () => {
   const [modifyCnt, setModifyCnt] = React.useState(0);
   const navigate = useNavigate();
   const [disabled, setDisabled] = React.useState("");
+  const [revisionId, setRevisionId] = React.useState(0);
 
   const [comment, setComment] = React.useState("");
 
@@ -33,6 +33,7 @@ const Edit = () => {
       setTitle(response.title);
       setClasses(response.categoryList);
       setDocsId(response.docsId);
+      setRevisionId(response.revId);
 
       setLoading(true);
 
@@ -54,6 +55,7 @@ const Edit = () => {
       docsId: id,
       content: content,
       categories: classes,
+      revId: revisionId,
       comment: comment,
     }).then((result) => {
       //완료
