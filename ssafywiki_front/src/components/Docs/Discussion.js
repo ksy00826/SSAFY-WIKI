@@ -13,18 +13,19 @@ function Discussion() {
   const [docsId, setDocsId] = useState(1);
   const location = useLocation();
   const client = useRef({});
-  const token = cookie.load('token');
+  const [token, setToken] = useState(cookie.load('token'));
   const scrollRef = useRef(null);
   const [email, setEmail] = useState('');
+  
   useEffect(() => {
     // URL 경로를 분석하여 docsId를 추출합니다.
+    setToken(cookie.load('token'));
     if (token) {
       getUserInfo().then((response) => {
         setEmail(response.email);
+        console.log("유저정보", response)
       })
-      console.error('인증 토큰이 누락되었습니다');
     }
-    
     const match = location.pathname.match(/\/(history|edit|auth|content)\/(\d+)\/?/);
     if (match && match[2]) {
       const currentDocsId = parseInt(match[2], 10); // 현재 문서 ID를 추출합니다.
@@ -34,11 +35,20 @@ function Discussion() {
         setDocsId(currentDocsId);
         setChatList(response);
       });
-      connect();
+      connect(currentDocsId);
     }
     return () => disconnect();
-  }, [location]);
+  }, []);
 
+
+  useEffect(() => {
+    if (token) {
+      getUserInfo().then((response) => {
+        setEmail(response.email);
+        console.log("유저정보", response)
+      })
+    }
+  },[]);
 
   useEffect(() => {
     // 채팅 목록의 변화를 감지하고 스크롤을 맨 아래로 이동시키는 함수
@@ -58,7 +68,7 @@ function Discussion() {
     }
   }, [chatList]);
 
-  const connect = () => {
+  const connect = (currentDocsId) => {
 
     if (!token) {
       console.error('인증 토큰이 누락되었습니다');
@@ -72,7 +82,7 @@ function Discussion() {
       },
       onConnect: () => {
         console.log('Connected');
-        subscribe();
+        subscribe(currentDocsId);
       },
       onStompError: (frame) => {
         // 오류 처리
@@ -102,9 +112,9 @@ function Discussion() {
     setChat('');
   };
 
-  const subscribe = () => {
-    console.log('sub', docsId);
-    client.current.subscribe('/sub/chat/' + docsId, (body) => {
+  const subscribe = (currentDocsId) => {
+    console.log('sub', currentDocsId);
+    client.current.subscribe('/sub/chat/' + currentDocsId, (body) => {
       const json_body = JSON.parse(body.body);
       setChatList((_chat_list) => [
         ..._chat_list, json_body
