@@ -85,4 +85,9 @@ public class Document {
     public void setChildren(List<Document> children) {
         this.children = children;
     }
+
+    public void setAuth(Long read, Long write) {
+        this.readAuth = read;
+        this.writeAuth = write;
+    }
 }
