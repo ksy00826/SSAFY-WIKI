@@ -17,8 +17,6 @@ const WritePage = () => {
   const [step, setStep] = React.useState(1);
   const [content, setContent] = React.useState("");
   const [selectedClass, setSelectedClass] = React.useState([]);
-  const [addRedirect, setAddRedirect] = React.useState([]);
-  const [removeRedirect, setRemoveRedirect] = React.useState([]);
 
   const navigate = useNavigate();
 
@@ -75,10 +73,6 @@ const WritePage = () => {
               completeLogic={create}
               selectedClass={selectedClass}
               setSelectedClass={setSelectedClass}
-              addRedirect={addRedirect}
-              setAddRedirect={setAddRedirect}
-              removeRedirect={removeRedirect}
-              setRemoveRedirect={setRemoveRedirect}
             />
             <Divider orientation="left" orientationMargin="0">
               <b>이미지 링크</b>

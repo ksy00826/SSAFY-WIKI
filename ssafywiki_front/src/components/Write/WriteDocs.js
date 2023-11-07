@@ -13,34 +13,13 @@ const DocsList = ({
   completeLogic,
   selectedClass,
   setSelectedClass,
-  addRedirect,
-  setAddRedirect,
-  removeRedirect,
-  setRemoveRedirect,
 }) => {
   const handleChange = (value) => {
     console.log(`selected ${value}`);
 
-    // if (!selectedClass.includes(value)) {
-    //   // 추가된 경우
-    //   setAddRedirect(value);
-    // } else {
-    //   //삭제된 경우
-    //   setRemoveRedirect(value);
-    // }
-    setAddRedirect(value);
-    // console.log(addRedirect);
-
     setSelectedClass(value);
   };
 
-  // React.useEffect(() => {
-  //   console.log(selectedClass);
-  // }, selectedClass);
-
-  React.useEffect(() => {
-    console.log(addRedirect);
-  }, addRedirect);
   const titleChange = (value) => {
     setTitle(value.target.value);
     console.log(value.target.value);
