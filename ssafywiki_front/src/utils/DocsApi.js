@@ -49,9 +49,28 @@ export const updateDocs = async (docs) => {
 
 export const getDocsVersionContent = async (docsId, revId) => {
   try {
-    const response = await axiosInstanceWithLogin.get(`/api/docs/${docsId}?revId=${revId}`);
+    const response = await axiosInstanceWithLogin.get(
+      `/api/docs/${docsId}?revId=${revId}`
+    );
     return response.data;
   } catch (error) {
     throw error;
   }
-}
+};
+
+export const subscribeRecentDocs = async () => {
+  try {
+    await axiosInstance.get(`/api/docs/sub`);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getRecentDocsList = async () => {
+  try {
+    const response = await axiosInstance.get("/api/docs/recent");
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
