@@ -45,31 +45,44 @@ const dummydata = [
 ];
 const { Search } = Input;
 
-const AuthorityForm = ({ read, write, userList, modify }) => {
+const AuthorityForm = ({
+  selectedRead,
+  setSelectedRead,
+  selectedWrite,
+  setSelectedWrite,
+  userList,
+  modify,
+  handleInvite,
+  handleDelete,
+}) => {
   const [isUserDefine1, setUserDefine1] = React.useState(false);
   const [isUserDefine2, setUserDefine2] = React.useState(false);
   const [invitloading, setInvitLoading] = React.useState();
-  const [data, setData] = React.useState(dummydata);
+
   const checkEmail = (value) => {
     console.log(value);
     // 이메일이 존재하는 유저인지 체크하고 추가.
+    handleInvite(value);
+  };
+
+  const deleteUser = (item) => {
+    handleDelete(item);
   };
 
   React.useEffect(() => {
     // 첫 랜더링시
+    if (selectedRead >= 100) setUserDefine1(true);
+    if (selectedWrite >= 100) setUserDefine2(true);
   }, []);
 
-  const updateAuth = () => {
-    console.log("update");
-    // axios로 전송
-  };
-
   const handleRead = (value) => {
+    setSelectedRead(value);
     if (value == 100) setUserDefine1(true);
     else setUserDefine1(false);
   };
 
   const handleWrite = (value) => {
+    setSelectedWrite(value);
     if (value == 100) setUserDefine2(true);
     else setUserDefine2(false);
   };
@@ -82,6 +95,7 @@ const AuthorityForm = ({ read, write, userList, modify }) => {
         }}
       >
         <h3>권한</h3>
+
         <Row>
           <Space>
             <Col>읽기권한</Col>
@@ -92,8 +106,8 @@ const AuthorityForm = ({ read, write, userList, modify }) => {
                 }}
                 options={readAuth}
                 onChange={handleRead}
-                defaultValue={read}
-              ></Select>
+                defaultValue={selectedRead < 1000 ? selectedRead : 100}
+              />
             </Col>
           </Space>
         </Row>
@@ -107,12 +121,13 @@ const AuthorityForm = ({ read, write, userList, modify }) => {
                 }}
                 options={writeAUth}
                 onChange={handleWrite}
-                defaultValue={write}
-              ></Select>
+                defaultValue={selectedWrite < 1000 ? selectedWrite : 100}
+              />
             </Col>
           </Space>
         </Row>
-        {modify ? <Button onClick={updateAuth}>수정</Button> : <></>}
+
+        {modify ? <Button onClick={modify}>수정</Button> : <></>}
 
         <Divider />
         <h3>사용자 지정권한</h3>
@@ -143,9 +158,15 @@ const AuthorityForm = ({ read, write, userList, modify }) => {
         </Form>
         <List
           className="demo-loadmore-list"
-          dataSource={data}
+          dataSource={userList}
           renderItem={(item) => (
-            <List.Item actions={[<a key="list-item-delete">삭제</a>]}>
+            <List.Item
+              actions={[
+                <a onClick={() => deleteUser(item)} key="list-item-delete">
+                  삭제
+                </a>,
+              ]}
+            >
               <Skeleton avatar title={false} loading={item.loading} active>
                 <List.Item.Meta
                   avatar={<UserOutlined />}
