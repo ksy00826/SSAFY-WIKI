@@ -1,7 +1,10 @@
+
 .NavBox {
-  width: 100%;
   display: flex;
   justify-content: space-between;
+  background-color: #424242;
+  min-width: 1200px;
+  max-width: 1200px;
 }
 
 .NavBar {
