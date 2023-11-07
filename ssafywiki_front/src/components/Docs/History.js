@@ -9,14 +9,10 @@ import { ExclamationCircleFilled } from '@ant-design/icons';
 const History = () => {
   const params = useParams();
   const navigate = useNavigate();
-  const {confirm} = Modal;
+  const { confirm, error } = Modal;
 
-  const [data, setData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-  const [totalItems, setTotalItems] = useState(0);
   const [pageSize, setPageSize] = useState(20);
-
-
   const [historyData, setHistoryData] = useState([]);
 
   const [totalPages, setTotalPages] = useState(0);
@@ -33,7 +29,7 @@ const History = () => {
     };
 
     fetchData();
-  }, [params, currentPage, pageSize]);
+  }, [params, currentPage]);
 
   const handlePageChange = (page, pageSize) => {
     setCurrentPage(page);
@@ -57,22 +53,23 @@ const History = () => {
     return selectedRevision.oldRev !== null & item.id <= selectedRevision.oldRev;
   }
 
-  const showConfirm = (e, revId, revNum)=>{
+  const showConfirm = (e, revId, revNum) => {
     e.preventDefault();
     confirm({
       title: `정말 r${revNum} 버전으로 되돌릴건가요?`,
       icon: <ExclamationCircleFilled />,
       async onOk() {
-        return revertVersion(revId).then((response) => {
+        revertVersion(revId).then((response) => {
           navigate(`/res/content/${params.docsId}/${params.title}`);
         }).catch((err) => {
-          
-          Modal.error({
-            title: err
-          })
+          if (err.response.data.status == 402) {
+            error({
+              title: "권한이 없습니다."
+            })
+          }
         })
       },
-      onCancel() {},
+      onCancel() { },
     })
   }
 

@@ -21,7 +21,7 @@ export const compareVersions = async (oldrev, rev) => {
 
 export const revertVersion = async (revId) => {
     try {
-        const response = await axiosInstanceWithLogin.get(`/api/version/revert?select=${revId}`);
+        const response = await axiosInstanceWithLogin.post(`/api/version/revert?revId=${revId}`);
         return response.data;
     } catch (err) {
         throw err;
