@@ -89,3 +89,21 @@ export const deleteTemplate = async (templateId) => {
     throw error;
   }
 };
+
+export const changeTemplateAuthority = async (
+  templateId,
+  newSecret,
+  pageNum
+) => {
+  try {
+    const response = await axiosInstanceWithLogin.put(
+      `/api/docs/template/${templateId}?newSecret=${newSecret}&size=${
+        pageNum * 5
+      }&sort=asc`
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
