@@ -28,9 +28,9 @@ public class DocsAuthController {
 
     @Operation(summary = "문서 권한 변경하기", description = "문서 하나의 권한을 변경합니다.")
     @PostMapping("api/docs/auth")
-    public ResponseEntity<Boolean> getAuth (@RequestBody DocsAuthDto.AuthRequest request,
+    public ResponseEntity<DocsAuthDto.AuthResponse> getAuth (@RequestBody DocsAuthDto.AuthRequest request,
                                                              @AuthenticationPrincipal User userDetails) {
-        Boolean response = docsAuthService.updateAuth(request, userDetails);
+        DocsAuthDto.AuthResponse response = docsAuthService.updateAuth(request, userDetails);
 
         return ResponseEntity.ok(response);
     }
