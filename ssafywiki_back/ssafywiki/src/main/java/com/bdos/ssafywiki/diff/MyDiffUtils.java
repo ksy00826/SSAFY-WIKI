@@ -1,11 +1,13 @@
 package com.bdos.ssafywiki.diff;
 
+import com.bdos.ssafywiki.exception.ExceptionCode;
 import com.github.difflib.DiffUtils;
 import com.github.difflib.patch.AbstractDelta;
 import com.github.difflib.patch.Chunk;
 import com.github.difflib.patch.Patch;
 import com.github.difflib.patch.PatchFailedException;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -58,13 +60,12 @@ public class MyDiffUtils {
         return length;
     }
 
-    public String threeWayMerge(List<String> base, List<String> versionA, List<String> versionB) throws PatchFailedException {
+    public MergeDto threeWayMerge(List<String> base, List<String> versionA, List<String> versionB) throws PatchFailedException {
         Patch<String> patchA = DiffUtils.diff(base, versionA);
         Patch<String> patchB = DiffUtils.diff(base, versionB);
 
         // 변화가 뒤에서 부터 일어나야지 List 인덱스가 안변함
         List<AbstractDelta<String>> deltasA = patchA.getDeltas();
-//        System.out.println(deltasA.stream().map(delta -> delta.getTarget()).collect(Collectors.toList()));
         List<AbstractDelta<String>> deltasB = patchB.getDeltas();
 
         int indexA = patchA.getDeltas().size() - 1;
@@ -115,18 +116,15 @@ public class MyDiffUtils {
             } else {
                 indexB--;
             }
-//            System.out.println("indexA : " + indexA + ", " + "indexB : " + indexB);
         }
 
         // mergeDeltaPatch를 적용
         List<String> merged = DiffUtils.patch(base, mergeDeltaPatch);
         applyConflict(merged, conflictList);
 
-//        System.out.println("########################");
-//        merged.stream().forEach(System.out::println);
-
-        return merged.stream().collect(Collectors.joining("\n"));
+        return new MergeDto(merged.stream().collect(Collectors.joining("\n")), conflictList.size() > 0 ? ExceptionCode.MERGE_CONFLICT : null);
     }
+
     public void applyConflict(List<String> base, List<Conflict> conflictList) {
         for (Conflict conflict : conflictList) {
             conflict.patch(base);
