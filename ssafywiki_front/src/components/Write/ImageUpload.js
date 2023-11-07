@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AWS from "aws-sdk";
 import { getToken } from "utils/Authenticate";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { message, Upload, Card, Space } from "antd";
+import { message, Upload, Card, Row, Col, Space } from "antd";
 
 const S3_BUCKET_NAME = "ssafywiki-s3"; // S3 버킷 이름
 const S3_REGION = "ap-northeast-2"; // S3 버킷의 AWS 지역
@@ -117,30 +117,42 @@ function FileUpload() {
 
   return (
     <div>
-      <Space direction="horizental" size={16}>
-        <Upload
-          name="avatar"
-          listType="picture-card"
-          className="avatar-uploader"
-          showUploadList={false}
-          beforeUpload={beforeUpload}
-          onChange={handleChange}
-        >
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt="avatar"
-              style={{
-                width: "100%",
-              }}
-            />
-          ) : (
-            uploadButton
-          )}
-        </Upload>
-        <Card title="Image URL" style={{ width: "100em" }}>
-          {imageUrl ? <p>{imageUrl}</p> : <p>loading..</p>}
-        </Card>
+      <Space
+        direction="vertical"
+        size="middle"
+        style={{
+          display: "flex",
+        }}
+      >
+        <Row>
+          <Col flex={1}>
+            <Upload
+              name="avatar"
+              listType="picture-card"
+              className="avatar-uploader"
+              showUploadList={false}
+              beforeUpload={beforeUpload}
+              onChange={handleChange}
+            >
+              {imageUrl ? (
+                <img
+                  src={imageUrl}
+                  alt="avatar"
+                  style={{
+                    width: "100%",
+                  }}
+                />
+              ) : (
+                uploadButton
+              )}
+            </Upload>
+          </Col>
+          <Col flex={16}>
+            <Card title="Image URL">
+              {imageUrl ? <p>{imageUrl}</p> : <p>URL</p>}
+            </Card>
+          </Col>
+        </Row>
       </Space>
     </div>
   );
