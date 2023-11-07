@@ -61,7 +61,7 @@ public class RevisionDto {
         private Long docsId;
         private String title;
         private String content;
-        private List<CategoryDto.Detail> categoryList;
+        private List<String> categoryList;
         private boolean canUpdate;
         private Long revId;
     }
