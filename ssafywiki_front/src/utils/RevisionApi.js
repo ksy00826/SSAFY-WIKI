@@ -1,5 +1,4 @@
-import { async } from "q";
-import { axiosInstance, axiosInstanceWithLogin } from "./AxiosConfig";
+import { axiosInstanceWithLogin } from "./AxiosConfig";
 
 export const getHistory = async (docsId, page, size) => {
     try {

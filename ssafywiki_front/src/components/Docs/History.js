@@ -80,7 +80,7 @@ const History = () => {
           {item.createdAt}&nbsp;
           {"( "}
           <Link to={`/res/content/${params.docsId}/${params.title}?rev=${item.number}`} state={{ revId: item.id }}>보기</Link>{" | "}
-          <Link to="">RAW</Link>{" | "}
+          <Link to={`/res/raw/${params.title}?rev=${item.number}`} state={{ revId: item.id, docsId: params.docsId }}>RAW</Link>{" | "}
           <Link to="#" onClick={(e) => showConfirm(e, item.id, item.number)}>이 리비전으로 되돌리기</Link>
           {" ) "}
           <Radio.Group
@@ -109,14 +109,12 @@ const History = () => {
     <div>
       <h1>{params.title} <small style={{ fontWeight: "normal" }}>(문서 역사)</small></h1>
       <DocsNav current="history" />
-      <Card>
-        <div>History</div>
-      </Card>
-      <Button
-        onClick={onClickDiff}
-      >
-        버전 비교
-      </Button>
+
+        <Button
+          onClick={onClickDiff}
+        >
+          버전 비교
+        </Button>
       <div>
         <Timeline mode="left" items={historyData != null && timelineItems} />
         <Pagination
