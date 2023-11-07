@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Input, Button, Select, Col, Row } from "antd";
+import { Input, Button, Select, Col, Row, Divider } from "antd";
 
 import WriteForm from "./WriteForm";
 
@@ -26,13 +26,16 @@ const WriteTemplate = ({
   return (
     <div>
       <Row>
+        <Divider orientation="left" orientationMargin="0">
+          <b>템플릿 제목</b>
+        </Divider>
         <Input placeholder="템플릿 제목" onChange={titleChange} />
       </Row>
       <div>
         <Row>
-          <Col flex={1}>
-            <p>템플릿 분류 선택</p>
-          </Col>
+          <Divider orientation="left" orientationMargin="0">
+            <b>템플릿 분류</b>
+          </Divider>
           <Col flex={5}>
             <Select
               mode="tags"
@@ -46,6 +49,9 @@ const WriteTemplate = ({
           </Col>
         </Row>
       </div>
+      <Divider orientation="left" orientationMargin="0">
+        <b>템플릿 내용</b>
+      </Divider>
       <WriteForm
         content={content}
         setContent={setContent}
@@ -55,9 +61,12 @@ const WriteTemplate = ({
         <Col flex="8"></Col>
         <Col>
           {!disabled ? (
-            <Button type="primary" onClick={completeLogic}>
-              {button}
-            </Button>
+            <div>
+              <br />
+              <Button type="primary" onClick={completeLogic}>
+                {button}
+              </Button>
+            </div>
           ) : (
             <></>
           )}
