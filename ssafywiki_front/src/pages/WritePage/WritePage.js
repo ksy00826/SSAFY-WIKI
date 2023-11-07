@@ -12,20 +12,22 @@ import { openNotification } from "App";
 const { Content } = Layout;
 const WritePage = () => {
   const [searchParams] = useSearchParams();
-  const [title, setTitle] = React.useState();
+  const [title, setTitle] = React.useState("");
   const [step, setStep] = React.useState(1);
-  const [content, setContent] = React.useState();
+  const [content, setContent] = React.useState("");
   const [selectedClass, setSelectedClass] = React.useState([]);
 
   const navigate = useNavigate();
 
-  const next = (content) => {
-    setContent(content);
+  const next = () => {
+    // setContent(content);
     setStep(step + 1);
   };
 
   React.useEffect(() => {
-    setTitle(searchParams.get("title")); //url에서 가져오기
+    const title = searchParams.get("title");
+    setTitle(title == undefined ? "문서 제목" : title); //url에서 가져오기
+    setContent("");
   }, []);
 
   const create = () => {

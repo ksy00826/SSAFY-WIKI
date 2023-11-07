@@ -37,9 +37,6 @@ const DocsList = ({
           <Divider orientation="left" orientationMargin="0">
             <b>문서 분류</b>
           </Divider>
-          {/* <Col flex={1}>
-            <p>문서 분류 선택</p>
-          </Col> */}
           <Col flex={5}>
             <Select
               mode="tags"
