@@ -1,5 +1,6 @@
 package com.bdos.ssafywiki.document.service;
 
+import com.bdos.ssafywiki.diff.MergeDto;
 import com.bdos.ssafywiki.diff.MyDiffUtils;
 import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
 import com.bdos.ssafywiki.docs_category.entity.Category;
@@ -27,6 +28,7 @@ import com.bdos.ssafywiki.user.enums.Privilege;
 import com.bdos.ssafywiki.user.enums.Role;
 import com.bdos.ssafywiki.user.repository.UserRepository;
 import com.github.difflib.DiffUtils;
+import com.github.difflib.patch.PatchFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.mapstruct.factory.Mappers;
@@ -59,6 +61,7 @@ public class DocumentService {
     private final MyDiffUtils myDiffUtils;
     private final RedisTemplate<String, DocumentDto.Recent> redisTemplateDocument;
     private final DocumentMapper documentMapper;
+
     @Transactional
     public RevisionDto.DocsResponse writeDocs(DocumentDto.Post post, User user) {
         //일단 유저를 다른 곳에 연관관계로 등록하기 위해 임시로 저장
@@ -185,37 +188,67 @@ public class DocumentService {
         return revisionMapper.toCheckUpdateResponse(revision, canUpdate);
     }
 
-    public RevisionDto.DocsResponse updateDocs(DocumentDto.Put put, User user) {
+    public RevisionDto.UpdateResponse updateDocs(DocumentDto.Put put, User user) {
         //유저의 권한과 문서의 권한을 체크해서 처리
 
-        //엔티티 : 코멘트, 내용 -> 버전
-        Comment comment = new Comment(put.getComment());
-        Content content = new Content(put.getContent());
-        commentRepository.save(comment);
-        contentRepository.save(content);
-
+        // base 버전이 최상위 버전인지 확인
         Document document = documentRepository.findById(put.getDocsId()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
+        Revision topRevision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
 
-        //연관관계 : 수정 유저, 이전 버전id, 문서id
-        Revision preRevision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
+        // base 버전이 최상위 버전이 아닌 경우
+        if (!put.getRevId().equals(topRevision.getId())) {
+            MergeDto threeWayMergeResult = null;
+            Revision baseRevision = revisionRepository.findById(put.getRevId()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.REVISION_NOT_FOUND));
+            List<String> base = myDiffUtils.splitIntoLines(baseRevision.getContent().getText());
+            List<String> latest = myDiffUtils.splitIntoLines(topRevision.getContent().getText());
+            List<String> update = myDiffUtils.splitIntoLines(put.getContent());
+            try {
+                threeWayMergeResult = myDiffUtils.threeWayMerge(base, latest, update);
+            } catch (PatchFailedException e) {
+                throw new BusinessLogicException(ExceptionCode.MERGE_FAILED);
+            }
 
-        //그 외 : 텍스트 증감 수, 문서 버전 번호
-        Long textDiff = (long) myDiffUtils.diffLength(DiffUtils.diff(myDiffUtils.splitIntoLines(preRevision.getContent().getText()), myDiffUtils.splitIntoLines(put.getContent())));
-        Long newVersionNo = preRevision.getNumber() + 1;
+            return RevisionDto.UpdateResponse.builder()
+                    .docsId(put.getDocsId())
+                    .revId(put.getRevId())
+                    .title(document.getTitle())
+                    .content(threeWayMergeResult.getResult()).exceptionCode(threeWayMergeResult.getExceptionCode()).build();
+        } else {
 
-        Revision revision = new Revision(textDiff, newVersionNo);
+            //엔티티 : 코멘트, 내용 -> 버전
+            Comment comment = new Comment(put.getComment());
+            Content content = new Content(put.getContent());
+            commentRepository.save(comment);
+            contentRepository.save(content);
 
-        //연관관계 등록 : 코멘트, 내용, 문서, 유저, 버전(selft)
-        revision.setUser(user);
-        revision.setDocument(document);
-        revision.setContent(content);
-        revision.setComment(comment);
-        revision.setParent(preRevision);
 
-        revisionRepository.save(revision);
-        saveRecentDocsToRedis(document);
-        //문서 상세 내용 리턴
-        return revisionMapper.toResponse(revision);
+            //연관관계 : 수정 유저, 이전 버전id, 문서id
+            Revision preRevision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
+
+            //그 외 : 텍스트 증감 수, 문서 버전 번호
+            Long textDiff = (long) myDiffUtils.diffLength(DiffUtils.diff(myDiffUtils.splitIntoLines(preRevision.getContent().getText()), myDiffUtils.splitIntoLines(put.getContent())));
+            Long newVersionNo = preRevision.getNumber() + 1;
+
+            Revision revision = new Revision(textDiff, newVersionNo);
+
+            //연관관계 등록 : 코멘트, 내용, 문서, 유저, 버전(selft)
+            revision.setUser(user);
+            revision.setDocument(document);
+            revision.setContent(content);
+            revision.setComment(comment);
+            revision.setParent(preRevision);
+
+            revisionRepository.save(revision);
+            saveRecentDocsToRedis(document);
+
+            //문서 상세 내용 리턴
+            return RevisionDto.UpdateResponse.builder()
+                    .docsId(put.getDocsId())
+                    .revId(revision.getId())
+                    .title(document.getTitle())
+                    .modifiedAt(revision.getModifiedAt())
+                    .content(revision.getContent().getText()).exceptionCode(null).build();
+        }
     }
 
     public void saveRecentDocsToRedis(Document document) {
