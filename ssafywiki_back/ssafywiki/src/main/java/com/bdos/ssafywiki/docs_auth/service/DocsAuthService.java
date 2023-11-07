@@ -85,7 +85,7 @@ public class DocsAuthService {
                 .write(document.getWriteAuth()).build();
     }
 
-    public Boolean inviteMember(DocsAuthDto.MemberInviteRequest request, User userDetails) {
+    public DocsAuthDto.UserAuthResponse inviteMember(DocsAuthDto.MemberInviteRequest request, User userDetails) {
 
         // 요청한 유저가 존재하는 유저인가
         User findUser = userRepository.findByEmail(request.getEmail()).orElseThrow( () ->
@@ -97,15 +97,18 @@ public class DocsAuthService {
         );
 
         // 중복된 유저인지 확인
-        userDocsAuthRepository.findByDocsAuthAndUser(findAuth, findUser)
-                .orElse(
-                        // 못찾았으면. 중복되지 않았으면 저장.
-                        userDocsAuthRepository.save(UserDocsAuth.builder()
-                                .docsAuth(findAuth)
-                                .user(findUser).build())
+        UserDocsAuth u = userDocsAuthRepository.findByDocsAuthAndUser(findAuth, findUser)
+                .orElseGet(()-> {
+                    // 못찾았으면. 중복되지 않았으면 저장.
+                            UserDocsAuth uu = UserDocsAuth.builder()
+                                    .docsAuth(findAuth)
+                                    .user(findUser).build();
+                            userDocsAuthRepository.save(uu);
+                            return uu;
+                        }
                 );
 
-        return true;
+        return docsAuthMapper.toUserAuth(u);
     }
 
     public Boolean deleteMember(DocsAuthDto.MemberDeleteRequest request, User userDetails) {
@@ -113,8 +116,6 @@ public class DocsAuthService {
         UserDocsAuth find = userDocsAuthRepository.findByDocsAuthIdAndUserId(request.getAuthId(), request.getUserId())
                 .orElseThrow(()-> new BusinessLogicException(ExceptionCode.REQUEST_NOT_FOUND));
 
-        log.info("????????????????????");
-        log.info(find.toString());
         userDocsAuthRepository.delete(find);
 
         return true;

@@ -37,15 +37,15 @@ public class DocsAuthController {
 
     @Operation(summary = "문서 권한 유저 초대", description = "문서 하나의 사용자권한에 멤버를 초대합니다.")
     @PostMapping("api/docs/auth/member")
-    public ResponseEntity<Boolean> invitMember (@RequestBody DocsAuthDto.MemberInviteRequest request,
+    public ResponseEntity<DocsAuthDto.UserAuthResponse> invitMember (@RequestBody DocsAuthDto.MemberInviteRequest request,
                                                              @AuthenticationPrincipal User userDetails) {
-        Boolean response = docsAuthService.inviteMember(request, userDetails);
+        DocsAuthDto.UserAuthResponse response = docsAuthService.inviteMember(request, userDetails);
 
         return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "문서 권한 유저 삭제", description = "문서 하나의 사용자권한에 멤버를 삭제합니다.")
-    @DeleteMapping("api/docs/auth/member")
+    @PatchMapping("api/docs/auth/member")
     public ResponseEntity<Boolean> deleteMember (@RequestBody DocsAuthDto.MemberDeleteRequest request,
                                                                  @AuthenticationPrincipal User userDetails) {
         Boolean response = docsAuthService.deleteMember(request, userDetails);
