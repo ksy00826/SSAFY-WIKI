@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Input, Button, Select, Col, Row, Divider } from "antd";
 
 import WriteForm from "./WriteForm";
@@ -16,8 +16,10 @@ const DocsList = ({
 }) => {
   const handleChange = (value) => {
     console.log(`selected ${value}`);
+
     setSelectedClass(value);
   };
+
   const titleChange = (value) => {
     setTitle(value.target.value);
     console.log(value.target.value);
@@ -29,7 +31,11 @@ const DocsList = ({
         <Divider orientation="left" orientationMargin="0">
           <b>문서 제목</b>
         </Divider>
-        <Input placeholder={title} onChange={titleChange} />
+        {button === "수정" ? (
+          <Input placeholder={title} readOnly={true} />
+        ) : (
+          <Input placeholder={title} onChange={titleChange} />
+        )}
       </Row>
 
       <div>
@@ -37,15 +43,14 @@ const DocsList = ({
           <Divider orientation="left" orientationMargin="0">
             <b>문서 분류</b>
           </Divider>
-          {/* <Col flex={1}>
-            <p>문서 분류 선택</p>
-          </Col> */}
           <Col flex={5}>
             <Select
+              disabled={disabled ? true : false}
               mode="tags"
               style={{
                 width: "90%",
               }}
+              defaultValue={selectedClass}
               placeholder="문서 분류"
               onChange={handleChange}
               options={[]}
