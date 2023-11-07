@@ -90,4 +90,8 @@ public class Document {
         this.readAuth = read;
         this.writeAuth = write;
     }
+
+    public void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
+    }
 }
