@@ -1,5 +1,10 @@
 import React, { useEffect } from "react";
-import { AndroidOutlined, AppleOutlined } from "@ant-design/icons";
+import {
+  AndroidOutlined,
+  AppleOutlined,
+  UnlockOutlined,
+  LockFilled,
+} from "@ant-design/icons";
 import {
   Button,
   Modal,
@@ -19,6 +24,7 @@ import {
   getTemplateDetail,
   getTemplateList,
   deleteTemplate,
+  changeTemplateAuthority,
 } from "utils/TemplateApi";
 // import { openNotification } from "App";
 
@@ -197,6 +203,23 @@ const SearchTemplete = ({ next }) => {
     </div>
   ) : null;
 
+  const changeAuthority = (item) => {
+    if (
+      item != undefined &&
+      item.templateId != undefined &&
+      item.secret != undefined
+    ) {
+      console.log(item);
+      changeTemplateAuthority(item.templateId, !item.secret, pageNum).then(
+        (res) => {
+          console.log(res);
+          setData(res);
+          setList(res);
+        }
+      );
+    }
+  };
+
   return (
     <div>
       <Row>
@@ -261,6 +284,12 @@ const SearchTemplete = ({ next }) => {
                       <List.Item.Meta
                         title={<a onClick={showTemplate}>{item.title}</a>}
                         description={item.author}
+                      />
+                      <Button
+                        type="default"
+                        icon={item.secret ? <LockFilled /> : <UnlockOutlined />}
+                        // loading={loadings[2]}
+                        onClick={() => changeAuthority(item)}
                       />
                     </Skeleton>
                   </List.Item>
