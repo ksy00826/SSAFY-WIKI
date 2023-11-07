@@ -39,5 +39,6 @@ public class TemplateDto {
         private Long templateId;
         private String title;
         private String author;
+        private boolean secret;
     }
 }
