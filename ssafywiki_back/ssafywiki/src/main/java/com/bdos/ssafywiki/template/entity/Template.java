@@ -58,4 +58,8 @@ public class Template {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public void setSecret(boolean secret) {
+        this.secret = secret;
+    }
 }

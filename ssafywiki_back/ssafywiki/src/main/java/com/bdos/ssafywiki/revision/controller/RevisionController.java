@@ -56,7 +56,7 @@ public class RevisionController {
     @PostMapping("/revert")
     public ResponseEntity revertVersion(
             @AuthenticationPrincipal User user,
-            @RequestParam(name = "select") long revId) {
+            @RequestParam(name = "revId") long revId) {
 
         System.out.println(user);
         revisionService.revertVersion(user, revId);
