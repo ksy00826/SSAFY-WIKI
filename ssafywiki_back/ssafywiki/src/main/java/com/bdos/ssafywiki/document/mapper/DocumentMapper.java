@@ -15,7 +15,7 @@ public interface DocumentMapper {
 
     DocumentDto.Detail toDetail(Document document);
 
-    DocumentDto.Recent toRecent(RevisionDto.DocsResponse response);
+    DocumentDto.Recent toRecent(RevisionDto.UpdateResponse response);
 
     @Mapping(source = "document.id", target = "docsId")
     DocumentDto.Recent documentToRecent(Document document);
