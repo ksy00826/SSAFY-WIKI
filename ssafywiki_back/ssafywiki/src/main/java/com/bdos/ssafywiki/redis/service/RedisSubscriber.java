@@ -1,6 +1,7 @@
-package com.bdos.ssafywiki.discussion.service;
+package com.bdos.ssafywiki.redis.service;
 
 import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
+import com.bdos.ssafywiki.document.dto.DocumentDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,12 +26,22 @@ public class RedisSubscriber implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
-            // redis에서 발행된 데이터를 받아 deserialize
+            String channelName = new String(message.getChannel());
+
+            // key 값에 따라 다른 DTO 클래스 선택
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
-            // ChatMessage 객채로 맵핑
-            DiscussionDto roomMessage = objectMapper.readValue(publishMessage, DiscussionDto.class);
+            Class<?> dtoClass = null;
+            // redis에서 발행된 데이터를 받아 deserialize
             // Websocket 구독자에게 채팅 메시지 Send
-            messagingTemplate.convertAndSend("/sub/chat/" + roomMessage.getDocsId(), roomMessage);
+            if ("recent".equals(channelName)) {
+                DocumentDto.Recent roomMessage = objectMapper.readValue(publishMessage, DocumentDto.Recent.class);
+                messagingTemplate.convertAndSend("/sub/recent/", roomMessage);
+            } else {
+                DiscussionDto roomMessage = objectMapper.readValue(publishMessage, DiscussionDto.class);
+                messagingTemplate.convertAndSend("/sub/chat/" + roomMessage.getDocsId(), roomMessage);
+            }
+
+
         } catch (Exception e) {
             log.error(e.getMessage());
         }

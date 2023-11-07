@@ -1,8 +1,10 @@
 package com.bdos.ssafywiki.document.controller;
 
-import com.bdos.ssafywiki.discussion.service.DiscussionService;
 import com.bdos.ssafywiki.document.dto.DocumentDto;
+import com.bdos.ssafywiki.document.mapper.DocumentMapper;
 import com.bdos.ssafywiki.document.service.DocumentService;
+import com.bdos.ssafywiki.redis.service.RedisPublisher;
+import com.bdos.ssafywiki.redis.service.TopicService;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import com.bdos.ssafywiki.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,8 +12,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @Tag(name = "문서 API", description = "문서에 대한 CRUD 작업을 수행하는 API")
@@ -21,7 +26,10 @@ import org.springframework.web.bind.annotation.*;
 public class DocumentController {
 
     private final DocumentService documentService;
-    private final DiscussionService discussionService;
+    private final TopicService topicService;
+    private final RedisPublisher redisPublisher;
+    private final DocumentMapper documentMapper;
+
     @Operation(summary = "문서 작성하기", description = "문서 하나를 작성합니다.")
     @PostMapping("/api/docs")
     public ResponseEntity<RevisionDto.DocsResponse> writeDocs(@RequestBody DocumentDto.Post post,
@@ -36,7 +44,7 @@ public class DocumentController {
     public ResponseEntity<RevisionDto.DocsResponse> readDocs(@PathVariable Long docsId,
                                                              @RequestParam(required = false) Long revId,
                                                              @AuthenticationPrincipal User userDetails){
-        discussionService.enterChatRoom(docsId.toString());
+        topicService.enterRoom(docsId.toString());
         RevisionDto.DocsResponse response = documentService.readDocs(docsId, revId, userDetails);
 
         return ResponseEntity.ok(response);
@@ -55,7 +63,21 @@ public class DocumentController {
     public ResponseEntity<RevisionDto.DocsResponse> updateDocs(@RequestBody DocumentDto.Put put,
                                                                @AuthenticationPrincipal User userDetails){
         RevisionDto.DocsResponse response = documentService.updateDocs(put, userDetails);
-
+        redisPublisher.publish(topicService.getTopic("recent"), documentMapper.toRecent(response));
         return ResponseEntity.ok(response);
+    }
+
+
+    @Operation(summary = "최근 수정한 문서 웹소켓 연결", description = "웹소켓을 연결합니다")
+    @GetMapping("/api/docs/sub")
+    public void recentUpdatedDocsSub() {
+        topicService.enterRoom("recent");
+    }
+
+    @Operation(summary = "최근 수정한 문서 리스트 조회하기", description = "최근 수정한 문서를 10개 조회합니다.")
+    @GetMapping("/api/docs/recent")
+    public ResponseEntity<?> readRecentDocs() {
+        List<DocumentDto.Recent> recentDocs = documentService.loadRecentDocsList();
+        return ResponseEntity.ok(recentDocs);
     }
 }
