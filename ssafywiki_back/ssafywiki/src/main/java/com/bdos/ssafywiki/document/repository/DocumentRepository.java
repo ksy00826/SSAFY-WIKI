@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface DocumentRepository extends JpaRepository<Document, Long> {
-    List<Document> findTop10ByOrderByModifiedAtDesc();
+    List<Document> findTop10ByOrderByModifiedAtAsc();
 }
