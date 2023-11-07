@@ -67,8 +67,10 @@ public class Document {
     private List<DocsCategory> categoryList = new ArrayList<>();
 
     @Builder
-    public Document(String title, Long readAuth, Long writeAuth) {
+    public Document(String title, boolean redirect, boolean deleted, Long readAuth, Long writeAuth) {
         this.title = title;
+        this.redirect = redirect;
+        this.deleted = deleted;
         this.readAuth = readAuth;
         this.writeAuth = writeAuth;
     }
@@ -89,5 +91,9 @@ public class Document {
     public void setAuth(Long read, Long write) {
         this.readAuth = read;
         this.writeAuth = write;
+    }
+
+    public void setModifiedAt(LocalDateTime modifiedAt) {
+        this.modifiedAt = modifiedAt;
     }
 }
