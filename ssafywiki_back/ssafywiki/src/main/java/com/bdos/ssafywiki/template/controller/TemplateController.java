@@ -76,4 +76,16 @@ public class TemplateController {
 
         return ResponseEntity.ok(list);
     }
+
+
+    @Operation(summary = "템플릿 하나 공개 여부 수정하기", description = "자신이 작성한 템플릿의 공개 여부를 수정합니다.")
+    @PutMapping("/api/docs/template/{templateId}")
+    public ResponseEntity modifyAuthority(@PathVariable Long templateId,
+                                            @RequestParam Boolean newSecret,
+                                          @AuthenticationPrincipal User user,
+                                          @PageableDefault(size = 5, sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
+        templateService.modifyAuthority(templateId, newSecret);
+        List<TemplateDto.Preview> list = templateService.readTemplateList(true, pageable, user);
+        return ResponseEntity.ok(list);
+    }
 }
