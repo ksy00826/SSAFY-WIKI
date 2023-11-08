@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import AWS from "aws-sdk";
 import { getToken } from "utils/Authenticate";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { message, Upload, Card, Row, Col, Space, Button } from "antd";
+import { message, Upload, Card, Row, Col, Space, Button, Tooltip } from "antd";
 import { openNotification } from "App";
 const S3_BUCKET_NAME = "ssafywiki-s3"; // S3 버킷 이름
 const S3_REGION = "ap-northeast-2"; // S3 버킷의 AWS 지역
@@ -132,19 +132,21 @@ function FileUpload() {
             </Upload>
           </Col>
           <Col flex={8}>
-            <Button ghost block style={buttonStyle} onClick={copyToClipboard}>
-              <Card title="Image URL" style={{ overflow: "auto" }}>
-                <div
-                  style={{
-                    whiteSpace: "nowrap",
-                    overflow: "auto",
-                    textOverflow: "ellipsis",
-                  }}
-                >
-                  {imageUrl ? <p>{imageUrl}</p> : <p>URL</p>}
-                </div>
-              </Card>
-            </Button>
+            <Tooltip title="copy">
+              <Button ghost block style={buttonStyle} onClick={copyToClipboard}>
+                <Card title="Image URL" style={{ overflow: "auto" }}>
+                  <div
+                    style={{
+                      whiteSpace: "nowrap",
+                      overflow: "auto",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {imageUrl ? <p>{imageUrl}</p> : <p>URL</p>}
+                  </div>
+                </Card>
+              </Button>
+            </Tooltip>
           </Col>
         </Row>
       </Space>
