@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Pagination, Timeline, Radio, Button, Modal } from "antd";
+import { Pagination, Timeline, Radio, Button, Modal } from "antd";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { getHistory, revertVersion } from "utils/RevisionApi"
 import DocsNav from "./DocsNav";
@@ -118,7 +118,7 @@ const History = () => {
       <div>
         <Timeline mode="left" items={historyData != null && timelineItems} />
         <Pagination
-          current={currentPage}
+          current={currentPage+1}
           pageSize={pageSize}
           total={totalElements}
           onChange={handlePageChange}
