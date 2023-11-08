@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Input, Button, Select, Col, Row, Divider, Space, Card } from "antd";
 
-const CategorySelect = ({ next, setReadAuth, setWriteAuth }) => {
+const CategorySelect = ({ next, setReadAuth, setWriteAuth, setIsRedirect }) => {
   const clickSsafyOpen = () => {
     setReadAuth(1);
-    setWriteAuth(1);
+    setWriteAuth(2);
     next();
   };
   const clickSsafyClose = () => {
@@ -19,7 +19,8 @@ const CategorySelect = ({ next, setReadAuth, setWriteAuth }) => {
   };
   const clickRedirect = () => {
     setReadAuth(1);
-    setWriteAuth(1); //고정
+    setWriteAuth(2);
+    setIsRedirect(true);
     next();
   };
   return (
