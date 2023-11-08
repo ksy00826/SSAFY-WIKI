@@ -15,8 +15,10 @@
 
 .App-header {
   color: white;
-  background-color: white;
+  background-color: #424242;
   padding: 0;
+  display: flex;
+  justify-content: space-around;
 }
 
 .App-link {
@@ -30,4 +32,14 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.Content {
+  max-width: 2000px;
+  min-width: 1200px;
+  margin: 0 auto;
+}
+
+.HeaderBox {
+  background-color: #424242;
 }

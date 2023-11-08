@@ -10,16 +10,14 @@ import Raw from "components/Docs/Raw";
 
 import ListPage from "./ListPage";
 import Sidebar from "components/Docs/Sidebar";
-
+import styles from "./DocsPage.module.css"
 const { Sider, Content } = Layout;
 
 const UserPage = () => {
   return (
     <Layout hasSider>
       <Content
-        style={{
-          backgroundColor: "white",
-        }}
+        className={styles.Content}
       >
         <Routes>
           <Route path="/list" element={<ListPage />} />
@@ -34,7 +32,7 @@ const UserPage = () => {
 
       <Sider
         style={{
-          backgroundColor: "white",
+          backgroundColor: "#f5f5f5",
         }}
       >
         <Sidebar />
