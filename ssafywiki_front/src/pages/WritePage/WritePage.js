@@ -25,8 +25,10 @@ const WritePage = () => {
 
   const navigate = useNavigate();
 
-  const next = () => {
-    // setContent(content);
+  const next = (content) => {
+    if (typeof content == "string") {
+      setContent(content);
+    }
     setStep(step + 1);
   };
 

@@ -1,9 +1,10 @@
 import React, { useEffect } from "react";
 import {
-  AndroidOutlined,
-  AppleOutlined,
+  SmileOutlined,
+  TeamOutlined,
   UnlockOutlined,
   LockFilled,
+  FileSearchOutlined,
 } from "@ant-design/icons";
 import {
   Button,
@@ -15,6 +16,7 @@ import {
   List,
   Skeleton,
   Tabs,
+  Tooltip,
 } from "antd";
 import MarkdownRenderer from "components/Common/MarkDownRenderer";
 import { useNavigate } from "react-router-dom";
@@ -251,7 +253,7 @@ const SearchTemplete = ({ next, title }) => {
         activeKey={activeKey}
         defaultActiveKey="1"
         onChange={changeTap}
-        items={[AppleOutlined, AndroidOutlined].map((Icon, i) => {
+        items={[SmileOutlined, TeamOutlined].map((Icon, i) => {
           const taps = ["", "My Template", "Others"];
           i++;
           return {
@@ -272,12 +274,14 @@ const SearchTemplete = ({ next, title }) => {
                 renderItem={(item) => (
                   <List.Item
                     actions={[
-                      <a
-                        key="list-loadmore-show"
-                        onClick={() => showTemplate(item.templateId)}
-                      >
-                        미리보기
-                      </a>,
+                      <Tooltip placement="top" title="상세보기">
+                        <Button
+                          type="default"
+                          icon={<FileSearchOutlined />}
+                          // loading={loadings[2]}
+                          onClick={() => showTemplate(item.templateId)}
+                        />
+                      </Tooltip>,
                     ]}
                   >
                     <Skeleton title={false} loading={item.loading} active>
@@ -286,14 +290,16 @@ const SearchTemplete = ({ next, title }) => {
                         description={item.author}
                       />
                       {activeKey === 1 ? (
-                        <Button
-                          type="default"
-                          icon={
-                            item.secret ? <LockFilled /> : <UnlockOutlined />
-                          }
-                          // loading={loadings[2]}
-                          onClick={() => changeAuthority(item)}
-                        />
+                        <Tooltip placement="top" title="공개여부">
+                          <Button
+                            type="default"
+                            icon={
+                              item.secret ? <LockFilled /> : <UnlockOutlined />
+                            }
+                            // loading={loadings[2]}
+                            onClick={() => changeAuthority(item)}
+                          />
+                        </Tooltip>
                       ) : (
                         <></>
                       )}
