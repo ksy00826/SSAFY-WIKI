@@ -1,6 +1,7 @@
 package com.bdos.ssafywiki.revision.service;
 
 import com.bdos.ssafywiki.diff.Conflict;
+import com.bdos.ssafywiki.diff.MergeDto;
 import com.bdos.ssafywiki.diff.MyDiffUtils;
 import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
 import com.bdos.ssafywiki.discussion.entity.Discussion;
@@ -193,7 +194,7 @@ public class RevisionService {
                 """;
 
         try {
-            String result = myDiffUtils.threeWayMerge(oldStrings, newStrings, myDiffUtils.splitIntoLines(version2));
+            MergeDto result = myDiffUtils.threeWayMerge(oldStrings, newStrings, myDiffUtils.splitIntoLines(version2));
 
         } catch (PatchFailedException e) {
             e.printStackTrace();

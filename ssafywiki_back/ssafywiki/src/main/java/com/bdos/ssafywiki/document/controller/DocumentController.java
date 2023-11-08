@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -60,11 +61,15 @@ public class DocumentController {
 
     @Operation(summary = "문서 수정하기", description = "문서 하나를 수정합니다.")
     @PutMapping("/api/docs")
-    public ResponseEntity<RevisionDto.DocsResponse> updateDocs(@RequestBody DocumentDto.Put put,
+    public ResponseEntity<RevisionDto.UpdateResponse> updateDocs(@RequestBody DocumentDto.Put put,
                                                                @AuthenticationPrincipal User userDetails){
-        RevisionDto.DocsResponse response = documentService.updateDocs(put, userDetails);
-        redisPublisher.publish(topicService.getTopic("recent"), documentMapper.toRecent(response));
-        return ResponseEntity.ok(response);
+        RevisionDto.UpdateResponse response = documentService.updateDocs(put, userDetails);
+        if(response.getExceptionCode() != null){
+            return new ResponseEntity(response, HttpStatus.CONFLICT);
+        }else{
+            redisPublisher.publish(topicService.getTopic("recent"), documentMapper.toRecent(response));
+            return ResponseEntity.ok(response);
+        }
     }
 
 

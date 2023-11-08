@@ -19,7 +19,8 @@ public enum ExceptionCode {
     BOOKMARK_NOT_FOUND(404, "Bookmark Not Found"),
     REQUEST_NOT_FOUND(404,"Requset Not Found"),
     BOOKMARK_CONFLICT(409, "Conflict"),
-    DOCUMENT_NO_ACCESS(402, "Document Can Not Access");
+    DOCUMENT_NO_ACCESS(402, "Document Can Not Access"),
+    MERGE_CONFLICT(409, "Merge Conflict");
 
 
     @Getter
