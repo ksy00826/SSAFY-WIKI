@@ -50,7 +50,7 @@ public class RedirectDocsService {
         documentRepository.save(redirectDocs);
 
         //리다이렉트 문서의 내용(버전) 등록
-        String contentString = "#redirect: " + post.getRedirectTitle();
+        String contentString = "[#redirect: " + post.getRedirectTitle() + "](/res/list?title="+post.getRedirectTitle()+")"; //검색 API 연결 - 수정 필요
         Revision revision = Revision.builder()
                 .number(1L)
                 .diffAmount((long) myDiffUtils.diffLength(DiffUtils.diff(myDiffUtils.splitIntoLines(""), myDiffUtils.splitIntoLines(contentString))))
