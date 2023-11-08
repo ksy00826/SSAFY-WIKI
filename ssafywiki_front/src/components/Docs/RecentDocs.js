@@ -3,6 +3,8 @@ import { useRef, useState, useEffect } from "react";
 import { subscribeRecentDocs, getRecentDocsList } from "utils/DocsApi";
 import { Divider } from "antd";
 import styles from "./RecentDocs.module.css";
+import { Link } from "react-router-dom";
+
 const RecentDocs = () => {
   const [recentDocsList, setRecentDocsList] = useState([]);
   const client = useRef({});
@@ -54,12 +56,39 @@ const RecentDocs = () => {
     }
   };
 
+  const formatTime = (dateString, flag) => {
+    const date = new Date(dateString);
+
+    // 한 자리 숫자일 경우 앞에 '0'을 붙여줌
+    if (flag === "time") {
+      let hours = date.getHours();
+      let minutes = date.getMinutes();
+      hours = hours < 10 ? `0${hours}` : hours;
+      minutes = minutes < 10 ? `0${minutes}` : minutes;
+
+      return `${hours}:${minutes}`;
+    } else {
+      let year = date.getFullYear();
+      let month = date.getMonth();
+      let day = date.getDay();
+      day = day < 10 ? `0${day}` : day;
+      return `${year}-${month}-${day}`;
+    }
+  };
+
   return (
     <div className={styles.RecentBox}>
       {recentDocsList.map((recentDocs, index) => (
         <div key={index}>
-          <Divider style={{ margin: 0 }} />
-          <p className={styles.RecentTitle}>{recentDocs.title}</p>
+          <Divider style={{ margin: "0" }} />
+          <Link to={`/res/content/${recentDocs.docsId}/${recentDocs.title}`}>
+            <div className={styles.RecentTitle}>
+              <span className={styles.Title}>{recentDocs.title}</span>
+              <span className={styles.Time}>
+                {formatTime(recentDocs.modifiedAt, "time")}
+              </span>
+            </div>
+          </Link>
         </div>
       ))}
     </div>
