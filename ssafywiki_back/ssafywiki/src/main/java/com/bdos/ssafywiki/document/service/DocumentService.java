@@ -2,7 +2,6 @@ package com.bdos.ssafywiki.document.service;
 
 import com.bdos.ssafywiki.diff.MergeDto;
 import com.bdos.ssafywiki.diff.MyDiffUtils;
-import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
 import com.bdos.ssafywiki.docs_category.entity.Category;
 import com.bdos.ssafywiki.docs_category.entity.DocsCategory;
 import com.bdos.ssafywiki.docs_category.repository.CategoryRepository;
@@ -13,7 +12,6 @@ import com.bdos.ssafywiki.document.mapper.DocumentMapper;
 import com.bdos.ssafywiki.document.repository.DocumentRepository;
 import com.bdos.ssafywiki.exception.BusinessLogicException;
 import com.bdos.ssafywiki.exception.ExceptionCode;
-import com.bdos.ssafywiki.redis.service.RedisPublisher;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import com.bdos.ssafywiki.revision.entity.Comment;
 import com.bdos.ssafywiki.revision.entity.Content;
@@ -31,8 +29,6 @@ import com.github.difflib.DiffUtils;
 import com.github.difflib.patch.PatchFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.mapstruct.factory.Mappers;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -61,7 +58,6 @@ public class DocumentService {
     private final RevisionMapper revisionMapper;
 
     private final MyDiffUtils myDiffUtils;
-    private final RedisTemplate<String, DocumentDto.Recent> redisTemplateDocument;
     private final DocumentMapper documentMapper;
 
     @Transactional
@@ -242,7 +238,7 @@ public class DocumentService {
             revision.setParent(preRevision);
 
             revisionRepository.save(revision);
-            saveRecentDocsToRedis(document);
+//            saveRecentDocsToRedis(document);
 
             //문서 상세 내용 리턴
             return RevisionDto.UpdateResponse.builder()
@@ -254,36 +250,11 @@ public class DocumentService {
         }
     }
 
-    public void saveRecentDocsToRedis(Document document) {
-        DocumentDto.Recent recentDocs = documentMapper.documentToRecent(document);
-        // 1. 직렬화
-        redisTemplateDocument.setValueSerializer(new Jackson2JsonRedisSerializer<>(DocumentDto.Recent.class));
-
-        // 2. redis 저장
-        redisTemplateDocument.opsForList().leftPush("recent", recentDocs);
-
-        // 3. expire 을 이용해서, Key 를 만료시킬 수 있음
-        redisTemplateDocument.expire("recent", 10, TimeUnit.MINUTES);
-    }
-
     public List<DocumentDto.Recent> loadRecentDocsList() {
-        List<DocumentDto.Recent> recentsDocsList = new ArrayList<>();
-
-        redisTemplateDocument.setValueSerializer(new Jackson2JsonRedisSerializer<>(DocumentDto.Recent.class));
-        List<DocumentDto.Recent> redisDocsList = redisTemplateDocument.opsForList().range("recent", 0, 9);
-
-        if (redisDocsList == null || redisDocsList.isEmpty()) {
-            List<Document> dbDocumentList = documentRepository.findTop10ByOrderByModifiedAtDesc();
-            System.out.println(dbDocumentList);
-            for (Document docs : dbDocumentList) {
-                DocumentDto.Recent recentDocs = documentMapper.documentToRecent(docs);
-                recentsDocsList.add(recentDocs);
-                redisTemplateDocument.setValueSerializer(new Jackson2JsonRedisSerializer<>(DocumentDto.Recent.class));      // 직렬화
-                redisTemplateDocument.opsForList().rightPush("recent", recentDocs);
-            }
-        } else {
-            recentsDocsList.addAll(redisDocsList);
-        }
+        List<Document> dbDocumentList = documentRepository.findTop10ByOrderByModifiedAtDesc();
+        List<DocumentDto.Recent> recentsDocsList = dbDocumentList.stream()
+                .map(documentMapper::documentToRecent)
+                .collect(Collectors.toList());
         return recentsDocsList;
     }
 }

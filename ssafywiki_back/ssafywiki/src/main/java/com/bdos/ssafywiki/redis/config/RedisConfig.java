@@ -59,30 +59,11 @@ public class RedisConfig {
         return redisTemplate;
     }
 
-//    @Bean
-//    public RedisTemplate<String, Object> redisTemplate() {
-//        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-//        redisTemplate.setKeySerializer(new StringRedisSerializer());
-//        redisTemplate.setValueSerializer(new StringRedisSerializer());
-//        redisTemplate.setConnectionFactory(redisConnectionFactory());
-//        return redisTemplate;
-//    }
-
 
     // Redis 에 메시지 내역을 저장하기 위한 RedisTemplate 을 설정
     @Bean
     public RedisTemplate<String, DiscussionDto> redisTemplateMessage(RedisConnectionFactory connectionFactory) {
         RedisTemplate<String, DiscussionDto> redisTemplateMessage = new RedisTemplate<>();
-        redisTemplateMessage.setConnectionFactory(connectionFactory);
-        redisTemplateMessage.setKeySerializer(new StringRedisSerializer());        // Key Serializer
-        redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));      // Value Serializer
-
-        return redisTemplateMessage;
-    }
-
-    @Bean
-    public RedisTemplate<String, DocumentDto.Recent> redisTemplateDocument(RedisConnectionFactory connectionFactory) {
-        RedisTemplate<String, DocumentDto.Recent> redisTemplateMessage = new RedisTemplate<>();
         redisTemplateMessage.setConnectionFactory(connectionFactory);
         redisTemplateMessage.setKeySerializer(new StringRedisSerializer());        // Key Serializer
         redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));      // Value Serializer

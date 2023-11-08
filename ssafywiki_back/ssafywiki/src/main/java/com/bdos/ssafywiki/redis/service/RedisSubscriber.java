@@ -30,16 +30,10 @@ public class RedisSubscriber implements MessageListener {
 
             // key 값에 따라 다른 DTO 클래스 선택
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
-            Class<?> dtoClass = null;
             // redis에서 발행된 데이터를 받아 deserialize
             // Websocket 구독자에게 채팅 메시지 Send
-            if ("recent".equals(channelName)) {
-                DocumentDto.Recent roomMessage = objectMapper.readValue(publishMessage, DocumentDto.Recent.class);
-                messagingTemplate.convertAndSend("/sub/recent/", roomMessage);
-            } else {
-                DiscussionDto roomMessage = objectMapper.readValue(publishMessage, DiscussionDto.class);
-                messagingTemplate.convertAndSend("/sub/chat/" + roomMessage.getDocsId(), roomMessage);
-            }
+            DiscussionDto roomMessage = objectMapper.readValue(publishMessage, DiscussionDto.class);
+            messagingTemplate.convertAndSend("/sub/chat/" + roomMessage.getDocsId(), roomMessage);
 
 
         } catch (Exception e) {
