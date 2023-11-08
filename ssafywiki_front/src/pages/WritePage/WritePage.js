@@ -109,7 +109,11 @@ const WritePage = () => {
         ) : (
           <></>
         )}
-        {step == 1 && !isRedirect ? <SerachTemplete next={next} /> : <></>}
+        {step == 1 && !isRedirect ? (
+          <SerachTemplete next={next} title={title} />
+        ) : (
+          <></>
+        )}
         {step == 2 && !isRedirect ? (
           <div>
             <WriteForm

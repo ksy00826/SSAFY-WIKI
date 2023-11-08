@@ -1,9 +1,7 @@
 import React from "react";
-import { Button } from "antd";
 import { Layout } from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { createDocs } from "utils/DocsApi";
 import { createTemplate } from "utils/TemplateApi";
 import { openNotification } from "App";
 import WriteTemplate from "components/Write/WriteTemplate";
@@ -12,31 +10,29 @@ const { Content } = Layout;
 const WritePage = () => {
   const [title, setTitle] = React.useState();
   const [content, setContent] = React.useState();
-  const [selectedClass, setSelectedClass] = React.useState([]);
-  const [readAuth, setReadAuth] = React.useState(0);
-  const [writeAuth, setWriteAuth] = React.useState(0);
-
+  const [secret, setSecret] = React.useState("true");
+  const [selectedClass, setSelectedClass] = React.useState();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const create = () => {
     // axios로 등록 데이터 넣어줘야함
-    console.log(title, content, selectedClass, readAuth, writeAuth);
+    console.log(title, content, secret);
     createTemplate({
       title: title,
       content: content,
-      categories: selectedClass,
-      readAuth: readAuth,
-      writeAuth: writeAuth,
+      secret: secret,
     }).then((result) => {
       //완료
       console.log(result);
       openNotification(
         "success",
         "템플릿 생성 완료",
-        `${result.title}템플릿이 생성되었습니다.`
+        `'${result.title}' 템플릿이 생성되었습니다.`
       );
-
-      navigate(`/wrt`);
+      const docsTitle = searchParams.get("title");
+      setTitle(docsTitle == undefined ? "문서 제목" : docsTitle); //url에서 가져오기
+      navigate(`/wrt?title=${docsTitle}`);
     });
   };
   return (
@@ -56,7 +52,8 @@ const WritePage = () => {
             setTitle={setTitle}
             button="템플릿 생성"
             completeLogic={create}
-            selectedClass={selectedClass}
+            secret={secret}
+            setSecret={setSecret}
             setSelectedClass={setSelectedClass}
           />
         </div>
