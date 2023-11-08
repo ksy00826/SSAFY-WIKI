@@ -91,7 +91,7 @@ function FileUpload() {
   const copyToClipboard = () => {
     console.log("click");
     const textArea = document.createElement("textarea");
-    textArea.value = imageUrl;
+    textArea.value = "![](" + imageUrl + ")";
     document.body.appendChild(textArea);
     textArea.select();
     document.execCommand("copy");
