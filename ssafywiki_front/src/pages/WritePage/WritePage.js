@@ -10,7 +10,6 @@ import WriteRedirect from "components/Write/WriteRedirect";
 
 import { createDocs, createRedirectDocs } from "utils/DocsApi";
 import { openNotification } from "App";
-import { remove } from "react-cookies";
 
 const { Content } = Layout;
 const WritePage = () => {
@@ -103,7 +102,6 @@ const WritePage = () => {
           <WriteRedirect
             button="등록"
             title={title}
-            setTitle={setTitle}
             redirectTitle={redirectKeyword}
             setRedirectKeyword={setRedirectKeyword}
             completeLogic={createRedirect}
@@ -116,7 +114,6 @@ const WritePage = () => {
           <div>
             <WriteForm
               title={title}
-              setTitle={setTitle}
               content={content}
               setContent={setContent}
               button="등록"
