@@ -43,13 +43,9 @@ public interface RevisionMapper {
     }
 
     default RevisionDto.CheckUpdateResponse toCheckUpdateResponse(Revision revision, boolean canUpdate) {
-        List<CategoryDto.Detail> categoryList = new ArrayList<>();
+        List<String> categoryList = new ArrayList<>();
         for (DocsCategory docsCategory : revision.getDocument().getCategoryList()){
-            Category category = docsCategory.getCategory();
-            CategoryDto.Detail detail = CategoryDto.Detail.builder()
-                    .categoryId(category.getId())
-                    .categoryName(category.getName()).build();
-            categoryList.add(detail);
+            categoryList.add(docsCategory.getCategory().getName());
         }
         RevisionDto.CheckUpdateResponse response = RevisionDto.CheckUpdateResponse.builder()
                 .categoryList(categoryList)
