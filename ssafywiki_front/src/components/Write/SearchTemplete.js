@@ -28,7 +28,7 @@ import {
 } from "utils/TemplateApi";
 // import { openNotification } from "App";
 
-const SearchTemplete = ({ next }) => {
+const SearchTemplete = ({ next, title }) => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [templateContent, setTemplateContent] = React.useState("# 내용");
   const [templateTitle, setTemplateTitle] = React.useState("타이틀");
@@ -47,7 +47,7 @@ const SearchTemplete = ({ next }) => {
 
   const makeTemplate = () => {
     // console.log("make로 이동");
-    navigate(`/wrt/template`);
+    navigate(`/wrt/template?title=${title}`);
   };
   const handleOk = () => {
     setIsModalOpen(false);

@@ -5,7 +5,7 @@ import WriteForm from "./WriteForm";
 
 const DocsList = ({
   title,
-  setTitle,
+  // setTitle,
   content,
   setContent,
   disabled,
@@ -20,10 +20,10 @@ const DocsList = ({
     setSelectedClass(value);
   };
 
-  const titleChange = (value) => {
-    setTitle(value.target.value);
-    console.log(value.target.value);
-  };
+  // const titleChange = (value) => {
+  //   setTitle(value.target.value);
+  //   console.log(value.target.value);
+  // };
 
   return (
     <div>
@@ -31,11 +31,7 @@ const DocsList = ({
         <Divider orientation="left" orientationMargin="0">
           <b>문서 제목</b>
         </Divider>
-        {button === "수정" ? (
-          <Input placeholder={title} readOnly={true} />
-        ) : (
-          <Input placeholder={title} onChange={titleChange} />
-        )}
+        <Input placeholder={title} value={title} readOnly={true} />
       </Row>
 
       <div>
