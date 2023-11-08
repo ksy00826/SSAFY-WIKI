@@ -8,8 +8,8 @@ const { Header, Content, Footer } = Layout;
 const ContributionPage = () => {
   const [docc, setdocc] = React.useState();
   const navigate = useNavigate();
-  const handleDocument = (id,content) => {
-    console.log(id,content);
+  const handleDocument = (id, content) => {
+    console.log(id, content);
     navigate(`/res/content/${id}/${content}`);
   };
   // 처음 랜더링시 내용 가져오기
@@ -20,7 +20,9 @@ const ContributionPage = () => {
         response.map((doc) => (
           <Col key={doc.createdAt} span={8}>
             <Card
-              onClick={() =>  {handleDocument(doc.docsId,doc.title)}}
+              onClick={() => {
+                handleDocument(doc.docsId, doc.title);
+              }}
               title={doc.title}
               bordered={false}
               headStyle={{ backgroundColor: "lightblue", border: 0 }}
@@ -37,7 +39,7 @@ const ContributionPage = () => {
   const {
     token: { colorBgContainer },
   } = theme.useToken();
-  
+
   return (
     <Layout
       style={{

@@ -1,9 +1,9 @@
 import { Routes, Route } from "react-router-dom";
 
-import MyPage from "./MyPage";
-import Contribution from "./ContributionPage";
-import Userchats from "./UserchatsPage";
-import Edituser from "./EdituserPage";
+import MyPage from "../../components/User/MyPage";
+import Contribution from "../../components/User/ContributionPage";
+import Userchats from "../../components/User/UserchatsPage";
+import Edituser from "../../components/User/EdituserPage";
 const UserPage = () => {
   return (
     <Routes>
