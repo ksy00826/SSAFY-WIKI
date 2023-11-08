@@ -46,7 +46,8 @@ const WriteForm = ({ content, setContent, isdisabled }) => {
       {viewType == 1 ? (
         <TextArea
           rows={4}
-          defaultValue={content}
+          // defaultValue={content}
+          value={content}
           autoSize={{
             minRows: 12,
           }}
