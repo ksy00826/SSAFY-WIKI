@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Alert, Input } from "antd";
+import { Card, Alert, Input, Modal } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
 import { getUpdateContent } from "utils/DocsApi";
 
@@ -25,6 +25,10 @@ const Edit = () => {
 
   const [comment, setComment] = React.useState("");
 
+  const [conflict, setConflict] = React.useState(false);
+  const [topRevId, setTopRevId] = React.useState();
+  const { error } = Modal;
+
   // 처음 랜더링시 내용과 권한 가져오기
   React.useEffect(() => {
     getUpdateContent(params.docsId).then((response) => {
@@ -49,25 +53,48 @@ const Edit = () => {
     setModifyCnt(0);
   }, [params]);
 
-  const handlemodify = () => {
-    // axios로 등록 데이터 넣어줘야함
-    updateDocs({
-      docsId: id,
-      content: content,
-      categories: classes,
-      revId: revisionId,
-      comment: comment,
-    }).then((result) => {
-      //완료
-      console.log(result);
-      openNotification(
-        "success",
-        "문서수정 완료",
-        `${result.title}문서가 수정되었습니다.`
-      );
 
-      navigate(`/res/content/${result.docsId}/${result.title}`);
-    });
+
+  const handlemodify = () => {
+    // conflict가 true이면 충돌난 부분 수정을 했는지 content내용 검사가 필요
+    if (conflict && (content.includes('`<<<<<< HEAD`') || content.includes('`======`') || content.includes('`>>>>>>> PATCH`'))) {
+      error({
+        title: "수정이 완료되지 않았습니다."
+      })
+    } else {
+      // axios로 등록 데이터 넣어줘야함
+      updateDocs({
+        docsId: id,
+        content: content,
+        categories: classes,
+        revId: revisionId,
+        topRevId: topRevId,
+        comment: comment,
+      }).then((result) => {
+        //완료
+        console.log(result);
+        openNotification(
+          "success",
+          "문서수정 완료",
+          `${result.title}문서가 수정되었습니다.`
+        );
+
+        navigate(`/res/content/${result.docsId}/${result.title}`);
+      }).catch((err) => {
+        // console.log(err.response);
+        if (err.response.status == 409) {
+          error({
+            title: "버전 충돌",
+            content: <><p>{"`<<<<<< HEAD`"}</p><p>{"`======`"}</p><p>{"`>>>>>>> PATCH`"}</p><p>사이의 내용이 충돌났습니다.</p></>
+          })
+
+          setContent(err.response.data.content);
+          setConflict(true);
+          setTopRevId(err.response.data.topRevId);
+        }
+
+      });
+    }
   };
 
   return (
