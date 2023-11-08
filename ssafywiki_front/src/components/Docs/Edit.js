@@ -5,6 +5,7 @@ import { getUpdateContent } from "utils/DocsApi";
 
 import WriteForm from "components/Write/WriteDocs";
 import ImageUpload from "components/Write/ImageUpload";
+import DocsNav from "./DocsNav";
 
 import { openNotification } from "App";
 import { updateDocs } from "utils/DocsApi";
@@ -53,14 +54,17 @@ const Edit = () => {
     setModifyCnt(0);
   }, [params]);
 
-
-
   const handlemodify = () => {
     // conflict가 true이면 충돌난 부분 수정을 했는지 content내용 검사가 필요
-    if (conflict && (content.includes('`<<<<<< HEAD`') || content.includes('`======`') || content.includes('`>>>>>>> PATCH`'))) {
+    if (
+      conflict &&
+      (content.includes("`<<<<<< HEAD`") ||
+        content.includes("`======`") ||
+        content.includes("`>>>>>>> PATCH`"))
+    ) {
       error({
-        title: "수정이 완료되지 않았습니다."
-      })
+        title: "수정이 완료되지 않았습니다.",
+      });
     } else {
       // axios로 등록 데이터 넣어줘야함
       updateDocs({
@@ -70,35 +74,48 @@ const Edit = () => {
         revId: revisionId,
         topRevId: topRevId,
         comment: comment,
-      }).then((result) => {
-        //완료
-        console.log(result);
-        openNotification(
-          "success",
-          "문서수정 완료",
-          `${result.title}문서가 수정되었습니다.`
-        );
+      })
+        .then((result) => {
+          //완료
+          console.log(result);
+          openNotification(
+            "success",
+            "문서수정 완료",
+            `${result.title}문서가 수정되었습니다.`
+          );
 
-        navigate(`/res/content/${result.docsId}/${result.title}`);
-      }).catch((err) => {
-        // console.log(err.response);
-        if (err.response.status == 409) {
-          error({
-            title: "버전 충돌",
-            content: <><p>{"`<<<<<< HEAD`"}</p><p>{"`======`"}</p><p>{"`>>>>>>> PATCH`"}</p><p>사이의 내용이 충돌났습니다.</p></>
-          })
+          navigate(`/res/content/${result.docsId}/${result.title}`);
+        })
+        .catch((err) => {
+          // console.log(err.response);
+          if (err.response.status == 409) {
+            error({
+              title: "버전 충돌",
+              content: (
+                <>
+                  <p>{"`<<<<<< HEAD`"}</p>
+                  <p>{"`======`"}</p>
+                  <p>{"`>>>>>>> PATCH`"}</p>
+                  <p>사이의 내용이 충돌났습니다.</p>
+                </>
+              ),
+            });
 
-          setContent(err.response.data.content);
-          setConflict(true);
-          setTopRevId(err.response.data.topRevId);
-        }
-
-      });
+            setContent(err.response.data.content);
+            setConflict(true);
+            setTopRevId(err.response.data.topRevId);
+          }
+        });
     }
   };
 
   return (
     <div>
+      <h1>
+        {params.title}{" "}
+        <small style={{ fontWeight: "normal" }}>(문서 수정)</small>
+      </h1>
+      <DocsNav current="edit" />
       <Card>
         {errmsg === "" ? (
           <></>
