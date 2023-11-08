@@ -3,7 +3,6 @@ import TextArea from "antd/es/input/TextArea";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { getDocsVersionContent } from "utils/DocsApi"
-import DocsNav from "./DocsNav";
 
 const Raw = () => {
   const params = useParams();
@@ -35,7 +34,7 @@ const Raw = () => {
         <Button onClick={toHistory}>역사</Button>
       </Flex>
 
-      <TextArea style={{ color: "black" }} disabled={true} value={content}>
+      <TextArea style={{ color: "black" }} disabled={true} value={content} rows="15">
       </TextArea>
     </div>
   );

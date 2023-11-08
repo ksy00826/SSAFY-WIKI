@@ -31,7 +31,11 @@ const DocsList = ({
         <Divider orientation="left" orientationMargin="0">
           <b>문서 제목</b>
         </Divider>
-        <Input placeholder={title} onChange={titleChange} />
+        {button === "수정" ? (
+          <Input placeholder={title} readOnly={true} />
+        ) : (
+          <Input placeholder={title} onChange={titleChange} />
+        )}
       </Row>
 
       <div>
@@ -41,10 +45,12 @@ const DocsList = ({
           </Divider>
           <Col flex={5}>
             <Select
+              disabled={disabled ? true : false}
               mode="tags"
               style={{
                 width: "90%",
               }}
+              defaultValue={selectedClass}
               placeholder="문서 분류"
               onChange={handleChange}
               options={[]}
