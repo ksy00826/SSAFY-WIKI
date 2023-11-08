@@ -30,7 +30,6 @@ public class RedisSubscriber implements MessageListener {
 
             // key 값에 따라 다른 DTO 클래스 선택
             String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
-            Class<?> dtoClass = null;
             // redis에서 발행된 데이터를 받아 deserialize
             // Websocket 구독자에게 채팅 메시지 Send
             if ("recent".equals(channelName)) {
