@@ -83,10 +83,10 @@ public class Conflict {
             subBase.addAll(source.getPosition() - start, target.getLines());
         }
 
-        orgData.add(0, "<<<<<< HEAD");
-        orgData.add("======");
+        orgData.add(0, "`<<<<<< HEAD`");
+        orgData.add("`======`");
         orgData.addAll(subBase);
-        orgData.add(">>>>>>> PATCH");
+        orgData.add("`>>>>>>> PATCH`");
 
         for (int i = 0; i < last + 1 - start; i++) {
             base.remove(start);

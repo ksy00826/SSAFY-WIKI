@@ -197,8 +197,14 @@ public class DocumentService {
         Document document = documentRepository.findById(put.getDocsId()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
         Revision topRevision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
 
+        // 충돌난거 수정해서 다시보낸 경우
+        // put.getTopRevId() != null
+        // put.getTopRevId() == topRevision.getId() 이면 threeWayMerge 안함
+        // put.getTopRevId() != topRevision.getId() 이면 다시 threeWayMerge 시도
+
         // base 버전이 최상위 버전이 아닌 경우
-        if (!put.getRevId().equals(topRevision.getId())) {
+        if ((put.getTopRevId() == null && !put.getRevId().equals(topRevision.getId())) ||
+                (put.getTopRevId() != null && !put.getTopRevId().equals(topRevision.getId()))) {
             MergeDto threeWayMergeResult = null;
             Revision baseRevision = revisionRepository.findById(put.getRevId()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.REVISION_NOT_FOUND));
             List<String> base = myDiffUtils.splitIntoLines(baseRevision.getContent().getText());
@@ -214,6 +220,8 @@ public class DocumentService {
                     .docsId(put.getDocsId())
                     .revId(put.getRevId())
                     .title(document.getTitle())
+                    .comment(put.getComment())
+                    .topRevId(topRevision.getId())
                     .content(threeWayMergeResult.getResult()).exceptionCode(threeWayMergeResult.getExceptionCode()).build();
         } else {
             document.setModifiedAt(LocalDateTime.now());
@@ -249,6 +257,8 @@ public class DocumentService {
                     .docsId(put.getDocsId())
                     .revId(revision.getId())
                     .title(document.getTitle())
+                    .comment(put.getComment())
+                    .topRevId(topRevision.getId())
                     .modifiedAt(revision.getModifiedAt())
                     .content(revision.getContent().getText()).exceptionCode(null).build();
         }

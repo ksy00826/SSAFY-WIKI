@@ -33,6 +33,7 @@ public class DocumentDto {
         private String content;
         private String comment;
         private Long revId;
+        private Long topRevId;
     }
     
     @Getter
