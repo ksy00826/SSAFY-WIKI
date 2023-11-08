@@ -34,7 +34,7 @@ const Navbar = () => {
   const items1 = [
     {
       key: "SubMenu",
-      label: <UserOutlined />,
+      label: <UserOutlined style={{ fontSize: "30px" }} />,
       children: [
         {
           label: <a onClick={handleLogin}>로그인</a>,
@@ -83,21 +83,23 @@ const Navbar = () => {
       <div className={styles.NavLogoBox} onClick={goHome}>
         <img src={Logoimg} className={styles.NavLogo} />
       </div>
-
-      <div className={styles.NavSearch}>
-        <SearchDocs />
+      <div className={styles.ComponentBox}>
+        <div className={styles.NavSearch}>
+          <SearchDocs />
+        </div>
+        <ConfigProvider
+          theme={{
+            token: {},
+          }}
+          style={{ width: "30px", paddingTop: "5px" }}
+        >
+          {user ? (
+            <Menu className={styles.NavUser} mode="horizontal" items={items2} />
+          ) : (
+            <Menu className={styles.NavUser} mode="horizontal" items={items1} />
+          )}
+        </ConfigProvider>
       </div>
-      <ConfigProvider
-        theme={{
-          token: {},
-        }}
-      >
-        {user ? (
-          <Menu className={styles.NavUser} mode="horizontal" items={items2} />
-        ) : (
-          <Menu className={styles.NavUser} mode="horizontal" items={items1} />
-        )}
-      </ConfigProvider>
     </div>
   );
 };
