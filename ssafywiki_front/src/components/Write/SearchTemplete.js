@@ -286,7 +286,11 @@ const SearchTemplete = ({ next, title }) => {
                   >
                     <Skeleton title={false} loading={item.loading} active>
                       <List.Item.Meta
-                        title={<a onClick={showTemplate}>{item.title}</a>}
+                        title={
+                          <a onClick={() => showTemplate(item.templateId)}>
+                            {item.title}
+                          </a>
+                        }
                         description={item.author}
                       />
                       {activeKey === 1 ? (
