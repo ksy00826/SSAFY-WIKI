@@ -110,6 +110,7 @@ function Discussion() {
     client.current.subscribe("/sub/chat/" + currentDocsId, (body) => {
       const json_body = JSON.parse(body.body);
       setChatList((_chat_list) => [..._chat_list, json_body]);
+      console.log(body.body);
     });
   };
 
@@ -136,7 +137,7 @@ function Discussion() {
 
   const formatTime = (dateString, flag) => {
     const date = new Date(dateString);
-
+    console.log(date);
     // 한 자리 숫자일 경우 앞에 '0'을 붙여줌
     if (flag === "time") {
       let hours = date.getHours();
@@ -148,9 +149,10 @@ function Discussion() {
     } else {
       let year = date.getFullYear();
       let month = date.getMonth();
-      let day = date.getDay();
+      let day = date.getDate();
       day = day < 10 ? `0${day}` : day;
-      return `${year}-${month}-${day}`;
+      console.log('날짜', date, month, day);
+      return `${year}-${month+1}-${day}`;
     }
   };
   return (

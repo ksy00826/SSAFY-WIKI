@@ -1,0 +1,8 @@
+.Box {
+    position: relative;
+}
+.TabBox {
+    position: absolute;
+    top: 11%;
+    right: 0%;
+}
