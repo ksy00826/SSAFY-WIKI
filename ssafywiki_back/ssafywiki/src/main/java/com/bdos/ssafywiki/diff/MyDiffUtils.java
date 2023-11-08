@@ -2,10 +2,7 @@ package com.bdos.ssafywiki.diff;
 
 import com.bdos.ssafywiki.exception.ExceptionCode;
 import com.github.difflib.DiffUtils;
-import com.github.difflib.patch.AbstractDelta;
-import com.github.difflib.patch.Chunk;
-import com.github.difflib.patch.Patch;
-import com.github.difflib.patch.PatchFailedException;
+import com.github.difflib.patch.*;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -67,6 +64,10 @@ public class MyDiffUtils {
         // 변화가 뒤에서 부터 일어나야지 List 인덱스가 안변함
         List<AbstractDelta<String>> deltasA = patchA.getDeltas();
         List<AbstractDelta<String>> deltasB = patchB.getDeltas();
+//        System.out.println("#################");
+//        System.out.println(deltasA);
+//        System.out.println(deltasB);
+//        System.out.println("#################");
 
         int indexA = patchA.getDeltas().size() - 1;
         int indexB = patchB.getDeltas().size() - 1;
@@ -79,8 +80,12 @@ public class MyDiffUtils {
         while (indexA >= 0 && indexB >= 0) {
             AbstractDelta<String> deltaA = deltasA.get(indexA);
             AbstractDelta<String> deltaB = deltasB.get(indexB);
+//            System.out.println(deltaA.getSource());
+//            System.out.println(deltaB.getSource());
 
             Conflict conflict = conflictList.size() > 0 ? conflictList.get(conflictList.size() - 1) : null;
+//            System.out.println("conflict: " + conflict);
+
             boolean isExistA = false;
             boolean isExistB = false;
             if (conflict != null) {
@@ -88,9 +93,16 @@ public class MyDiffUtils {
                 isExistB = conflict.isExistInB(deltaB);
             }
 
-            if (deltaA.getSource().getPosition() <= deltaB.getSource().last() && deltaA.getSource().last() >= deltaB.getSource().getPosition()) {
+//            System.out.println("A position: " + deltaA.getSource().getPosition() + " A last: " + deltaA.getSource().last());
+//            System.out.println("B position: " + deltaB.getSource().getPosition() + " B last: " + deltaB.getSource().last());
+
+            if (deltaA.getSource().getPosition() <= (DeltaType.INSERT.equals(deltaB.getType()) ? deltaB.getSource().last() + 1 : deltaB.getSource().last()) &&
+                    (DeltaType.INSERT.equals(deltaA.getType()) ? deltaA.getSource().last() + 1 : deltaA.getSource().last()) >= deltaB.getSource().getPosition()) {
                 // 겹치는 구간 존재
                 // 겹쳤는데 이후 변화가 같음
+//                System.out.println("겹치는 구간 존재");
+//                System.out.println("A와 B의 변화가 같나요?: " + deltaA.equals(deltaB));
+
                 if (deltaA.equals(deltaB)) {
                     mergeDeltaPatch.addDelta(deltaA);
                 } else if (deltaA.getSource().getPosition() <= deltaB.getSource().getPosition() && isExistB) {
@@ -102,7 +114,7 @@ public class MyDiffUtils {
                 }
             } else {
                 // 안겹침 / 가장 뒤에 있는 것 수정 가능 / 뒤에있는게 conflict에 있으면 안됨
-                if (deltaA.getSource().last() < deltaB.getSource().last()) {
+                if ((DeltaType.INSERT.equals(deltaA.getType()) ? deltaA.getSource().last() + 1 : deltaA.getSource().last()) < (DeltaType.INSERT.equals(deltaB.getType()) ? deltaB.getSource().last() + 1 : deltaB.getSource().last())) {
                     if (!isExistB)
                         mergeDeltaPatch.addDelta(deltaB);
                 } else {
@@ -117,6 +129,23 @@ public class MyDiffUtils {
                 indexB--;
             }
         }
+
+        // 남은 변경사항은 수정 가능한 것
+        while (indexA >= 0) {
+            AbstractDelta<String> deltaA = deltasA.get(indexA);
+            mergeDeltaPatch.addDelta(deltaA);
+            indexA--;
+        }
+        while (indexB >= 0) {
+            AbstractDelta<String> deltaB = deltasB.get(indexB);
+            mergeDeltaPatch.addDelta(deltaB);
+            indexB--;
+        }
+
+
+//        System.out.println("############3-way-merge#############");
+//        System.out.println("mergeDeltaPatch: " + mergeDeltaPatch);
+//        System.out.println("conflictList: " + conflictList);
 
         // mergeDeltaPatch를 적용
         List<String> merged = DiffUtils.patch(base, mergeDeltaPatch);
