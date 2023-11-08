@@ -214,6 +214,7 @@ public class DocumentService {
                     .docsId(put.getDocsId())
                     .revId(put.getRevId())
                     .title(document.getTitle())
+                    .comment(put.getComment())
                     .content(threeWayMergeResult.getResult()).exceptionCode(threeWayMergeResult.getExceptionCode()).build();
         } else {
             document.setModifiedAt(LocalDateTime.now());
@@ -249,6 +250,7 @@ public class DocumentService {
                     .docsId(put.getDocsId())
                     .revId(revision.getId())
                     .title(document.getTitle())
+                    .comment(put.getComment())
                     .modifiedAt(revision.getModifiedAt())
                     .content(revision.getContent().getText()).exceptionCode(null).build();
         }
