@@ -33,19 +33,13 @@ function App() {
             minHeight: "100vh",
           }}
         >
-          <div className="HeaderBox">
-            <Header className="App-header">
-              <Navbar />
-            </Header>
-          </div>
+          <Header className="App-header">
+            <Navbar />
+          </Header>
           <Layout className="Content">
             <AppRouter />
           </Layout>
-          <Footer
-            style={{
-              backgroundColor: "white",
-            }}
-          >
+          <Footer>
             <MyFooter />
           </Footer>
         </Layout>
