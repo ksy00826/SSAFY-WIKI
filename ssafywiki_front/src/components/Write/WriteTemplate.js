@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Input, Button, Select, Col, Row, Divider } from "antd";
+import { Input, Button, Select, Col, Row, Divider, Radio } from "antd";
 
 import WriteForm from "./WriteForm";
 
@@ -11,7 +11,8 @@ const WriteTemplate = ({
   disabled,
   button,
   completeLogic,
-  selectedClass,
+  secret,
+  setSecret,
   setSelectedClass,
 }) => {
   const handleChange = (value) => {
@@ -21,6 +22,10 @@ const WriteTemplate = ({
   const titleChange = (value) => {
     setTitle(value.target.value);
     console.log(value.target.value);
+  };
+  const changeSecret = (e) => {
+    console.log(e.target.value);
+    setSecret(e.target.value);
   };
 
   return (
@@ -42,13 +47,22 @@ const WriteTemplate = ({
               style={{
                 width: "90%",
               }}
-              placeholder="분류"
+              placeholder="인물, CS.."
               onChange={handleChange}
               options={[]}
             />
           </Col>
         </Row>
       </div>
+      <Row>
+        <Divider orientation="left" orientationMargin="0">
+          <b>공개 범위 설정</b>
+        </Divider>
+        <Radio.Group defaultValue={secret} onChange={changeSecret}>
+          <Radio.Button value="true">비공개</Radio.Button>
+          <Radio.Button value="false">공개</Radio.Button>
+        </Radio.Group>
+      </Row>
       <Divider orientation="left" orientationMargin="0">
         <b>템플릿 내용</b>
       </Divider>

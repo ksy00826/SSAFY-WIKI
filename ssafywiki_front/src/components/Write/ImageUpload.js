@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import AWS from "aws-sdk";
 import { getToken } from "utils/Authenticate";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { message, Upload, Card, Row, Col, Space } from "antd";
-
+import { message, Upload, Card, Row, Col, Space, Button, Tooltip } from "antd";
+import { openNotification } from "App";
 const S3_BUCKET_NAME = "ssafywiki-s3"; // S3 버킷 이름
 const S3_REGION = "ap-northeast-2"; // S3 버킷의 AWS 지역
 
@@ -15,11 +15,11 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
-const getBase64 = (img, callback) => {
-  const reader = new FileReader();
-  reader.addEventListener("load", () => callback(reader.result));
-  reader.readAsDataURL(img);
-};
+// const getBase64 = (img, callback) => {
+//   const reader = new FileReader();
+//   reader.addEventListener("load", () => callback(reader.result));
+//   reader.readAsDataURL(img);
+// };
 
 const beforeUpload = (file) => {
   const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
@@ -34,37 +34,6 @@ const beforeUpload = (file) => {
 };
 
 function FileUpload() {
-  const [selectedImage, setSelectedImage] = useState(null);
-  // const [imageUrl, setImageUrl] = useState("");
-
-  const handleImageUpload = () => {
-    if (!selectedImage) {
-      alert("이미지를 선택하세요.");
-      return;
-    }
-    const date = new Date();
-    const file = selectedImage;
-    const fileName = date.toString() + getToken() + ".jpg"; //나중에 토큰은 유저 아이디로 수정..
-
-    const params = {
-      Bucket: S3_BUCKET_NAME,
-      Key: fileName,
-      Body: file,
-      ACL: "public-read", // 업로드된 파일을 공개로 설정
-    };
-
-    s3.upload(params, (err, data) => {
-      if (err) {
-        console.error("S3 업로드 오류:", err);
-      } else {
-        const imageUrl = data.Location;
-        setImageUrl(imageUrl);
-        console.log("이미지 URL:", imageUrl);
-      }
-    });
-  };
-
-  // const [uploadUrl, setUploadUrl] = useState();
   const [imageUrl, setImageUrl] = useState();
   const [loading, setLoading] = useState(false);
 
@@ -114,6 +83,21 @@ function FileUpload() {
       </div>
     </div>
   );
+  // 버튼에 적용할 스타일 객체
+  const buttonStyle = {
+    width: "1000px", // 버튼의 너비를 100%로 설정하여 블록 레벨 버튼으로 만듭니다.
+    height: "100%",
+  };
+  const copyToClipboard = () => {
+    console.log("click");
+    const textArea = document.createElement("textarea");
+    textArea.value = imageUrl;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand("copy");
+    document.body.removeChild(textArea);
+    openNotification("success", "복사 완료", `이미지 URL이 복사되었습니다.`);
+  };
 
   return (
     <div>
@@ -124,8 +108,8 @@ function FileUpload() {
           display: "flex",
         }}
       >
-        <Row>
-          <Col flex={1}>
+        <Row flex={10}>
+          <Col flex={2}>
             <Upload
               name="avatar"
               listType="picture-card"
@@ -147,10 +131,22 @@ function FileUpload() {
               )}
             </Upload>
           </Col>
-          <Col flex={16}>
-            <Card title="Image URL">
-              {imageUrl ? <p>{imageUrl}</p> : <p>URL</p>}
-            </Card>
+          <Col flex={8}>
+            <Tooltip title="copy">
+              <Button ghost block style={buttonStyle} onClick={copyToClipboard}>
+                <Card title="Image URL" style={{ overflow: "auto" }}>
+                  <div
+                    style={{
+                      whiteSpace: "nowrap",
+                      overflow: "auto",
+                      textOverflow: "ellipsis",
+                    }}
+                  >
+                    {imageUrl ? <p>{imageUrl}</p> : <p>URL</p>}
+                  </div>
+                </Card>
+              </Button>
+            </Tooltip>
           </Col>
         </Row>
       </Space>
