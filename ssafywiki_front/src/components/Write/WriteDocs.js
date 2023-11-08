@@ -47,7 +47,7 @@ const DocsList = ({
                 width: "90%",
               }}
               defaultValue={selectedClass}
-              placeholder="문서 분류"
+              placeholder="인물, CS, .."
               onChange={handleChange}
               options={[]}
             />
