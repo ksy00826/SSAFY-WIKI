@@ -35,16 +35,16 @@ const DocsList = ({
       </Row>
 
       <div>
+        <Divider orientation="left" orientationMargin="0">
+          <b>문서 분류</b>
+        </Divider>
         <Row>
-          <Divider orientation="left" orientationMargin="0">
-            <b>문서 분류</b>
-          </Divider>
           <Col flex={5}>
             <Select
               disabled={disabled ? true : false}
               mode="tags"
               style={{
-                width: "90%",
+                width: "100%",
               }}
               defaultValue={selectedClass}
               placeholder="인물, CS, .."
