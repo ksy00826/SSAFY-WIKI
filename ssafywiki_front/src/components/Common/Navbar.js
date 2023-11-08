@@ -50,7 +50,7 @@ const Navbar = () => {
   const items2 = [
     {
       key: "SubMenu",
-      label: <UserOutlined />,
+      label: <UserOutlined style={{ fontSize: "30px" }}/>,
       children: [
         {
           label: <a onClick={handleLogout}>로그아웃</a>,
