@@ -29,6 +29,7 @@ public class RevisionDto {
         private String title;
         private String content;
         private String comment;
+        private Long topRevId;
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime modifiedAt;
         private ExceptionCode exceptionCode;
