@@ -6,8 +6,9 @@ import SerachTemplete from "components/Write/SearchTemplete";
 import WriteForm from "components/Write/WriteDocs";
 import ImageUpload from "components/Write/ImageUpload";
 import CategorySelect from "components/Write/CategorySelect";
+import WriteRedirect from "components/Write/WriteRedirect";
 
-import { createDocs } from "utils/DocsApi";
+import { createDocs, createRedirectDocs } from "utils/DocsApi";
 import { openNotification } from "App";
 import { remove } from "react-cookies";
 
@@ -20,6 +21,8 @@ const WritePage = () => {
   const [selectedClass, setSelectedClass] = React.useState([]);
   const [readAuth, setReadAuth] = React.useState(1);
   const [writeAuth, setWriteAuth] = React.useState(1);
+  const [isRedirect, setIsRedirect] = React.useState(false);
+  const [redirectKeyword, setRedirectKeyword] = React.useState();
 
   const navigate = useNavigate();
 
@@ -40,6 +43,7 @@ const WritePage = () => {
   React.useEffect(() => {
     console.log(writeAuth);
   }, [writeAuth]);
+
   const create = () => {
     // axios로 등록 데이터 넣어줘야함
     createDocs({
@@ -60,6 +64,22 @@ const WritePage = () => {
       navigate(`/res/content/${result.docsId}/${result.title}`);
     });
   };
+
+  const createRedirect = () => {
+    //리다이렉트 문서 생성 API 요청
+    createRedirectDocs({
+      title: title,
+      redirectTitle: redirectKeyword,
+    }).then((result) => {
+      console.log(result);
+      openNotification(
+        "success",
+        "문서작성 완료",
+        `${result.title}문서가 생성되었습니다.`
+      );
+      navigate(`/res/content/${result.docsId}/${result.title}`);
+    });
+  };
   return (
     <Layout>
       <Content
@@ -74,12 +94,25 @@ const WritePage = () => {
             next={next}
             setReadAuth={setReadAuth}
             setWriteAuth={setWriteAuth}
+            setIsRedirect={setIsRedirect}
           />
         ) : (
           <></>
         )}
-        {step == 1 ? <SerachTemplete next={next} /> : <></>}
-        {step == 2 ? (
+        {step == 1 && isRedirect ? (
+          <WriteRedirect
+            button="등록"
+            title={title}
+            setTitle={setTitle}
+            redirectTitle={redirectKeyword}
+            setRedirectKeyword={setRedirectKeyword}
+            completeLogic={createRedirect}
+          />
+        ) : (
+          <></>
+        )}
+        {step == 1 && !isRedirect ? <SerachTemplete next={next} /> : <></>}
+        {step == 2 && !isRedirect ? (
           <div>
             <WriteForm
               title={title}

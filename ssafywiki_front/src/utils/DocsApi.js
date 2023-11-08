@@ -74,3 +74,15 @@ export const getRecentDocsList = async () => {
     throw error;
   }
 };
+
+export const createRedirectDocs = async (redirDocs) => {
+  try {
+    const response = await axiosInstanceWithLogin.post(
+      "/api/redirect-docs",
+      redirDocs
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
