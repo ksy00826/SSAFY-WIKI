@@ -40,7 +40,7 @@ function Discussion() {
       connect(currentDocsId);
     }
     return () => disconnect();
-  }, []);
+  }, [location]);
 
   useEffect(() => {
     // 채팅 목록의 변화를 감지하고 스크롤을 맨 아래로 이동시키는 함수
