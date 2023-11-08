@@ -1,6 +1,5 @@
 package com.bdos.ssafywiki.redis.service;
 
-import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
