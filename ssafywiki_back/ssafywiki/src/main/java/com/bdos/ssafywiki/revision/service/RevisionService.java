@@ -1,11 +1,7 @@
 package com.bdos.ssafywiki.revision.service;
 
-import com.bdos.ssafywiki.diff.Conflict;
 import com.bdos.ssafywiki.diff.MergeDto;
 import com.bdos.ssafywiki.diff.MyDiffUtils;
-import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
-import com.bdos.ssafywiki.discussion.entity.Discussion;
-import com.bdos.ssafywiki.discussion.mapper.DiscussionMapper;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.exception.BusinessLogicException;
 import com.bdos.ssafywiki.exception.ExceptionCode;
@@ -21,11 +17,7 @@ import com.bdos.ssafywiki.user.enums.Privilege;
 import com.bdos.ssafywiki.user.enums.Role;
 import com.bdos.ssafywiki.user.repository.UserRepository;
 import com.github.difflib.DiffUtils;
-import com.github.difflib.algorithm.DiffAlgorithmFactory;
-import com.github.difflib.algorithm.DiffAlgorithmI;
 import com.github.difflib.patch.*;
-import com.github.difflib.text.DiffRow;
-import com.github.difflib.text.DiffRowGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,12 +25,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
-import java.sql.SQLOutput;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -47,6 +36,7 @@ public class RevisionService {
     private final ContentRepository contentRepository;
     private final UserRepository userRepository;
     private final MyDiffUtils myDiffUtils;
+    private final RevisionMapper revisionMapper;
 
     public Page<Revision> getHistory(long docsId, Pageable pageable) {
 
@@ -167,5 +157,27 @@ public class RevisionService {
         // 권한테이블에서 권한있는지 체크
 
         return true;
+    }
+
+    public int[][] getUserContributeDocs(User user, LocalDateTime startDate) {
+//        List<Revision> revisionList = revisionRepository.findByUserWithStartDate(user.getId(), startDate);
+
+        //시작 날짜부터 1씩 증가하면서 i, j++
+        int[][] arr = new int[23][7];
+        for (int i = 0; i < 23; i++){
+            for (int j = 0; j < 7; j++){
+                List<Revision> revisionList = revisionRepository.findByUserWithDate(user.getId(), startDate, startDate.plusDays(1L));
+                arr[i][j] = revisionList.size();
+                startDate = startDate.plusDays(1L);
+            }
+        }
+
+        return arr;
+    }
+
+    public List<RevisionDto.DocsResponse> getUserContributeDocsWithDate(User user, LocalDateTime date) {
+        List<Revision> revisionList = revisionRepository.findByUserWithDate(user.getId(), date, date.plusDays(1L));
+
+        return revisionMapper.toResponseList(revisionList);
     }
 }
