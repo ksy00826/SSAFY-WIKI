@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Col, Row, Slider, Button, Tooltip } from "antd";
-import { getUserContribute } from "utils/UserApi";
+import { getUserContribute, getUserContributeOneDay } from "utils/UserApi";
 const LawnGraph = () => {
   const [cols, setCols] = React.useState([]);
   const [rows, setRows] = React.useState([]);
@@ -16,6 +16,14 @@ const LawnGraph = () => {
     // padding: "10px 10px 10px 10px", // 원하는 패딩 값을 설정
     margin: "3px 0px",
     background: "#EBF3E8",
+  };
+
+  const handleClickDay = (e) => {
+    console.log(e.target.value);
+    const date = e.target.value;
+    getUserContributeOneDay(date).then((result) => {
+      console.log(result);
+    });
   };
 
   React.useEffect(() => {
@@ -38,7 +46,7 @@ const LawnGraph = () => {
       (Math.floor(curMonth / 10) == 0 ? "0" + curMonth : curMonth) +
       "-" +
       (Math.floor(curDay / 10) == 0 ? "0" + curDay : curDay);
-    console.log("go", startDate);
+    // console.log("go", startDate);
 
     if (loading) {
       getUserContribute(startDate + "T00:00:00").then((result) => {
@@ -47,6 +55,20 @@ const LawnGraph = () => {
         result.forEach((week) => {
           const row = [];
           week.forEach((cnt) => {
+            //날짜 계산
+            const curYear = sixMonthAgo.getFullYear();
+            const curMonth = sixMonthAgo.getMonth() + 1;
+            const curDay = sixMonthAgo.getDate();
+            console.log(sixMonthAgo);
+
+            const date =
+              curYear +
+              "-" +
+              (Math.floor(curMonth / 10) == 0 ? "0" + curMonth : curMonth) +
+              "-" +
+              (Math.floor(curDay / 10) == 0 ? "0" + curDay : curDay);
+
+            //색상 계산
             let color = "white";
             if (cnt >= 1 && cnt <= 3) color = "#EBF3E8";
             else if (cnt >= 4 && cnt <= 6) color = "#D2E3C8";
@@ -60,13 +82,17 @@ const LawnGraph = () => {
                       minWidth: "0",
                       minHeight: "0",
                       // padding: "10px 10px 10px 10px", // 원하는 패딩 값을 설정
-                      margin: "3px 0px",
+                      margin: "3px 3px",
                       background: color,
                     }}
+                    value={date + "T00:00:00"}
+                    onClick={handleClickDay}
                   />
                 </Tooltip>
               </Row>
             );
+            console.log(sixMonthAgo);
+            sixMonthAgo.setDate(sixMonthAgo.getDate() + 1); // 다음 날
           });
           rows.push(row);
         });
