@@ -70,4 +70,6 @@ public interface RevisionMapper {
     RevisionDto.Detail toDetail(Revision revision);
 
     RevisionDto.VersionPage toVersionPage(Page<Revision> revisionPage);
+
+    List<RevisionDto.DocsResponse> toResponseList(List<Revision> revisionList);
 }
