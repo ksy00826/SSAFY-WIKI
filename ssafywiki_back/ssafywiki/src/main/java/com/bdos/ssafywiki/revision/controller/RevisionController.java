@@ -64,10 +64,10 @@ public class RevisionController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @Operation(summary = "버전 충돌 검사", description = "병합 후 버전 충돌난 곳을 표시합니다.")
+    @Operation(summary = "버전 충돌 검사 테스트용", description = "병합 후 버전 충돌난 곳을 표시합니다.")
     @GetMapping("/merge")
     public ResponseEntity merge() {
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(revisionService.diffTest(), HttpStatus.OK);
     }
 }
