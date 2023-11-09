@@ -36,7 +36,7 @@ export const axiosSsafygitInstance = axios.create({
 });
 export const axiosElasticInstance = axios.create({
   maxBodyLength: Infinity,
-  baseURL: "http://k9e202a.p.ssafy.io:9200/test_v1.0.0/",
+  baseURL: "https://k9e202a.p.ssafy.io/test_v1.0.0/",
   headers: {
     Accept: "application/json, text/plain, */*",
     "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6",
