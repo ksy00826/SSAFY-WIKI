@@ -129,20 +129,17 @@ public class RevisionService {
                 최초의 문서
                 1
                 2
-                3
                 """;
 
         String text = """
                 최초의 문서
                 
                 2
-                3
                 """;
 
         String version2 = """
                 최초의 문서
                 1
-                2
                 """;
 
 

@@ -197,11 +197,11 @@ public class DocumentService {
         // put.getTopRevId() != null
         // put.getTopRevId() == topRevision.getId() 이면 threeWayMerge 안함
         // put.getTopRevId() != topRevision.getId() 이면 다시 threeWayMerge 시도
-
+        MergeDto threeWayMergeResult = null;
         // base 버전이 최상위 버전이 아닌 경우
         if ((put.getTopRevId() == null && !put.getRevId().equals(topRevision.getId())) ||
                 (put.getTopRevId() != null && !put.getTopRevId().equals(topRevision.getId()))) {
-            MergeDto threeWayMergeResult = null;
+
             Revision baseRevision = revisionRepository.findById(put.getRevId()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.REVISION_NOT_FOUND));
             List<String> base = myDiffUtils.splitIntoLines(baseRevision.getContent().getText());
             List<String> latest = myDiffUtils.splitIntoLines(topRevision.getContent().getText());
@@ -211,53 +211,60 @@ public class DocumentService {
             } catch (PatchFailedException e) {
                 throw new BusinessLogicException(ExceptionCode.MERGE_FAILED);
             }
+//            System.out.println("#############################");
+//            System.out.println(threeWayMergeResult.getResult());
 
-            return RevisionDto.UpdateResponse.builder()
-                    .docsId(put.getDocsId())
-                    .revId(put.getRevId())
-                    .title(document.getTitle())
-                    .comment(put.getComment())
-                    .topRevId(topRevision.getId())
-                    .content(threeWayMergeResult.getResult()).exceptionCode(threeWayMergeResult.getExceptionCode()).build();
-        } else {
-            document.setModifiedAt(LocalDateTime.now());
+            // 결과의 exception 코드가 null이면 충돌안나고 병합된것
+            if (ExceptionCode.MERGE_CONFLICT.equals(threeWayMergeResult.getExceptionCode())) {
+                return RevisionDto.UpdateResponse.builder()
+                        .docsId(put.getDocsId())
+                        .revId(put.getRevId())
+                        .title(document.getTitle())
+                        .comment(put.getComment())
+                        .topRevId(topRevision.getId())
+                        .content(threeWayMergeResult.getResult()).exceptionCode(threeWayMergeResult.getExceptionCode()).build();
+            }
+        }
 
-            //엔티티 : 코멘트, 내용 -> 버전
-            Comment comment = new Comment(put.getComment());
-            Content content = new Content(put.getContent());
-            commentRepository.save(comment);
-            contentRepository.save(content);
+        // threeWayMergeResult가 null이 아니면 병합 과정을 거쳤다는 것.
+        String modifiedContent = threeWayMergeResult != null ? threeWayMergeResult.getResult() : put.getContent();
+
+        document.setModifiedAt(LocalDateTime.now());
+
+        //엔티티 : 코멘트, 내용 -> 버전
+        Comment comment = new Comment(put.getComment());
+        Content content = new Content(modifiedContent);
+        commentRepository.save(comment);
+        contentRepository.save(content);
 
 
-            //연관관계 : 수정 유저, 이전 버전id, 문서id
-            Revision preRevision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
+        //연관관계 : 수정 유저, 이전 버전id, 문서id
+        //그 외 : 텍스트 증감 수, 문서 버전 번호
+        Long textDiff = (long) myDiffUtils.diffLength(DiffUtils.diff(myDiffUtils.splitIntoLines(topRevision.getContent().getText()), myDiffUtils.splitIntoLines(modifiedContent)));
+        Long newVersionNo = topRevision.getNumber() + 1;
 
-            //그 외 : 텍스트 증감 수, 문서 버전 번호
-            Long textDiff = (long) myDiffUtils.diffLength(DiffUtils.diff(myDiffUtils.splitIntoLines(preRevision.getContent().getText()), myDiffUtils.splitIntoLines(put.getContent())));
-            Long newVersionNo = preRevision.getNumber() + 1;
+        Revision revision = new Revision(textDiff, newVersionNo);
 
-            Revision revision = new Revision(textDiff, newVersionNo);
+        //연관관계 등록 : 코멘트, 내용, 문서, 유저, 버전(selft)
+        revision.setUser(user);
+        revision.setDocument(document);
+        revision.setContent(content);
+        revision.setComment(comment);
+        revision.setParent(topRevision);
 
-            //연관관계 등록 : 코멘트, 내용, 문서, 유저, 버전(selft)
-            revision.setUser(user);
-            revision.setDocument(document);
-            revision.setContent(content);
-            revision.setComment(comment);
-            revision.setParent(preRevision);
-
-            revisionRepository.save(revision);
+        revisionRepository.save(revision);
 //            saveRecentDocsToRedis(document);
 
-            //문서 상세 내용 리턴
-            return RevisionDto.UpdateResponse.builder()
-                    .docsId(put.getDocsId())
-                    .revId(revision.getId())
-                    .title(document.getTitle())
-                    .comment(put.getComment())
-                    .topRevId(topRevision.getId())
-                    .modifiedAt(revision.getModifiedAt())
-                    .content(revision.getContent().getText()).exceptionCode(null).build();
-        }
+        //문서 상세 내용 리턴
+        return RevisionDto.UpdateResponse.builder()
+                .docsId(put.getDocsId())
+                .revId(revision.getId())
+                .title(document.getTitle())
+                .comment(put.getComment())
+                .topRevId(topRevision.getId())
+                .modifiedAt(revision.getModifiedAt())
+                .content(revision.getContent().getText()).exceptionCode(null).build();
+
     }
 
     public List<DocumentDto.Recent> loadRecentDocsList() {
