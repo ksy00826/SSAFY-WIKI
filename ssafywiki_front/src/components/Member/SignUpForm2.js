@@ -17,6 +17,8 @@ import { axiosInstance } from "utils/AxiosConfig";
 
 import { signup, sendEmail, authEmail } from "utils/Authenticate";
 
+import styles from "./SignUpForm2.module.css";
+
 const { Search } = Input;
 
 const SignUp = ({ goNext, info }) => {
@@ -99,31 +101,26 @@ const SignUp = ({ goNext, info }) => {
     setChecking(false);
   };
 
-  const handleAuth = (value) => {
-    if (authBtn === "인증번호 전송") {
-      handleSendEmail(form.getFieldValue(["email"]));
-    } else {
-      validateEmail(form.getFieldValue(["email"]),value);
-    }
-  };
-
-  const handleSendEmail = async (value) => {
-    console.log(value, "에 인증 메일을 보낸다.");
+  const handleSendEmail = async () => {
+    const email = form.getFieldValue(["email"]);
+    console.log(email, "에 인증 메일을 보낸다.");
 
     try {
-      sendEmail(value, info.roll).then((data) => {
+      sendEmail(email, info.roll).then((data) => {
         console.log(data);
-        setAuthBtn("인증번호 확인");
+        setAuthBtn("재전송");
       });
     } catch (error) {
       console.log(error);
     }
   };
 
-  const validateEmail = (email,value) => {
+  const validateEmail = () => {
+    const email = form.getFieldValue(["email"]);
+    const value = form.getFieldValue(["auth"]);
     console.log("인증번호를 확인한다.");
     let result = true;
-    authEmail(email,info.roll,value).then((data) => {
+    authEmail(email, info.roll, value).then((data) => {
       console.log(data);
       if (data === "실패") {
         result = false;
@@ -136,13 +133,17 @@ const SignUp = ({ goNext, info }) => {
         setAuthSuccess(true);
       }
     });
-    
   };
 
   useEffect(() => {
     console.log("s", emailSuccess, "f", emailFail);
     form.validateFields(["email"]);
   }, [emailSuccess, emailFail]);
+
+  useEffect(() => {
+    console.log("s", emailSuccess, "f", emailFail);
+    form.validateFields(["auth"]);
+  }, [authSuccess]);
 
   return (
     <Form
@@ -194,24 +195,24 @@ const SignUp = ({ goNext, info }) => {
       <Form.Item
         name="auth"
         rules={[
-          {
-            required: true,
-            message: "인증번호를 입력해주세요.",
-          },
           () => ({
-            validator() {
+            validator(_, value) {
+              if (!value) {
+                return Promise.reject(new Error("인증번호를 입력해주세요."));
+              }
               if (authSuccess) return Promise.resolve();
               return Promise.reject(new Error("인증번호를 확인해주세요."));
             },
           }),
         ]}
       >
-        <Search
-          placeholder="인증번호"
-          enterButton={authBtn}
-          onSearch={handleAuth}
-          disabled={authSuccess}
-        />
+        <div className={styles.authBox}>
+          <Input placeholder="인증번호" disabled={authSuccess} />
+          <Button type="primary" onClick={handleSendEmail}>
+            {authBtn}
+          </Button>
+          <Button onClick={validateEmail}>확인</Button>
+        </div>
       </Form.Item>
 
       <Form.Item
