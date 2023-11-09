@@ -134,14 +134,18 @@ public class MyDiffUtils {
         }
 
         // 남은 변경사항은 수정 가능한 것
+        Conflict conflict = conflictList.size() > 0 ? conflictList.get(conflictList.size() - 1) : null;
+
         while (indexA >= 0) {
             AbstractDelta<String> deltaA = deltasA.get(indexA);
-            modifiedDeltaStack.push(deltaA);
+            if (conflict == null || !conflict.isExistInA(deltaA))
+                modifiedDeltaStack.push(deltaA);
             indexA--;
         }
         while (indexB >= 0) {
             AbstractDelta<String> deltaB = deltasB.get(indexB);
-            modifiedDeltaStack.push(deltaB);
+            if (conflict == null || !conflict.isExistInB(deltaB))
+                modifiedDeltaStack.push(deltaB);
             indexB--;
         }
 
