@@ -14,7 +14,7 @@ const DocsList = () => {
   React.useEffect(() => {
     const title = searchParams.get("title");
     setTitle(title == undefined ? "문서 제목" : title); //url에서 가져오기
-  }, []);
+  }, [searchParams]);
 
   return (
     <div>
