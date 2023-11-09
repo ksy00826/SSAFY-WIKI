@@ -91,10 +91,15 @@ export const getSearchDoc = async (docsTitle) => {
   try {
     const response = await axiosElasticInstance.post(`_search`,`{
       "query": {
-        "match": {
-          "docs_title": "${docsTitle}"
+        "bool": { 
+          "should": [ 
+             { "match": { "docs_title": "${docsTitle}" } },
+             { "match": { "docs_title.keyword": "${docsTitle}" } },
+             { "match": { "docs_title.ngram": "${docsTitle}" } },
+             { "match": { "docs_title.nori": "${docsTitle}" } }
+          ]
         }
-      }
+     }
     
     }
       
