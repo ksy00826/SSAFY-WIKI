@@ -20,7 +20,11 @@ function getItem(label, key, icon, children) {
 }
 const items = [
   getItem(<Link to="/userpage">마이페이지</Link>, "1", <UserOutlined />),
-  getItem(<Link to="/userpage/edituser">회원정보 수정</Link>, "2", <UserOutlined />),
+  getItem(
+    <Link to="/userpage/edituser">회원정보 수정</Link>,
+    "2",
+    <UserOutlined />
+  ),
   getItem(
     <Link to="/userpage/contribution">기여한 문서</Link>,
     "3",
@@ -46,10 +50,11 @@ const UserNavbar = (props) => {
       collapsible
       collapsed={collapsed}
       onCollapse={(value) => setCollapsed(value)}
+      theme="light"
     >
       <div className="demo-logo-verticall" />
       <Menu
-        theme="dark"
+        theme="light"
         mode="inline"
         items={items}
         activeKey={"1"}

@@ -1,5 +1,9 @@
-import { axiosInstance ,axiosInstanceWithLogin, axiosSsafygitInstance } from "./AxiosConfig";
-import { getToken } from "./Authenticate";
+import {
+  axiosInstance,
+  axiosInstanceWithLogin,
+  axiosSsafygitInstance,
+} from "./AxiosConfig";
+
 export const getUserProfile = async () => {
   try {
     const response = await axiosInstanceWithLogin.get(`/api/user/info`);
@@ -11,7 +15,7 @@ export const getUserProfile = async () => {
 
 export const editUserProfile = async (info) => {
   try {
-    const response = await axiosInstanceWithLogin.post(`/api/user/info`,info);
+    const response = await axiosInstanceWithLogin.post(`/api/user/info`, info);
     return response.data;
   } catch (error) {
     throw error;
@@ -20,23 +24,27 @@ export const editUserProfile = async (info) => {
 
 export const getContributedDocs = async (id) => {
   try {
-    const response = await axiosInstanceWithLogin.get(`/api/user/info/contributeDocs`);
-    if(response == null) {
-      return [{
-        docsId: null,
-        author: null,
-        title: "작성한 문서가 없어요",
-        content: null,
-        createdAt: "ㅠㅠ",
-        modifiedAt: null,
-        categoryList: null
-    },];
+    const response = await axiosInstanceWithLogin.get(
+      `/api/user/info/contributeDocs`
+    );
+    if (response == null) {
+      return [
+        {
+          docsId: null,
+          author: null,
+          title: "작성한 문서가 없어요",
+          content: null,
+          createdAt: "ㅠㅠ",
+          modifiedAt: null,
+          categoryList: null,
+        },
+      ];
     }
     return response.data;
   } catch (error) {
     throw error;
   }
-  
+
   // return {
   //   docs: [
   //     {
@@ -66,14 +74,18 @@ export const getContributedDocs = async (id) => {
 
 export const getContributedChats = async (id) => {
   try {
-    const response = await axiosInstanceWithLogin.get(`/api/user/info/contributeChats`);
-    if(response == null) {
-      return [{
-        docsId: 1,
-        nickname: "",
-        content: "채팅이 없어요",
-        createdAt: "NOTIME"
-      },];
+    const response = await axiosInstanceWithLogin.get(
+      `/api/user/info/contributeChats`
+    );
+    if (response == null) {
+      return [
+        {
+          docsId: 1,
+          nickname: "",
+          content: "채팅이 없어요",
+          createdAt: "NOTIME",
+        },
+      ];
     }
     return response.data;
   } catch (error) {
@@ -113,12 +125,14 @@ export const checkSSAFYEmail = async (id) => {
   try {
     console.log(`{"usernameOrEmail":"${id}","password":"aaaaa"}`);
     let data = `{"usernameOrEmail":"${id}","password":"aaaaa"}`;
-    const response = await axiosSsafygitInstance.post(`/signin`,data);
+    const response = await axiosSsafygitInstance.post(`/signin`, data);
     return response.data;
   } catch (error) {
-    if(error.response.data.message === "아이디가 존재하지 않습니다."
-      || error.response.data.message.startsWith("비밀번호가 ")) {
-        console.log("noID on API");
+    if (
+      error.response.data.message === "아이디가 존재하지 않습니다." ||
+      error.response.data.message.startsWith("비밀번호가 ")
+    ) {
+      console.log("noID on API");
       return error.response.data.message;
     }
     return error;
