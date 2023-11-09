@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Space, Alert, Tooltip } from "antd";
+import { Card, Space, Alert, Tooltip, Modal } from "antd";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 import { FormOutlined, WarningTwoTone } from "@ant-design/icons";
@@ -25,6 +25,7 @@ const Content = () => {
   const state = location != null ? location.state : null;
   const queryParams = location != null ? location.search != null ? new URLSearchParams(location.search) : null : null;
 
+  const {confirm} = Modal;
 
   // 처음 랜더링시 내용 가져오기
   React.useEffect(() => {
@@ -54,7 +55,16 @@ const Content = () => {
 
   const handleReport = () => {
     console.log(params.docsId);
+    confirm({
+      title: "신고",
+      content: "관리자에게 부적절한 문서임을 알립니다.",
+      onOk() {
+        
+      }
+    })
+
     // 유저
+    
   };
 
   return (
