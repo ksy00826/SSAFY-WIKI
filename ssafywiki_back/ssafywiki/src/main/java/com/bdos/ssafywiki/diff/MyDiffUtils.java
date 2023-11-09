@@ -3,10 +3,9 @@ package com.bdos.ssafywiki.diff;
 import com.bdos.ssafywiki.exception.ExceptionCode;
 import com.github.difflib.DiffUtils;
 import com.github.difflib.patch.*;
-import lombok.NoArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,8 +71,9 @@ public class MyDiffUtils {
         int indexA = patchA.getDeltas().size() - 1;
         int indexB = patchB.getDeltas().size() - 1;
 
-        // 수정할 수 있는 Delta 객체를 Patch에 저장
-        Patch<String> mergeDeltaPatch = new Patch<>();
+        // 수정할 수 있는 Delta 객체를 Stack에 저장
+        ArrayDeque<AbstractDelta<String>> modifiedDeltaStack = new ArrayDeque<>();
+
         // Conflict 나는 Delta 쌍을 List에 저장
         List<Conflict> conflictList = new ArrayList<>();
 
@@ -104,7 +104,8 @@ public class MyDiffUtils {
 //                System.out.println("A와 B의 변화가 같나요?: " + deltaA.equals(deltaB));
 
                 if (deltaA.equals(deltaB)) {
-                    mergeDeltaPatch.addDelta(deltaA);
+//                    mergeDeltaPatch.addDelta(deltaA);
+                    modifiedDeltaStack.push(deltaA);
                 } else if (deltaA.getSource().getPosition() <= deltaB.getSource().getPosition() && isExistB) {
                     conflict.addDeltaA(deltaA);
                 } else if (deltaA.getSource().getPosition() > deltaB.getSource().getPosition() && isExistA) {
@@ -116,10 +117,12 @@ public class MyDiffUtils {
                 // 안겹침 / 가장 뒤에 있는 것 수정 가능 / 뒤에있는게 conflict에 있으면 안됨
                 if ((DeltaType.INSERT.equals(deltaA.getType()) ? deltaA.getSource().last() + 1 : deltaA.getSource().last()) < (DeltaType.INSERT.equals(deltaB.getType()) ? deltaB.getSource().last() + 1 : deltaB.getSource().last())) {
                     if (!isExistB)
-                        mergeDeltaPatch.addDelta(deltaB);
+//                        mergeDeltaPatch.addDelta(deltaB);
+                        modifiedDeltaStack.push(deltaB);
                 } else {
                     if (!isExistA)
-                        mergeDeltaPatch.addDelta(deltaA);
+//                        mergeDeltaPatch.addDelta(deltaA);
+                        modifiedDeltaStack.push(deltaA);
                 }
             }
 
@@ -133,15 +136,20 @@ public class MyDiffUtils {
         // 남은 변경사항은 수정 가능한 것
         while (indexA >= 0) {
             AbstractDelta<String> deltaA = deltasA.get(indexA);
-            mergeDeltaPatch.addDelta(deltaA);
+            modifiedDeltaStack.push(deltaA);
             indexA--;
         }
         while (indexB >= 0) {
             AbstractDelta<String> deltaB = deltasB.get(indexB);
-            mergeDeltaPatch.addDelta(deltaB);
+            modifiedDeltaStack.push(deltaB);
             indexB--;
         }
 
+        // 수정할 수 있는 Delta 객체를 Patch에 저장
+        Patch<String> mergeDeltaPatch = new Patch<>();
+        while (!modifiedDeltaStack.isEmpty()) {
+            mergeDeltaPatch.addDelta(modifiedDeltaStack.pop());
+        }
 
 //        System.out.println("############3-way-merge#############");
 //        System.out.println("mergeDeltaPatch: " + mergeDeltaPatch);
