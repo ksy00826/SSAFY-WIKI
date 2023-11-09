@@ -1,20 +1,12 @@
 import React, { useState } from "react";
 import {} from "@ant-design/icons";
-import {
-  Layout,
-  Menu,
-  theme,
-  Row,
-  Col,
-  Image,
-  Space,
-  Divider,
-  Tooltip,
-  Button,
-} from "antd";
-import UserNavbar from "components/Common/UserNavbar";
+import { Layout, theme, Row, Col, Image, Divider, Tooltip, Button } from "antd";
 import { getUserProfile } from "utils/UserApi";
 import { AuditOutlined } from "@ant-design/icons";
+
+import UserNavbar from "components/Common/UserNavbar";
+import LawnGraph from "./LawnGraph";
+
 const { Header, Content, Footer, Sider } = Layout;
 
 const MyPage = () => {
@@ -79,7 +71,7 @@ const MyPage = () => {
             <Row justify="space-around" align="middle">
               <Col span={1}></Col>
             </Row>
-
+            <LawnGraph></LawnGraph>
             <Divider orientation="left" orientationMargin="0">
               <b>내 신고 정보</b>
             </Divider>
