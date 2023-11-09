@@ -1,4 +1,4 @@
-import { axiosInstance, axiosInstanceWithLogin } from "./AxiosConfig";
+import { axiosInstance, axiosInstanceWithLogin,axiosElasticInstance } from "./AxiosConfig";
 
 export const getDocsContent = async (id) => {
   try {
@@ -86,3 +86,21 @@ export const createRedirectDocs = async (redirDocs) => {
     throw error;
   }
 };
+
+export const getSearchDoc = async (docsTitle) => {
+  try {
+    const response = await axiosElasticInstance.post(`_search`,`{
+      "query": {
+        "match": {
+          "docs_title": "${docsTitle}"
+        }
+      }
+    
+    }
+      
+     `);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
