@@ -11,7 +11,7 @@ const History = () => {
   const navigate = useNavigate();
   const { confirm, error } = Modal;
 
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [historyData, setHistoryData] = useState([]);
 
@@ -22,7 +22,7 @@ const History = () => {
   useEffect(() => {
     const fetchData = async () => {
       // Implement the actual getHistory function to fetch data
-      const result = await getHistory(params.docsId, currentPage, pageSize);
+      const result = await getHistory(params.docsId, currentPage - 1, pageSize);
       setHistoryData(result.content);
       setTotalPages(result.totalPages);
       setTotalElements(result.totalElements);
@@ -32,6 +32,7 @@ const History = () => {
   }, [params, currentPage]);
 
   const handlePageChange = (page, pageSize) => {
+    console.log(page, pageSize);
     setCurrentPage(page);
     setPageSize(pageSize);
   };
@@ -110,15 +111,15 @@ const History = () => {
       <h1>{params.title} <small style={{ fontWeight: "normal" }}>(문서 역사)</small></h1>
       <DocsNav current="history" />
 
-        <Button
-          onClick={onClickDiff}
-        >
-          버전 비교
-        </Button>
+      <Button
+        onClick={onClickDiff}
+      >
+        버전 비교
+      </Button>
       <div>
         <Timeline mode="left" items={historyData != null && timelineItems} />
         <Pagination
-          current={currentPage+1}
+          current={currentPage}
           pageSize={pageSize}
           total={totalElements}
           onChange={handlePageChange}
