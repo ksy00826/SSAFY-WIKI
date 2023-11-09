@@ -158,3 +158,14 @@ export const getUserContribute = async (startDate) => {
     throw error;
   }
 };
+
+export const getUserContributeOneDay = async (date) => {
+  try {
+    const response = await axiosInstanceWithLogin.get(
+      `/api/user/info/day-contribute-docs?date=${date}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
