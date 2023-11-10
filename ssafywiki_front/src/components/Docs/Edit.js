@@ -69,6 +69,7 @@ const Edit = () => {
       });
     } else {
       // axios로 등록 데이터 넣어줘야함
+      console.log(comment);
       updateDocs({
         docsId: id,
         content: content,
@@ -148,7 +149,10 @@ const Edit = () => {
             autoSize={{
               minRows: 4,
             }}
-            onChange={(value) => setComment(value)}
+            onChange={(value) => {
+              // console.log(value);
+              setComment(value.target.value);
+            }}
           />
         ) : (
           <></>

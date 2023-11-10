@@ -1,0 +1,18 @@
+.Box {
+  display: flex;
+}
+
+.Upload {
+  margin-top: 0.5rem;
+  width: 15%;
+}
+
+
+.Button {
+  width: 85%;
+}
+
+.Url {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
