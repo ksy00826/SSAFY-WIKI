@@ -2,6 +2,8 @@ package com.bdos.ssafywiki.document.service;
 
 import com.bdos.ssafywiki.diff.MergeDto;
 import com.bdos.ssafywiki.diff.MyDiffUtils;
+import com.bdos.ssafywiki.docs_auth.repository.DocsAuthRepository;
+import com.bdos.ssafywiki.docs_auth.repository.UserDocsAuthRepository;
 import com.bdos.ssafywiki.docs_category.entity.Category;
 import com.bdos.ssafywiki.docs_category.entity.DocsCategory;
 import com.bdos.ssafywiki.docs_category.repository.CategoryRepository;
@@ -53,6 +55,7 @@ public class DocumentService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final DocsCategoryRepository docsCategoryRepository;
+    private final UserDocsAuthRepository userDocsAuthRepository;
 
     //mapstruct
     private final RevisionMapper revisionMapper;
@@ -142,7 +145,14 @@ public class DocumentService {
         }
 
         // 권한이 없으면 error
-        if (!result) throw new BusinessLogicException(ExceptionCode.DOCUMENT_NO_ACCESS);
+        if (!result) {
+            if(document.getReadAuth() == 2)
+                throw new BusinessLogicException(ExceptionCode.REQUIRED_LOGIN);
+            if(document.getReadAuth() == 3)
+                throw new BusinessLogicException(ExceptionCode.REQUIRED_MANAGER);
+            else
+                throw new BusinessLogicException(ExceptionCode.REQUIRED_PRIVATE);
+        }
 
         // 권한이 있으면
         //docsId에 해당하는 가장 최신 버전의 문서를 찾아서 리턴 (revision 엔티티 찾기)
@@ -154,7 +164,11 @@ public class DocumentService {
     }
 
     private boolean checkReadAuth(Long readAuth, Role role, Long id) {
+        if(role == Role.ADMIN) return true;
+
         // 권한테이블에서 권한있는지 체크
+        userDocsAuthRepository.findByDocsAuthIdAndUserId(readAuth, id)
+                .orElseThrow(()-> new BusinessLogicException(ExceptionCode.REQUIRED_PRIVATE));
 
         return true;
     }
