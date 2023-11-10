@@ -34,6 +34,7 @@ public class DocumentDto {
         private String comment;
         private Long revId;
         private Long topRevId;
+        private List<String> categories;
     }
     
     @Getter
