@@ -13,6 +13,7 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RevisionDto {
@@ -116,5 +117,31 @@ public class RevisionDto {
         private List<Version> content;
         private long totalPages;
         private long totalElements;
+    }
+
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @ToString
+    public static class UserContribute {
+        private Long docsId;
+        private String title;
+        private List<ContributeDetail> revisions = new ArrayList<>();
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @ToString
+    public static class ContributeDetail {
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime createdAt;
+        private Long revisionId;
+        private String revisionComment;
     }
 }
