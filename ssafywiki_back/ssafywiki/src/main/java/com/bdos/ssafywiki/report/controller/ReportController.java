@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/report")
 public class ReportController {
     private final ReportService reportService;
-    @PostMapping("/docs")
+    @PostMapping("/docs/{docs_id}")
     public ResponseEntity requestDocumentReport(
             @AuthenticationPrincipal User user,
             @PathVariable("docs_id") Long docsId){

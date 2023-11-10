@@ -9,14 +9,16 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Table(name = "document_reports")
 @NoArgsConstructor
 @ToString
+@EntityListeners(AuditingEntityListener.class)
+@Table(name = "document_reports")
 public class DocumentReport {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

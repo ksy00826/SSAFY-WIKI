@@ -22,6 +22,10 @@ public class ReportService {
 
     @Transactional
     public void requestDocumentReport(Long docsId, User user) {
+        if(user == null)
+            throw new BusinessLogicException(ExceptionCode.MEMBER_UNAUTHORIZED);
+
+
         Document document = documentRepository.findById(docsId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
         DocumentReport documentReport = DocumentReport.builder().document(document).user(user).build();
 
