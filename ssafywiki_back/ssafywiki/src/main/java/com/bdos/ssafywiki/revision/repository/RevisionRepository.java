@@ -6,6 +6,7 @@ import com.bdos.ssafywiki.revision.entity.Revision;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.bdos.ssafywiki.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,6 +28,11 @@ public interface RevisionRepository extends JpaRepository<Revision, Long> {
     @Query(value = "SELECT r FROM Revision r WHERE r.user.id = :userId AND r.createdAt >= :startDate")
     List<Revision> findByUserWithStartDate(Long userId, LocalDateTime startDate);
 
-    @Query(value = "SELECT r FROM Revision r WHERE r.user.id = :userId AND r.createdAt >= :startDate AND r.createdAt < :endDate")
+    @Query(value = "SELECT r FROM Revision r JOIN FETCH r.document WHERE r.user.id = :userId AND r.createdAt >= :startDate AND r.createdAt < :endDate")
     List<Revision> findByUserWithDate(Long userId, LocalDateTime startDate, LocalDateTime endDate);
+    @Query(value = "SELECT r FROM Revision r JOIN FETCH r.document WHERE r.user.id = :userId AND r.createdAt >= :startDate AND r.createdAt < :endDate GROUP BY r.document")
+    List<Revision> findByDocsUserWithDate(Long userId, LocalDateTime startDate, LocalDateTime endDate);
+
+    @Query(value = "SELECT r FROM Revision r WHERE r.user = :user AND r.document = :document")
+    List<Revision> findRevisionInfoByUserAndDateAndDocs(Document document, User user);
 }
