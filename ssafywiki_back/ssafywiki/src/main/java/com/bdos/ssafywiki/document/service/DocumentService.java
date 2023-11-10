@@ -269,6 +269,32 @@ public class DocumentService {
         revisionRepository.save(revision);
 //            saveRecentDocsToRedis(document);
 
+
+        List<Long> ids =  docsCategoryRepository.findAllByDocsId(put.getDocsId());
+        ids.stream().forEach(
+                docsCategoryId -> {
+                    docsCategoryRepository.deleteById(docsCategoryId);
+                }
+        );
+        put.getCategories().stream()
+                //존재하지 않는 카테고리는 생성 및 저장하여 리턴
+                .map(categoryName ->
+                        categoryRepository.findByName(categoryName)
+                                .orElseGet(() -> {
+                                    Category category = Category.builder().name(categoryName).build();
+                                    categoryRepository.save(category);
+                                    return category;
+                                }))
+                //각 카테고리마다 문서와 연결
+                .forEach(category -> {
+                    //카테고리-문서 엔티티 생성
+                    DocsCategory docsCategory = new DocsCategory();
+                    System.out.println(category);
+                    docsCategory.setCategory((Category) category);
+                    docsCategory.setDocument(document);
+                    docsCategoryRepository.save(docsCategory);
+                    System.out.println(docsCategory);
+                });
         //문서 상세 내용 리턴
         return RevisionDto.UpdateResponse.builder()
                 .docsId(put.getDocsId())
@@ -278,6 +304,9 @@ public class DocumentService {
                 .topRevId(topRevision.getId())
                 .modifiedAt(revision.getModifiedAt())
                 .content(revision.getContent().getText()).exceptionCode(null).build();
+
+
+
 
     }
 
