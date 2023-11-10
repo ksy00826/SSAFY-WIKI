@@ -10,9 +10,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 @Tag(name = "리다이렉트 문서 API", description = "문서에 대한 CRUD 작업을 수행하는 API")
 @RestController
 @RequiredArgsConstructor
@@ -25,6 +24,15 @@ public class RedirectDocsController {
     public ResponseEntity<RevisionDto.DocsResponse> writeRedirectDocs(@RequestBody RedirectDocsDto.Post post,
                                                               @AuthenticationPrincipal User userDetails){
         RevisionDto.DocsResponse response = redirectDocsService.writeDocs(post, userDetails);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "리다이렉트 키워드 가져오기", description = "문서에 해당하는 리다이렉트 키워드를 가져옵니다.")
+    @GetMapping("/api/redirect-docs/{docsId}")
+    public ResponseEntity<RedirectDocsDto.Detail> readRedirectDocs(@PathVariable Long docsId,
+                                                                      @AuthenticationPrincipal User userDetails){
+        RedirectDocsDto.Detail response = redirectDocsService.readDocs(docsId, userDetails);
 
         return ResponseEntity.ok(response);
     }

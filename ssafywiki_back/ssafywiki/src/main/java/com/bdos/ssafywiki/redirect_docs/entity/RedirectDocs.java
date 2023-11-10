@@ -42,4 +42,7 @@ public class RedirectDocs {
     public void setRedirectDocs(Document redirectDocs) {
         this.redirectDocs = redirectDocs;
     }
+
+    public RedirectDocs() {
+    }
 }

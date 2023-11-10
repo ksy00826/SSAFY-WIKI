@@ -4,8 +4,11 @@ import com.bdos.ssafywiki.diff.MyDiffUtils;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.document.repository.DocumentRepository;
 import com.bdos.ssafywiki.document.service.DocumentService;
+import com.bdos.ssafywiki.exception.BusinessLogicException;
+import com.bdos.ssafywiki.exception.ExceptionCode;
 import com.bdos.ssafywiki.redirect_docs.dto.RedirectDocsDto;
 import com.bdos.ssafywiki.redirect_docs.entity.RedirectDocs;
+import com.bdos.ssafywiki.redirect_docs.mapper.RedirectDocsMapper;
 import com.bdos.ssafywiki.redirect_docs.repository.RedirectDocsRepository;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import com.bdos.ssafywiki.revision.entity.Comment;
@@ -34,6 +37,7 @@ public class RedirectDocsService {
 
     private final MyDiffUtils myDiffUtils;
     private final RevisionMapper revisionMapper;
+    private final RedirectDocsMapper redirectDocsMapper;
     public RevisionDto.DocsResponse writeDocs(RedirectDocsDto.Post post, User user) {
 
         //리다이렉트 문서 생성
@@ -50,7 +54,7 @@ public class RedirectDocsService {
         documentRepository.save(redirectDocs);
 
         //리다이렉트 문서의 내용(버전) 등록
-        String contentString = "[#redirect: " + post.getRedirectTitle() + "](/res/list?title="+post.getRedirectTitle()+")"; //검색 API 연결 - 수정 필요
+        String contentString = "[#redirect: " + post.getRedirectTitle() + "](/res/redirect?title="+post.getRedirectTitle()+")"; //검색 API 연결 - 수정 필요
         Revision revision = Revision.builder()
                 .number(1L)
                 .diffAmount((long) myDiffUtils.diffLength(DiffUtils.diff(myDiffUtils.splitIntoLines(""), myDiffUtils.splitIntoLines(contentString))))
@@ -79,5 +83,10 @@ public class RedirectDocsService {
 
         //만들어진 문서 DTO 리턴
         return revisionMapper.toResponse(revision);
+    }
+
+    public RedirectDocsDto.Detail readDocs(Long docsId, User userDetails) {
+        RedirectDocs redirectDocs = redirectDocsRepository.findByDocsId(docsId);
+        return redirectDocsMapper.toDetail(redirectDocs);
     }
 }
