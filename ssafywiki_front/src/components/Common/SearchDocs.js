@@ -7,6 +7,8 @@ import {
   getRedirectKeyword,
 } from "utils/DocsApi";
 import { SearchOutlined } from '@ant-design/icons';
+import { relative } from "path-browserify";
+import styles from "./SearchDocs.module.css";
 const App = () => {
   const navigate = useNavigate();
   const [options, setOptions] = useState([]);
@@ -19,7 +21,6 @@ const App = () => {
   // };  
   const onSelect = (val, option) => {
     console.log("onSelect")
-    setDoctitle(option.label);
     setDocid(option.value);
     navigate(`res/content/${option.key}/${option.label}`);
   };
@@ -57,12 +58,13 @@ const App = () => {
     });
   }
   const onSearchList = () => {
-
+    console.log(doctitle," aaa");
       navigate(`res/list?title=${doctitle}`);
   }
   const searchResult = (keyword) => {
     // 자동완성옵션검색
-    console.log("onChange");
+    console.log("onChange",keyword);
+    setDoctitle(keyword);
     getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
       // console.log(output);
