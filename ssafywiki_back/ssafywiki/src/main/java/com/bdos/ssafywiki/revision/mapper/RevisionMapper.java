@@ -37,6 +37,7 @@ public interface RevisionMapper {
                 .content(revision.getContent().getText())
                 .createdAt(revision.getDocument().getCreatedAt())
                 .modifiedAt(revision.getModifiedAt())
+                .redirect(revision.getDocument().isRedirect())
                 .build();
 
         return response;
@@ -70,4 +71,6 @@ public interface RevisionMapper {
     RevisionDto.Detail toDetail(Revision revision);
 
     RevisionDto.VersionPage toVersionPage(Page<Revision> revisionPage);
+
+    List<RevisionDto.DocsResponse> toResponseList(List<Revision> revisionList);
 }

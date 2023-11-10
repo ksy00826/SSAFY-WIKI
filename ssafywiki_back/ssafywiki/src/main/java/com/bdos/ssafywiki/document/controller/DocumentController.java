@@ -6,9 +6,11 @@ import com.bdos.ssafywiki.document.service.DocumentService;
 import com.bdos.ssafywiki.redis.service.RedisPublisher;
 import com.bdos.ssafywiki.redis.service.TopicService;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
+import com.bdos.ssafywiki.user.dto.UserDto;
 import com.bdos.ssafywiki.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -84,5 +86,19 @@ public class DocumentController {
     public ResponseEntity<?> readRecentDocs() {
         List<DocumentDto.Recent> recentDocs = documentService.loadRecentDocsList();
         return ResponseEntity.ok(recentDocs);
+    }
+
+
+    @Operation(summary = "문서 리스트 조회하기", description = "문서 여럿의 상세를 조회합니다.")
+    @PostMapping("/api/docs/list")
+    public ResponseEntity<List<RevisionDto.DocsResponse>> readDocs(
+            @RequestBody List<String> docsIds,
+            @AuthenticationPrincipal User userDetails){
+        List<RevisionDto.DocsResponse> response = new ArrayList<>();
+        for(String id : docsIds){
+            response.add(documentService.readDocs(Long.valueOf(id), null, userDetails));
+        }
+
+        return ResponseEntity.ok(response);
     }
 }

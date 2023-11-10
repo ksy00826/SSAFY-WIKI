@@ -2,6 +2,8 @@ package com.bdos.ssafywiki.document.service;
 
 import com.bdos.ssafywiki.diff.MergeDto;
 import com.bdos.ssafywiki.diff.MyDiffUtils;
+import com.bdos.ssafywiki.docs_auth.repository.DocsAuthRepository;
+import com.bdos.ssafywiki.docs_auth.repository.UserDocsAuthRepository;
 import com.bdos.ssafywiki.docs_category.entity.Category;
 import com.bdos.ssafywiki.docs_category.entity.DocsCategory;
 import com.bdos.ssafywiki.docs_category.repository.CategoryRepository;
@@ -53,6 +55,7 @@ public class DocumentService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final DocsCategoryRepository docsCategoryRepository;
+    private final UserDocsAuthRepository userDocsAuthRepository;
 
     //mapstruct
     private final RevisionMapper revisionMapper;
@@ -138,11 +141,19 @@ public class DocumentService {
         if (document.getReadAuth() < 4) {
             result = user.getRole().havePrivilege(Privilege.getOptionLv('R', document.getReadAuth()));
         } else {  // private 문서
-            result = checkReadAuth(document.getReadAuth(), user.getRole(), user.getId());
+            if(!checkReadAuth(document.getReadAuth(), user.getRole(), user.getId()))
+                throw new BusinessLogicException(ExceptionCode.REQUIRED_PRIVATE);
         }
 
         // 권한이 없으면 error
-        if (!result) throw new BusinessLogicException(ExceptionCode.DOCUMENT_NO_ACCESS);
+        if (!result) {
+            if(document.getReadAuth() == 2)
+                throw new BusinessLogicException(ExceptionCode.REQUIRED_LOGIN);
+            if(document.getReadAuth() == 3)
+                throw new BusinessLogicException(ExceptionCode.REQUIRED_MANAGER);
+            else
+                throw new BusinessLogicException(ExceptionCode.REQUIRED_PRIVATE);
+        }
 
         // 권한이 있으면
         //docsId에 해당하는 가장 최신 버전의 문서를 찾아서 리턴 (revision 엔티티 찾기)
@@ -154,9 +165,10 @@ public class DocumentService {
     }
 
     private boolean checkReadAuth(Long readAuth, Role role, Long id) {
-        // 권한테이블에서 권한있는지 체크
+        if(role == Role.ADMIN) return true;
 
-        return true;
+        // 권한테이블에서 권한있는지 체크
+        return userDocsAuthRepository.findByDocsAuthIdAndUserId(readAuth, id).isPresent();
     }
 
 
@@ -169,12 +181,15 @@ public class DocumentService {
         //유저의 권한과 문서의 권한을 체크해서 처리
         boolean canUpdate = false;
         boolean canRead = false;
-        if (document.getWriteAuth() < 4) {
+        if (document.getReadAuth() < 4) {
             canRead = user.getRole().havePrivilege(Privilege.getOptionLv('R', document.getReadAuth()));
-            canUpdate = user.getRole().havePrivilege(Privilege.getOptionLv('W', document.getReadAuth()));
         } else {  // private 문서
             canRead = checkReadAuth(document.getReadAuth(), user.getRole(), user.getId());
-            canUpdate = checkReadAuth(document.getReadAuth(), user.getRole(), user.getId());
+        }
+        if (document.getWriteAuth() < 4) {
+            canUpdate = user.getRole().havePrivilege(Privilege.getOptionLv('W', document.getWriteAuth()));
+        } else {  // private 문서
+            canUpdate = checkReadAuth(document.getWriteAuth(), user.getRole(), user.getId());
         }
 
         // Read 권한이 없으면 error

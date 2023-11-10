@@ -79,7 +79,7 @@ public class AuthenticationService {
         System.out.println(passwordEncoder.matches(request.getPassword(), user.getPassword()));
         // 2. 비밀번호 비교
         boolean result = passwordEncoder.matches(request.getPassword(), user.getPassword());
-        if(!result) throw new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND);
+        if(!result) throw new BusinessLogicException(ExceptionCode.WRONG_PASSWORD);
 
         // 3. block 유저인지 확인
         if(user.getBlockedAt() != null) {

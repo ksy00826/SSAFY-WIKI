@@ -27,6 +27,9 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Tag(name = "유저 API", description = "마이페이지")
@@ -86,5 +89,20 @@ public class UserController {
     public ResponseEntity<Boolean> isAdmin(@AuthenticationPrincipal User user) {
 //        System.out.println("유저 확인요~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         return new ResponseEntity<>(Role.ADMIN.equals(user.getRole()), HttpStatus.OK);
+    }
+    
+    @GetMapping("/info/contribute-docs")
+    public ResponseEntity<int[][]> contributeDocsWithDate(
+            @AuthenticationPrincipal User user, @RequestParam LocalDateTime startDate){
+
+        int[][] revisions = revisionService.getUserContributeDocs(user, startDate);
+        return new ResponseEntity(revisions, HttpStatus.OK);
+    }
+    @GetMapping("/info/day-contribute-docs")
+    public ResponseEntity<List<RevisionDto.DocsResponse>> contributeDocsWithOneDate(
+            @AuthenticationPrincipal User user, @RequestParam LocalDateTime date){
+
+        List<RevisionDto.DocsResponse> revisions = revisionService.getUserContributeDocsWithDate(user, date);
+        return new ResponseEntity(revisions, HttpStatus.OK);
     }
 }

@@ -22,6 +22,5 @@ public class RedirectDocsDto {
     @Builder
     public static class Detail {
         private String originDocsTitle;
-        private String originDocsId;
     }
 }
