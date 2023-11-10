@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
-import { AutoComplete, Input } from "antd";
+import { AutoComplete, Input, Button } from "antd";
 import { useNavigate } from "react-router-dom";
+import { SearchOutlined } from '@ant-design/icons';
 import { getSearchDoc } from "utils/DocsApi";
 const App = () => {
   const navigate = useNavigate();
@@ -9,6 +10,7 @@ const App = () => {
   const [doctitle, setDoctitle] = useState("");
 
   const handleSearch = (value) => {
+    setDoctitle(value);
     setOptions(value ? searchResult(value) : [])
   };  
   const onSelect = (val, option) => {
@@ -34,14 +36,16 @@ const App = () => {
       }
     });
   }
+  const onSearchList = () => {
+
+      navigate(`res/list?title=${doctitle}`);
+  }
   const searchResult = (keyword) => {
     // 키워드로 검색
     getSearchDoc(keyword).then((data)=>{
       var output = data.data.hits.hits;
       // console.log(output);
-      var seq = 0;
       var newSearched = output.map(function(element) {
-        seq = seq + 1;
         return {label: element._source.docs_title,value: element._source.docs_title, key: element._source.docs_id};
       });
       console.log(newSearched);
@@ -53,6 +57,7 @@ const App = () => {
   };
 
   return (
+    <div>
     <AutoComplete
       popupClassName="certain-category-search-dropdown"
       popupMatchSelectWidth={500}
@@ -64,7 +69,10 @@ const App = () => {
       onSearch={handleSearch}
     >
       <Input.Search onSearch={onSearch} placeholder="검색" />
+      {/* <Button icon={<SearchOutlined />}></Button> */}
     </AutoComplete>
+    <Button onClick={onSearchList} type="primary" icon={<SearchOutlined />}></Button>
+    </div>
   );
 };
 export default App;
