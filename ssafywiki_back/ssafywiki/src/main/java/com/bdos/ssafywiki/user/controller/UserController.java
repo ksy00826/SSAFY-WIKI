@@ -9,6 +9,7 @@ import com.bdos.ssafywiki.revision.entity.Revision;
 import com.bdos.ssafywiki.revision.mapper.RevisionMapper;
 import com.bdos.ssafywiki.revision.service.RevisionService;
 import com.bdos.ssafywiki.user.dto.UserDto;
+import com.bdos.ssafywiki.user.entity.GuestUser;
 import com.bdos.ssafywiki.user.entity.User;
 import com.bdos.ssafywiki.user.enums.Role;
 import com.bdos.ssafywiki.user.mapper.UserMapper;
@@ -88,6 +89,7 @@ public class UserController {
     @GetMapping("/admin")
     public ResponseEntity<Boolean> isAdmin(@AuthenticationPrincipal User user) {
 //        System.out.println("유저 확인요~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        if(user == null) user = new GuestUser();
         return new ResponseEntity<>(Role.ADMIN.equals(user.getRole()), HttpStatus.OK);
     }
     
