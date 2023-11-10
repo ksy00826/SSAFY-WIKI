@@ -7,19 +7,19 @@ import Edit from "components/Docs/Edit";
 import Authority from "components/Docs/Authority";
 import Diff from "components/Docs/Diff";
 import Raw from "components/Docs/Raw";
+import RedirectSearch from "components/Docs/RedirectSearch";
 
 import ListPage from "./ListPage";
 import Sidebar from "components/Docs/Sidebar";
-import styles from "./DocsPage.module.css"
+import styles from "./DocsPage.module.css";
 const { Sider, Content } = Layout;
 
 const UserPage = () => {
   return (
     <Layout hasSider>
-      <Content
-        className={styles.Content}
-      >
+      <Content className={styles.Content}>
         <Routes>
+          <Route path="/redirect" element={<RedirectSearch />} />
           <Route path="/list" element={<ListPage />} />
           <Route path="/history/:docsId/:title" element={<History />} />
           <Route path="/edit/:docsId/:title" element={<Edit />} />
