@@ -8,7 +8,6 @@ import {
 } from "utils/DocsApi";
 import { SearchOutlined } from '@ant-design/icons';
 import { relative } from "path-browserify";
-import styles from "./SearchDocs.module.css";
 const App = () => {
   const navigate = useNavigate();
   const [options, setOptions] = useState([]);
