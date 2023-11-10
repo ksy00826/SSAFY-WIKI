@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Space, Alert, Tooltip, Modal, Divider, Tag } from "antd";
+import { Card, Space, Alert, Tooltip, Modal } from "antd";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 import { FormOutlined, WarningTwoTone } from "@ant-design/icons";
@@ -30,7 +30,6 @@ const Content = () => {
   const [redirectInfo, setRedirectInfo] = React.useState("");
   const [searchParams] = useSearchParams();
   const [errMsg, setErrMsg] = React.useState("");
-  const [categories, setCategories] = React.useState();
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -48,29 +47,29 @@ const Content = () => {
   React.useEffect(() => {
     if (state == null) {
       getDocsContent(params.docsId)
-      .then((response) => {
-        //리다이렉트 문서인지 검사
-        let fromId = searchParams.get("fromId");
-        let fromTitle = searchParams.get("fromTitle");
-        console.log("from", fromId);
-        if (fromId != null && fromTitle != null) {
-          const url = `/res/content/${fromId}/${fromTitle}`;
-          setRedirectInfo(
-            <>
-              <p>
-                <a href={url}>{fromTitle}</a>에서 넘어옴
-              </p>
-            </>
-          );
-        }
-        var colors = ["magenta","red","volcano","orange","gold","lime","green","cyan","blue","geekblue","purple"];
-        setContent(response.content);
-        setTitle(response.title);
-        setModifedAt(convertDate(response.modifiedAt));
-        setCategories(response.categoryList.map((category) => (
-          <Tag color={colors[Math.floor(Math.random() * 11)]}>{category.categoryName}</Tag>
-        )));
-      })
+        .then((response) => {
+          //리다이렉트 문서인지 검사
+          let fromId = searchParams.get("fromId");
+          let fromTitle = searchParams.get("fromTitle");
+          console.log("from", fromId, fromTitle);
+          if (fromId != null && fromTitle != null) {
+            const url = `/res/content/${fromId}/${fromTitle}`;
+            setRedirectInfo(
+              <>
+                <p>
+                  <a href={url}>{fromTitle}</a>에서 넘어옴
+                </p>
+              </>
+            );
+          }
+          var colors = ["magenta","red","volcano","orange","gold","lime","green","cyan","blue","geekblue","purple"];
+          setContent(response.content);
+          setTitle(response.title);
+          setModifedAt(convertDate(response.modifiedAt));
+          setCategories(response.categoryList.map((category) => (
+              <Tag color={colors[Math.floor(Math.random() * 11)]}>{category.categoryName}</Tag>
+          )));
+        })
         .catch((err) => {
           console.log(err.response.data.message);
           setTitle(params.title);
@@ -98,23 +97,25 @@ const Content = () => {
       title: "신고",
       content: "관리자에게 부적절한 문서임을 알립니다.",
       onOk() {
-        reportDocument(params.docsId).then(() => {
-          openNotification(
-            "success",
-            "신고 완료",
-            `${title}문서가 신고되었습니다.`)
-        }).catch((err) => {
-          if (err.response.status == 403) {
-            error({
-              title: "권한이 없습니다."
-            })
-          }
-        });
-      }
-    })
+        reportDocument(params.docsId)
+          .then(() => {
+            openNotification(
+              "success",
+              "신고 완료",
+              `${title}문서가 신고되었습니다.`
+            );
+          })
+          .catch((err) => {
+            if (err.response.status == 403) {
+              error({
+                title: "권한이 없습니다.",
+              });
+            }
+          });
+      },
+    });
 
     // 유저
-
   };
 
   return (
