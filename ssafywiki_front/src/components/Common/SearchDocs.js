@@ -13,17 +13,18 @@ const App = () => {
   const [docid, setDocid] = useState(0);
   const [doctitle, setDoctitle] = useState("");
 
-  const handleSearch = (value) => {
-    setDoctitle(value);
-    setOptions(value ? searchResult(value) : [])
-  };  
+  // const handleSearch = (value) => {
+  //   setDoctitle(value);
+  //   setOptions(value ? searchResult(value) : []);
+  // };  
   const onSelect = (val, option) => {
-    console.log(option);
+    console.log("onSelect")
     setDoctitle(option.label);
     setDocid(option.value);
     navigate(`res/content/${option.key}/${option.label}`);
   };
   const onSearch = (keyword) => {
+    console.log("onSearch");
     getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
       // console.log(output);
@@ -60,7 +61,8 @@ const App = () => {
       navigate(`res/list?title=${doctitle}`);
   }
   const searchResult = (keyword) => {
-    // 키워드로 검색
+    // 자동완성옵션검색
+    console.log("onChange");
     getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
       // console.log(output);
@@ -78,6 +80,7 @@ const App = () => {
   return (
     <div>
     <AutoComplete
+      backfill="true"
       popupClassName="certain-category-search-dropdown"
       popupMatchSelectWidth={500}
       style={{
@@ -85,9 +88,9 @@ const App = () => {
       }}
       options={options}
       onSelect={(val, option) => onSelect(val, option)}
-      onSearch={handleSearch}
+      onChange={searchResult}
     >
-      <Input.Search onSearch={onSearch} placeholder="검색" />
+      <Input.Search placeholder="검색" onSearch={onSearch}/>
     </AutoComplete>
     <Button onClick={onSearchList} type="primary" icon={<SearchOutlined />}></Button>
     </div>
