@@ -3,12 +3,14 @@ package com.bdos.ssafywiki.user.controller;
 import com.bdos.ssafywiki.configuration.jwt.JwtTokenProvider;
 import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
 import com.bdos.ssafywiki.document.entity.Document;
+import com.bdos.ssafywiki.report.dto.DocumentReportDto;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import com.bdos.ssafywiki.revision.entity.Revision;
 import com.bdos.ssafywiki.revision.mapper.RevisionMapper;
 import com.bdos.ssafywiki.revision.service.RevisionService;
 import com.bdos.ssafywiki.user.dto.UserDto;
 import com.bdos.ssafywiki.user.entity.User;
+import com.bdos.ssafywiki.user.enums.Role;
 import com.bdos.ssafywiki.user.mapper.UserMapper;
 import com.bdos.ssafywiki.user.mapper.UserMapperImpl;
 import com.bdos.ssafywiki.user.service.UserService;
@@ -40,9 +42,10 @@ public class UserController {
     private final RevisionService revisionService;
     private final RevisionMapper revisionMapper;
     private final UserMapper userMapper;
+
     @GetMapping("/info")
     public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal User user) {
-        if(user.equals(null)) {
+        if (user.equals(null)) {
             return ResponseEntity.ok("false");
         }
         UserDto.Registration response = userService.checkUserInfo(user.getId());
@@ -52,14 +55,15 @@ public class UserController {
     @PostMapping("/info")
     public ResponseEntity<String> editUserInfo(@RequestBody UserDto.Registration request,
                                                @AuthenticationPrincipal User user
-             ) {
+    ) {
 
-        String response = userService.editUser(user , request );
+        String response = userService.editUser(user, request);
         return ResponseEntity.ok(response);
     }
+
     @GetMapping("/info/contributeDocs")
     public ResponseEntity<List<RevisionDto.DocsResponse>> contributeDocs(
-            @AuthenticationPrincipal User user){
+            @AuthenticationPrincipal User user) {
 
         List<RevisionDto.DocsResponse> revisions = revisionService.getUserHistory(user.getId());
         return new ResponseEntity(revisions, HttpStatus.OK);
@@ -81,6 +85,12 @@ public class UserController {
         return new ResponseEntity<>(userMapper.toVersion(user), HttpStatus.OK);
     }
 
+    @GetMapping("/admin")
+    public ResponseEntity<Boolean> isAdmin(@AuthenticationPrincipal User user) {
+//        System.out.println("유저 확인요~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        return new ResponseEntity<>(Role.ADMIN.equals(user.getRole()), HttpStatus.OK);
+    }
+    
     @GetMapping("/info/contribute-docs")
     public ResponseEntity<int[][]> contributeDocsWithDate(
             @AuthenticationPrincipal User user, @RequestParam LocalDateTime startDate){
