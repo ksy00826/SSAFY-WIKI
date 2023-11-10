@@ -112,9 +112,10 @@ const LawnGraph = () => {
     // console.log("go", startDate);
 
     if (loading) {
+      setRows([]);
       getUserContribute(startDate + "T00:00:00").then((result) => {
         // console.log(result);
-
+        const rowss = [];
         result.forEach((week) => {
           const row = [];
           week.forEach((cnt) => {
@@ -154,10 +155,11 @@ const LawnGraph = () => {
             // console.log(sixMonthAgo);
             sixMonthAgo.setDate(sixMonthAgo.getDate() + 1); // 다음 날
           });
-          rows.push(row);
+          rowss.push(row);
         });
         // console.log(rows);
         setLoading(false);
+        setRows(rowss);
       });
     }
   }, []);
@@ -166,29 +168,13 @@ const LawnGraph = () => {
     <>
       <Card style={{ marginTop: 16 }} loading={loading}>
         <Row>
-          <Col>{rows[0]}</Col>
-          <Col>{rows[1]}</Col>
-          <Col>{rows[2]}</Col>
-          <Col>{rows[3]}</Col>
-          <Col>{rows[4]}</Col>
-          <Col>{rows[5]}</Col>
-          <Col>{rows[6]}</Col>
-          <Col>{rows[7]}</Col>
-          <Col>{rows[8]}</Col>
-          <Col>{rows[9]}</Col>
-          <Col>{rows[10]}</Col>
-          <Col>{rows[11]}</Col>
-          <Col>{rows[12]}</Col>
-          <Col>{rows[13]}</Col>
-          <Col>{rows[14]}</Col>
-          <Col>{rows[15]}</Col>
-          <Col>{rows[16]}</Col>
-          <Col>{rows[17]}</Col>
-          <Col>{rows[18]}</Col>
-          <Col>{rows[19]}</Col>
-          <Col>{rows[20]}</Col>
-          <Col>{rows[21]}</Col>
-          <Col>{rows[22]}</Col>
+          {loading ? (
+            <></>
+          ) : (
+            rows.map((row) => {
+              return <Col>{row}</Col>;
+            })
+          )}
         </Row>
       </Card>
       <Divider orientation="left" orientationMargin="0">
