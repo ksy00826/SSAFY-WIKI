@@ -169,3 +169,12 @@ export const getUserContributeOneDay = async (date) => {
     throw error;
   }
 };
+
+export const getIsAdmin = async () => {
+  try {
+    const response = await axiosInstanceWithLogin.get(`/api/user/admin`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};

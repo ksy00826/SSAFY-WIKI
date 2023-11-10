@@ -14,9 +14,11 @@ import SearchDocs from "./SearchDocs";
 
 import { isLogin } from "utils/Authenticate";
 import { logout } from "utils/Authenticate";
+import { getIsAdmin } from "utils/UserApi";
 
 const Navbar = () => {
   const [user, setUser] = React.useState(false);
+  const [isAdmin, setIsAdmin] = React.useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -50,29 +52,47 @@ const Navbar = () => {
   const items2 = [
     {
       key: "SubMenu",
-      label: <UserOutlined style={{ fontSize: "30px" }}/>,
+      label: <UserOutlined style={{ fontSize: "30px" }} />,
       children: [
         {
           label: <a onClick={handleLogout}>로그아웃</a>,
           key: "logout",
         },
+        // {
+        //   label: <Link to="/userpage">마이페이지</Link>,
+        //   key: "mypage",
+        // },
         {
-          label: <Link to="/userpage">마이페이지</Link>,
+          label: <Link to="/userpage">내 기여 목록</Link>,
           key: "mypage",
-        },
-        { label: <Link to="/userpage">관리자 페이지</Link>, key: "admin" },
-        {
-          label: <Link to="/userpage/contribution">내 기여 목록</Link>,
-          key: "my docs",
         },
         { label: <Link to="/userpage">스크랩 목록</Link>, key: "bookmark" },
       ],
     },
   ];
 
+  const items3 = [
+    {
+      key: "SubMenu",
+      label: <UserOutlined style={{ fontSize: "30px" }} />,
+      children: [
+        {
+          label: <a onClick={handleLogout}>로그아웃</a>,
+          key: "logout",
+        },
+        { label: <Link to="/userpage">관리자 페이지</Link>, key: "admin" },
+      ],
+    },
+  ];
   // 위치 이동하고 랜더링 될때마다 로그인 되어있는지 확인
   React.useEffect(() => {
     setUser(isLogin());
+
+    //admin
+    getIsAdmin().then((response) => {
+      console.log("isAdmin", response);
+      setIsAdmin(response);
+    });
   });
 
   const goHome = () => {
@@ -94,7 +114,19 @@ const Navbar = () => {
           style={{ width: "30px", paddingTop: "5px" }}
         >
           {user ? (
-            <Menu className={styles.NavUser} mode="horizontal" items={items2} />
+            isAdmin ? (
+              <Menu
+                className={styles.NavUser}
+                mode="horizontal"
+                items={items3}
+              />
+            ) : (
+              <Menu
+                className={styles.NavUser}
+                mode="horizontal"
+                items={items2}
+              />
+            )
           ) : (
             <Menu className={styles.NavUser} mode="horizontal" items={items1} />
           )}
