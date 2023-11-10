@@ -112,12 +112,10 @@ export const getSearchDoc = async (docsTitle) => {
 
 export const getDocsList = async (idList) => {
   try {
-    console.log(`{
-      docsIds: ${JSON.stringify(idList)}
-    }`);
-    const response = await axiosInstance.get(`/api/docs/list`,`{
-      docsIds: ${JSON.stringify(idList)}
-    }`);
+    // console.log(`{
+    //   docsIds: ${JSON.stringify(idList)}
+    // }`);
+    const response = await axiosInstanceWithLogin.post(`/api/docs/list`,JSON.stringify(idList));
     return response.data;
   } catch (error) {
     throw error;
