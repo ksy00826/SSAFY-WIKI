@@ -1,17 +1,45 @@
-
-import MDX from '@mdx-js/runtime'
+import MDX from "@mdx-js/runtime";
 import { Link } from "react-router-dom";
+import style from "./Component.module.css";
+import { getSearchDoc } from "utils/DocsApi";
+import { useState, useEffect } from "react";
+const MoveDocs = ({ children, docs }) => {
+  const [url, setUrl] = useState('');
 
-const MoveDocs = ({children, docs}) => (
-  <Link to={`/res/content/1/싸피위키:대문`}>
-    {children}
-  </Link>
-)
+  const onSearch = (keyword) => {
+    getSearchDoc(keyword).then((response) => {
+      const output = response.data.hits.hits;
+      const newSearched = output.map((element) => {
+        return { label: element._source.docs_title, value: element._source.docs_id };
+      });
+      if (newSearched.length > 0 && newSearched[0].label === keyword) {
+        setUrl(`/res/content/${newSearched[0].value}/${newSearched[0].label}`);
+      } else {
+        setUrl(`/res/list?title=${keyword}`);
+      }
+    }).catch((error) => {
+      console.error('Error searching documents:', error);
+      setUrl(`/res/list?title=${keyword}`);
+    });
+  };
 
-const components = {
-  MoveDocs// 여기서 'Highlight'는 MDX에서 사용할 컴포넌트 이름을 나타냅니다.
+  // onSearch 함수를 호출해서 url 상태를 설정
+  useEffect(() => {
+    if (docs) {
+      onSearch(docs);
+    }
+  }, [docs]);
+
+  return (
+    <Link to={url} className={style.MoveDocs}>
+      {children}
+    </Link>
+  );
 };
 
+const components = {
+  MoveDocs,
+};
 
 const MarkdownRenderer = ({ content }) => {
   return (
