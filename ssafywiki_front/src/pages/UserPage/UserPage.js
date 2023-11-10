@@ -9,7 +9,7 @@ const UserPage = () => {
     <Routes>
       <Route path="/" element={<MyPage />} />
       <Route path="/edituser" element={<Edituser />} />
-      <Route path="/contribution" element={<Contribution />} />
+      {/* <Route path="/contribution" element={<Contribution />} /> */}
       <Route path="/userchats" element={<Userchats />} />
     </Routes>
   );

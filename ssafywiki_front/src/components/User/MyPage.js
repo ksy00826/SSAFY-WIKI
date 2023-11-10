@@ -59,7 +59,7 @@ const MyPage = () => {
               <Col span={3}>
                 <h1>{nickname}</h1>
               </Col>
-              <Tooltip placement="top" title="내 문서 바로가기">
+              <Tooltip placement="top" title="내 문서">
                 <Button type="default" icon={<AuditOutlined />} />
               </Tooltip>
               <Col span={17}></Col>
