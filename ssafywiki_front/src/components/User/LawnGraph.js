@@ -42,51 +42,66 @@ const LawnGraph = () => {
     console.log(e.target.value);
     const date = e.target.value;
     setDay(date.substr(0, 10));
+    setChildren([]);
     getUserContributeOneDay(date).then((result) => {
       console.log(result);
+      // console.log(result[0].revisions);
 
-      const chi = [];
-      result.forEach((doc) => {
-        chi.push({
+      const chi = result.map((doc, index) => {
+        console.log(doc.revisions);
+        const btn = doc.revisions.map((rev, revIndex) => {
+          return (
+            <>
+              <br></br>
+              <Button
+                key={`${revIndex}`}
+                type="text"
+                onClick={() => handleDocs(doc.docsId, doc.title)}
+              >
+                {rev.revisionComment ? (
+                  rev.revisionComment
+                ) : (
+                  <span style={{ color: "gray" }}> No comment</span>
+                )}
+              </Button>
+              <span style={{ fontSize: "smaller", color: "gray" }}>
+                - {rev.createdAt.substr(11)}
+              </span>
+            </>
+          );
+        });
+        console.log("btn", btn);
+
+        return {
           dot: <FileProtectOutlined style={{ color: "green" }} />,
           children: (
             <>
-              <b>Create Document </b>
-              <span style={{ fontSize: "smaller", color: "gray" }}>
-                - {doc.createdAt.substr(11)}
-              </span>
-              <p>
-                <Button
-                  type="text"
-                  onClick={() => handleDocs(doc.docsId, doc.title)}
-                >
-                  {doc.title}
-                </Button>
-              </p>
+              <b>Contribute Document - {doc.title}</b>
+              {btn}
             </>
           ),
-        });
+        };
       });
       setChildren(chi);
     });
   };
-  //   React.useEffect(() => {
-  //     console.log("ch", children);
-  //   }, [children]);
+  React.useEffect(() => {
+    console.log("~~", children);
+  }, [children]);
 
   React.useEffect(() => {
     const now = new Date(); //현재 날짜 및 시간
-    console.log("현재시간", now);
+    // console.log("현재시간", now);
     const sixMonthAgo = new Date();
     sixMonthAgo.setDate(now.getDate() - now.getDay() - (weekAgo - 1) * 7);
     // console.log(now);
-    console.log(sixMonthAgo);
+    // console.log(sixMonthAgo);
 
     const curYear = sixMonthAgo.getFullYear();
     const curMonth = sixMonthAgo.getMonth() + 1;
     const curDay = sixMonthAgo.getDate();
     const day = curMonth + " / " + curDay;
-    console.log(sixMonthAgo);
+    // console.log(sixMonthAgo);
 
     const startDate =
       curYear +
@@ -98,7 +113,7 @@ const LawnGraph = () => {
 
     if (loading) {
       getUserContribute(startDate + "T00:00:00").then((result) => {
-        console.log(result);
+        // console.log(result);
 
         result.forEach((week) => {
           const row = [];
@@ -107,7 +122,7 @@ const LawnGraph = () => {
             const curYear = sixMonthAgo.getFullYear();
             const curMonth = sixMonthAgo.getMonth() + 1;
             const curDay = sixMonthAgo.getDate();
-            console.log(sixMonthAgo);
+            // console.log(sixMonthAgo);
 
             const date =
               curYear +
@@ -136,12 +151,12 @@ const LawnGraph = () => {
                 </Tooltip>
               </Row>
             );
-            console.log(sixMonthAgo);
+            // console.log(sixMonthAgo);
             sixMonthAgo.setDate(sixMonthAgo.getDate() + 1); // 다음 날
           });
           rows.push(row);
         });
-        console.log(rows);
+        // console.log(rows);
         setLoading(false);
       });
     }
