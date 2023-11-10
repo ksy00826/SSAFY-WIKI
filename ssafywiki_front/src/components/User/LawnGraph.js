@@ -35,7 +35,7 @@ const LawnGraph = () => {
 
   const handleDocs = (docsId, title) => {
     console.log(docsId, title);
-    navigate(`/res/content/${docsId}/${title}`);
+    navigate(`/res/history/${docsId}/${title}`);
   };
 
   const handleClickDay = (e) => {
