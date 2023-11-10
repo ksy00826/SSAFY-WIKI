@@ -14,10 +14,6 @@ const items = [
     label: "권한",
     key: "auth",
   },
-  {
-    label: "편집",
-    key: "edit",
-  },
 ];
 
 const Navbar = ({ current }) => {
@@ -32,13 +28,6 @@ const Navbar = ({ current }) => {
     navigate(`/res/${e}/${params.docsId}/${params.title}`);
   };
 
-  return (
-    <Tabs
-      defaultActiveKey={current}
-      items={items}
-      onChange={onChange}
-      centered
-    />
-  );
+  return <Tabs defaultActiveKey={current} items={items} onChange={onChange} />;
 };
 export default Navbar;

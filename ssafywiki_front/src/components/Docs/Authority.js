@@ -7,6 +7,8 @@ import AuthorityForm from "components/Write/AuthorityForm";
 import { getAuth, updateAuth, inviteUser, deleteUser } from "utils/DocsAuthApi";
 import { openNotification } from "App";
 
+import styles from "./Content.module.css";
+
 const Authority = () => {
   const params = useParams();
   const [loading, setLoading] = React.useState(true);
@@ -26,7 +28,7 @@ const Authority = () => {
       console.log(response);
       setRead(response.read);
       setWrite(response.write);
-      if (response.user !== undefined){
+      if (response.user !== undefined) {
         setUsers(response.users);
       }
       setLoading(false);
@@ -112,11 +114,15 @@ const Authority = () => {
 
   return (
     <div>
-      <h1>
-        {params.title}{" "}
-        <small style={{ fontWeight: "normal" }}>(문서 권한)</small>
-      </h1>
-      <DocsNav current="auth" />
+      <div className={styles.contentTitle}>
+        <h1 className={styles.title}>
+          {params.title}{" "}
+          <small style={{ fontWeight: "normal" }}>(문서 권한)</small>
+        </h1>
+        <div className={styles.nav}>
+          <DocsNav current="auth" />
+        </div>
+      </div>
 
       {!loading ? (
         <AuthorityForm
