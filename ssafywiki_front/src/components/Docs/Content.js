@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Space, Alert, Tooltip, Modal } from "antd";
+import { Card, Space, Alert, Tooltip, Modal, Divider, Tag } from "antd";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 import { FormOutlined, WarningTwoTone } from "@ant-design/icons";
@@ -30,6 +30,7 @@ const Content = () => {
   const [redirectInfo, setRedirectInfo] = React.useState("");
   const [searchParams] = useSearchParams();
   const [errMsg, setErrMsg] = React.useState("");
+  const [categories, setCategories] = React.useState();
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -62,11 +63,13 @@ const Content = () => {
             </>
           );
         }
-
-        console.log(response);
+        var colors = ["magenta","red","volcano","orange","gold","lime","green","cyan","blue","geekblue","purple"];
         setContent(response.content);
         setTitle(response.title);
         setModifedAt(convertDate(response.modifiedAt));
+        setCategories(response.categoryList.map((category) => (
+          <Tag color={colors[Math.floor(Math.random() * 11)]}>{category.categoryName}</Tag>
+        )));
       })
         .catch((err) => {
           console.log(err.response.data.message);
@@ -148,6 +151,10 @@ const Content = () => {
           ) : (
             <Alert type="info" message={redirectInfo} showIcon />
           )}
+
+          <Space size={[0, 8]} wrap>
+            {categories}
+          </Space>
           <Card className={styles.card}>
             <div className={styles.contentHeader}>
               <Space>
