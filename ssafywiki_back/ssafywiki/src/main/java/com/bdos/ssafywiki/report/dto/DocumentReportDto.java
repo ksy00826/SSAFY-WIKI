@@ -30,7 +30,7 @@ public class DocumentReportDto {
     @ToString
     public static class Response {
         private Long id;
-        private DocumentDto.Recent document;
+        private DocumentDto.Report document;
         private UserDto.Version user;
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime modifiedAt;
