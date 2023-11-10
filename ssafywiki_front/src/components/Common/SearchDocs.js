@@ -1,7 +1,11 @@
 import { useState, useEffect } from "react";
 import { AutoComplete, Input } from "antd";
 import { useNavigate } from "react-router-dom";
-import { getSearchDoc } from "utils/DocsApi";
+import {
+  getSearchDoc,
+  getDocsContent,
+  getRedirectKeyword,
+} from "utils/DocsApi";
 const App = () => {
   const navigate = useNavigate();
   const [options, setOptions] = useState([]);
@@ -9,8 +13,8 @@ const App = () => {
   const [doctitle, setDoctitle] = useState("");
 
   const handleSearch = (value) => {
-    setOptions(value ? searchResult(value) : [])
-  };  
+    setOptions(value ? searchResult(value) : []);
+  };
   const onSelect = (val, option) => {
     console.log(option);
     setDoctitle(option.label);
@@ -18,31 +22,50 @@ const App = () => {
     navigate(`res/content/${option.key}/${option.label}`);
   };
   const onSearch = (keyword) => {
-    getSearchDoc(keyword).then((data)=>{
+    getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
       // console.log(output);
       var seq = 0;
-      var newSearched = output.map(function(element) {
+      var newSearched = output.map(function (element) {
         seq = seq + 1;
-        return {label: element._source.docs_title, value: element._source.docs_id};
+        return {
+          label: element._source.docs_title,
+          value: element._source.docs_id,
+        };
       });
-      if(newSearched.length > 0 && newSearched[0].label === keyword) {
-        navigate(`res/content/${newSearched[0].value}/${newSearched[0].label}`);
-      }
-      else {
+      if (newSearched.length > 0 && newSearched[0].label === keyword) {
+        getDocsContent(newSearched[0].value).then((response) => {
+          //리다이렉트 문서인지 검사
+          if (response.redirect) {
+            getRedirectKeyword(newSearched[0].value).then((res) => {
+              navigate(
+                `/res/redirect?title=${res.originDocsTitle}&preId=${newSearched[0].value}&preTitle=${newSearched[0].label}`
+              );
+            });
+          } else {
+            navigate(
+              `res/content/${newSearched[0].value}/${newSearched[0].label}`
+            );
+          }
+        });
+      } else {
         navigate(`res/list?title=${keyword}`);
       }
     });
-  }
+  };
   const searchResult = (keyword) => {
     // 키워드로 검색
-    getSearchDoc(keyword).then((data)=>{
+    getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
       // console.log(output);
       var seq = 0;
-      var newSearched = output.map(function(element) {
+      var newSearched = output.map(function (element) {
         seq = seq + 1;
-        return {label: element._source.docs_title,value: element._source.docs_title, key: element._source.docs_id};
+        return {
+          label: element._source.docs_title,
+          value: element._source.docs_title,
+          key: element._source.docs_id,
+        };
       });
       console.log(newSearched);
       setOptions(newSearched);

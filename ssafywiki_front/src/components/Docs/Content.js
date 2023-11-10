@@ -16,6 +16,7 @@ import MarkdownRenderer from "components/Common/MarkDownRenderer";
 
 import styles from "./Content.module.css";
 import { red } from "utils/ColorPicker";
+import { useSearchParams } from "react-router-dom";
 
 const Content = () => {
   const params = useParams();
@@ -23,6 +24,8 @@ const Content = () => {
   const [title, setTitle] = React.useState();
   const [modifiedAt, setModifedAt] = React.useState("");
   const [modifyCnt, setModifyCnt] = React.useState(0);
+  const [redirectInfo, setRedirectInfo] = React.useState("");
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -39,10 +42,18 @@ const Content = () => {
     if (state == null) {
       getDocsContent(params.docsId).then((response) => {
         //리다이렉트 문서인지 검사
-        if (response.redirect) {
-          getRedirectKeyword(params.docsId).then((res) => {
-            navigate(`/res/redirect?title=${res.originDocsTitle}`);
-          });
+        let fromId = searchParams.get("fromId");
+        let fromTitle = searchParams.get("fromTitle");
+        console.log("from", fromId);
+        if (fromId != null && fromTitle != null) {
+          const url = `/res/content/${fromId}/${fromTitle}`;
+          setRedirectInfo(
+            <>
+              <p>
+                <a href={url}>{fromTitle}</a>에서 넘어옴
+              </p>
+            </>
+          );
         }
 
         console.log(response);
@@ -83,6 +94,11 @@ const Content = () => {
         )}
       </h1>
       <DocsNav current="content" />
+      {redirectInfo === "" ? (
+        <></>
+      ) : (
+        <Alert type="info" message={redirectInfo} showIcon />
+      )}
       <Card
         style={{
           textAlign: "left",

@@ -6,7 +6,7 @@ const RedirectSearch = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const onSearch = (keyword) => {
+  const onSearch = (keyword, preId, preTitle) => {
     getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
       console.log(output);
@@ -19,9 +19,15 @@ const RedirectSearch = () => {
         };
       });
       if (newSearched.length > 0 && newSearched[0].label === keyword) {
-        navigate(
-          `/res/content/${newSearched[0].value}/${newSearched[0].label}`
-        );
+        if (preId != null && preTitle != null) {
+          navigate(
+            `/res/content/${newSearched[0].value}/${newSearched[0].label}?fromId=${preId}&fromTitle=${preTitle}`
+          );
+        } else {
+          navigate(
+            `/res/content/${newSearched[0].value}/${newSearched[0].label}`
+          );
+        }
       } else {
         navigate(`/res/list?title=${keyword}`);
       }
@@ -30,14 +36,12 @@ const RedirectSearch = () => {
 
   React.useEffect(() => {
     const title = searchParams.get("title");
+    const preId = searchParams.get("preId");
+    const preTitle = searchParams.get("preTitle");
     console.log(title);
-    onSearch(title);
+    onSearch(title, preId, preTitle);
   }, []);
 
-  return (
-    <>
-      <div>redirect</div>
-    </>
-  );
+  return <></>;
 };
 export default RedirectSearch;
