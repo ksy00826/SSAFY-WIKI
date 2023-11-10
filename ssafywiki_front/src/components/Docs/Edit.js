@@ -10,6 +10,8 @@ import DocsNav from "./DocsNav";
 import { openNotification } from "App";
 import { updateDocs } from "utils/DocsApi";
 
+import styles from "./Content.module.css";
+
 const { TextArea } = Input;
 const Edit = () => {
   const params = useParams();
@@ -111,11 +113,12 @@ const Edit = () => {
 
   return (
     <div>
-      <h1>
-        {params.title}{" "}
-        <small style={{ fontWeight: "normal" }}>(문서 수정)</small>
-      </h1>
-      <DocsNav current="edit" />
+      <div className={styles.contentTitle}>
+        <h1 className={styles.title}>
+          {params.title}{" "}
+          <small style={{ fontWeight: "normal" }}>(문서 수정)</small>
+        </h1>
+      </div>
       <Card>
         {errmsg === "" ? (
           <></>
