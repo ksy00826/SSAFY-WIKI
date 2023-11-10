@@ -3,6 +3,7 @@ package com.bdos.ssafywiki.user.controller;
 import com.bdos.ssafywiki.report.entity.DocumentReport;
 import com.bdos.ssafywiki.report.mapper.ReportMapper;
 import com.bdos.ssafywiki.user.entity.User;
+import com.bdos.ssafywiki.user.enums.Role;
 import com.bdos.ssafywiki.user.service.AdminService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
