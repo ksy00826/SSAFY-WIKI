@@ -92,10 +92,10 @@ public class DocumentController {
     @Operation(summary = "문서 리스트 조회하기", description = "문서 여럿의 상세를 조회합니다.")
     @GetMapping("/api/docs/list")
     public ResponseEntity<List<RevisionDto.DocsResponse>> readDocs(
-            @RequestParam(value = "docsIds[]") List<Long> docsIds,
+            @RequestBody List<Long> docsIds,
             @AuthenticationPrincipal User userDetails){
         List<RevisionDto.DocsResponse> response = new ArrayList<>();
-        for(long id : docsIds){
+        for(Long id : docsIds){
             response.add(documentService.readDocs(id, null, userDetails));
         }
 
