@@ -53,7 +53,7 @@ const LawnGraph = () => {
             <>
               <b>Create Document </b>
               <span style={{ fontSize: "smaller", color: "gray" }}>
-                - {doc.createdAt.substr(12)}
+                - {doc.createdAt.substr(11)}
               </span>
               <p>
                 <Button
