@@ -30,7 +30,7 @@ public class Template {
     @Column(name = "template_title", nullable = false)
     private String title;
 
-    @Column(name = "template_content", nullable = false)
+    @Column(name = "template_content", columnDefinition = "TEXT", nullable = false)
     private String content;
 
     @Column(name = "template_is_secret", nullable = false)
