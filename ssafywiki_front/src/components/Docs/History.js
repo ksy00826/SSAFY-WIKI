@@ -160,6 +160,9 @@ const History = () => {
         </div>
       </div>
 
+      <div style={{ marginLeft: "3%", textAlign: "left" }}>
+        <Button onClick={onClickDiff}>선택 버전 비교</Button>
+      </div>
       <div style={{ margin: "3%" }}>
         <Timeline mode="left" items={historyData != null && timelineItems} />
         <Pagination
