@@ -37,6 +37,7 @@ public interface RevisionMapper {
                 .content(revision.getContent().getText())
                 .createdAt(revision.getDocument().getCreatedAt())
                 .modifiedAt(revision.getModifiedAt())
+                .redirect(revision.getDocument().isRedirect())
                 .build();
 
         return response;

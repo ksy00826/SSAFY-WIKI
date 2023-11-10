@@ -21,6 +21,7 @@ public enum ExceptionCode {
     TEMPLATE_NOT_FOUND(404, "Template Not Found"),
     MERGE_FAILED(404, "Merge Failed"),
     DOCUMENT_NOT_FOUND(404, "Document Not Found"),
+    REDIRECT_DOCUMENT_NOT_FOUND(404, "Redirect Document Not Found"),
     BOOKMARK_NOT_FOUND(404, "Bookmark Not Found"),
     REQUEST_NOT_FOUND(404,"Requset Not Found"),
     BOOKMARK_CONFLICT(409, "Conflict"),
