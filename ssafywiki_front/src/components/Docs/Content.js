@@ -6,12 +6,17 @@ import { FormOutlined, WarningTwoTone } from "@ant-design/icons";
 
 import DocsNav from "./DocsNav";
 
-import { getDocsContent, getDocsVersionContent } from "utils/DocsApi";
+import {
+  getDocsContent,
+  getDocsVersionContent,
+  getRedirectKeyword,
+} from "utils/DocsApi";
 import { convertDate } from "utils/convertDate";
 import MarkdownRenderer from "components/Common/MarkDownRenderer";
 
 import styles from "./Content.module.css";
 import { red } from "utils/ColorPicker";
+import { useSearchParams } from "react-router-dom";
 
 import { reportDocument } from "utils/ReportApi";
 import { openNotification } from "App";
@@ -22,6 +27,8 @@ const Content = () => {
   const [title, setTitle] = React.useState();
   const [modifiedAt, setModifedAt] = React.useState("");
   const [modifyCnt, setModifyCnt] = React.useState(0);
+  const [redirectInfo, setRedirectInfo] = React.useState("");
+  const [searchParams] = useSearchParams();
   const [errMsg, setErrMsg] = React.useState("");
   const navigate = useNavigate();
 
@@ -40,12 +47,27 @@ const Content = () => {
   React.useEffect(() => {
     if (state == null) {
       getDocsContent(params.docsId)
-        .then((response) => {
-          console.log(response);
-          setContent(response.content);
-          setTitle(response.title);
-          setModifedAt(convertDate(response.modifiedAt));
-        })
+      .then((response) => {
+        //리다이렉트 문서인지 검사
+        let fromId = searchParams.get("fromId");
+        let fromTitle = searchParams.get("fromTitle");
+        console.log("from", fromId);
+        if (fromId != null && fromTitle != null) {
+          const url = `/res/content/${fromId}/${fromTitle}`;
+          setRedirectInfo(
+            <>
+              <p>
+                <a href={url}>{fromTitle}</a>에서 넘어옴
+              </p>
+            </>
+          );
+        }
+
+        console.log(response);
+        setContent(response.content);
+        setTitle(response.title);
+        setModifedAt(convertDate(response.modifiedAt));
+      })
         .catch((err) => {
           console.log(err.response.data.message);
           setTitle(params.title);
@@ -121,6 +143,11 @@ const Content = () => {
               <DocsNav current="content" />
             </div>
           </div>
+          {redirectInfo === "" ? (
+            <></>
+          ) : (
+            <Alert type="info" message={redirectInfo} showIcon />
+          )}
           <Card className={styles.card}>
             <div className={styles.contentHeader}>
               <Space>
@@ -151,5 +178,6 @@ const Content = () => {
     </div>
   );
 };
+
 
 export default Content;
