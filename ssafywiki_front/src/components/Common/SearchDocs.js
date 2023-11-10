@@ -69,7 +69,6 @@ const App = () => {
       onSearch={handleSearch}
     >
       <Input.Search onSearch={onSearch} placeholder="검색" />
-      {/* <Button icon={<SearchOutlined />}></Button> */}
     </AutoComplete>
     <Button onClick={onSearchList} type="primary" icon={<SearchOutlined />}></Button>
     </div>

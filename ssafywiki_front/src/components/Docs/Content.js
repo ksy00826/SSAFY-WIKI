@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Space, Alert, Tooltip } from "antd";
+import { Card, Space, Alert, Tooltip, Modal } from "antd";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 import { FormOutlined, WarningTwoTone } from "@ant-design/icons";
@@ -12,6 +12,9 @@ import MarkdownRenderer from "components/Common/MarkDownRenderer";
 
 import styles from "./Content.module.css";
 import { red } from "utils/ColorPicker";
+
+import { reportDocument } from "utils/ReportApi";
+import { openNotification } from "App";
 
 const Content = () => {
   const params = useParams();
@@ -30,6 +33,8 @@ const Content = () => {
         ? new URLSearchParams(location.search)
         : null
       : null;
+  
+  const { confirm, error } = Modal;
 
   // 처음 랜더링시 내용 가져오기
   React.useEffect(() => {
@@ -64,8 +69,27 @@ const Content = () => {
   };
 
   const handleReport = () => {
-    console.log(params.docsId);
+    confirm({
+      title: "신고",
+      content: "관리자에게 부적절한 문서임을 알립니다.",
+      onOk() {
+        reportDocument(params.docsId).then(() => {
+          openNotification(
+            "success",
+            "신고 완료",
+            `${title}문서가 신고되었습니다.`)
+        }).catch((err) => {
+          if (err.response.status == 403) {
+            error({
+              title: "권한이 없습니다."
+            })
+          }
+        });
+      }
+    })
+
     // 유저
+
   };
 
   return (
