@@ -37,8 +37,23 @@ const MoveDocs = ({ children, docs }) => {
   );
 };
 
+const Note = ({ children }) => {
+  // 툴팁 표시 상태를 관리하기 위한 state를 선언합니다.
+  const [isTooltipVisible, setTooltipVisible] = useState(false);
+
+  return (
+    <span className={style.noteContainer}
+          onMouseEnter={() => setTooltipVisible(true)} // 마우스를 올리면 툴팁을 보여줍니다.
+          onMouseLeave={() => setTooltipVisible(false)} // 마우스를 떼면 툴팁을 숨깁니다.
+    >
+      <span className={style.Note}>[주]</span>
+      {isTooltipVisible && <span className={style.tooltip}>{children}</span>}
+    </span>
+  );
+};
+
 const components = {
-  MoveDocs,
+  MoveDocs, Note 
 };
 
 const MarkdownRenderer = ({ content }) => {
