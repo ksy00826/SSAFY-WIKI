@@ -79,7 +79,7 @@ const WriteForm = ({
               key: "1",
             },
             {
-              label: "미리보기",
+              label: "문서확인",
               key: "2",
             },
           ]}
@@ -109,9 +109,6 @@ const WriteForm = ({
             onClick={() => insertAtCursor("<Note></Note>")}
           >
             주석
-          </Button>
-          <Button type="text" className={styles.Button}>
-            이미지
           </Button>
         </div>
       </div>
