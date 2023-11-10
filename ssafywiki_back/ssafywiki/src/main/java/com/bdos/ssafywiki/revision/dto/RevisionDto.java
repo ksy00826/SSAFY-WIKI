@@ -51,6 +51,7 @@ public class RevisionDto {
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         private LocalDateTime modifiedAt;
         private List<CategoryDto.Detail> categoryList;
+        private boolean redirect;
     }
 
     @Getter
