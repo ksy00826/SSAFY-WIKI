@@ -31,6 +31,7 @@ import java.security.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "유저 API", description = "마이페이지")
 @RestController
@@ -99,10 +100,10 @@ public class UserController {
         return new ResponseEntity(revisions, HttpStatus.OK);
     }
     @GetMapping("/info/day-contribute-docs")
-    public ResponseEntity<List<RevisionDto.DocsResponse>> contributeDocsWithOneDate(
+    public ResponseEntity<List<RevisionDto.UserContribute>> contributeDocsWithOneDate(
             @AuthenticationPrincipal User user, @RequestParam LocalDateTime date){
 
-        List<RevisionDto.DocsResponse> revisions = revisionService.getUserContributeDocsWithDate(user, date);
+        List<RevisionDto.UserContribute> revisions = revisionService.getUserContributeDocsWithDate(user, date);
         return new ResponseEntity(revisions, HttpStatus.OK);
     }
 }
