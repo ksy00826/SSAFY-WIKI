@@ -21,6 +21,7 @@ import com.github.difflib.patch.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @RequiredArgsConstructor
@@ -175,9 +179,33 @@ public class RevisionService {
         return arr;
     }
 
-    public List<RevisionDto.DocsResponse> getUserContributeDocsWithDate(User user, LocalDateTime date) {
-        List<Revision> revisionList = revisionRepository.findByUserWithDate(user.getId(), date, date.plusDays(1L));
+    public List<RevisionDto.UserContribute> getUserContributeDocsWithDate(User user, LocalDateTime date) {
+        //결과값
+        List<RevisionDto.UserContribute> result = new ArrayList<>();
 
-        return revisionMapper.toResponseList(revisionList);
+        //당일에 수정한 문서를 조회 - 문서 아이디, 문서 제목
+        List<Revision> updateDocs = revisionRepository.findByDocsUserWithDate(user.getId(), date, date.plusDays(1L));
+
+        //수정한 문서에 대해 수정한 시간, 수정한 버전 ID, 수정 코멘트를 조회
+        for (Revision revision : updateDocs){
+            List<RevisionDto.ContributeDetail> revisionInfo = new ArrayList<>();
+            List<Revision> revisionList = revisionRepository.findRevisionInfoByUserAndDateAndDocs(revision.getDocument(), user);
+            for (Revision rev : revisionList){
+                RevisionDto.ContributeDetail contributeDetail = RevisionDto.ContributeDetail.builder()
+                        .createdAt(rev.getCreatedAt())
+                        .revisionId(rev.getId())
+                        .revisionComment(rev.getComment().getContent())
+                        .build();
+                revisionInfo.add(contributeDetail);
+            }
+            RevisionDto.UserContribute userContribute = RevisionDto.UserContribute.builder()
+                    .docsId(revision.getDocument().getId())
+                    .title((revision.getDocument().getTitle()))
+                    .revisions(revisionInfo)
+                    .build();
+            result.add(userContribute);
+        }
+
+        return result;
     }
 }
