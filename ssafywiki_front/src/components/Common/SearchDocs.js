@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
-import { AutoComplete, Input } from "antd";
+import { AutoComplete, Input, Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import {
   getSearchDoc,
   getDocsContent,
   getRedirectKeyword,
 } from "utils/DocsApi";
+import { SearchOutlined } from '@ant-design/icons';
 const App = () => {
   const navigate = useNavigate();
   const [options, setOptions] = useState([]);
@@ -13,8 +14,9 @@ const App = () => {
   const [doctitle, setDoctitle] = useState("");
 
   const handleSearch = (value) => {
-    setOptions(value ? searchResult(value) : []);
-  };
+    setDoctitle(value);
+    setOptions(value ? searchResult(value) : [])
+  };  
   const onSelect = (val, option) => {
     console.log(option);
     setDoctitle(option.label);
@@ -52,20 +54,18 @@ const App = () => {
         navigate(`res/list?title=${keyword}`);
       }
     });
-  };
+  }
+  const onSearchList = () => {
+
+      navigate(`res/list?title=${doctitle}`);
+  }
   const searchResult = (keyword) => {
     // 키워드로 검색
     getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
       // console.log(output);
-      var seq = 0;
-      var newSearched = output.map(function (element) {
-        seq = seq + 1;
-        return {
-          label: element._source.docs_title,
-          value: element._source.docs_title,
-          key: element._source.docs_id,
-        };
+      var newSearched = output.map(function(element) {
+        return {label: element._source.docs_title,value: element._source.docs_title, key: element._source.docs_id};
       });
       console.log(newSearched);
       setOptions(newSearched);
@@ -76,6 +76,7 @@ const App = () => {
   };
 
   return (
+    <div>
     <AutoComplete
       popupClassName="certain-category-search-dropdown"
       popupMatchSelectWidth={500}
@@ -88,6 +89,8 @@ const App = () => {
     >
       <Input.Search onSearch={onSearch} placeholder="검색" />
     </AutoComplete>
+    <Button onClick={onSearchList} type="primary" icon={<SearchOutlined />}></Button>
+    </div>
   );
 };
 export default App;

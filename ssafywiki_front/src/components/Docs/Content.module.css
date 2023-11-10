@@ -2,3 +2,26 @@
   display: flex;
   justify-content: flex-end;
 }
+
+.contentTitle {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+
+.title {
+  display: inline-block;
+  margin-left: 5%;
+  margin-right: 5%;
+}
+
+.nav {
+  position: absolute;
+  right: 2rem;
+  top: 1rem;
+}
+
+.card {
+  text-align: left;
+  min-height: 40rem;
+}

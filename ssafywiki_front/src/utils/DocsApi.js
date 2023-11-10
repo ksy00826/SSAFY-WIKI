@@ -127,3 +127,16 @@ export const getRedirectKeyword = async (docsId) => {
     throw error;
   }
 };
+
+
+export const getDocsList = async (idList) => {
+  try {
+    // console.log(`{
+    //   docsIds: ${JSON.stringify(idList)}
+    // }`);
+    const response = await axiosInstanceWithLogin.post(`/api/docs/list`,JSON.stringify(idList));
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
