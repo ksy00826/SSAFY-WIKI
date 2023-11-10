@@ -147,3 +147,25 @@ export const getUserInfo = async () => {
     throw error;
   }
 };
+
+export const getUserContribute = async (startDate) => {
+  try {
+    const response = await axiosInstanceWithLogin.get(
+      `/api/user/info/contribute-docs?startDate=${startDate}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getUserContributeOneDay = async (date) => {
+  try {
+    const response = await axiosInstanceWithLogin.get(
+      `/api/user/info/day-contribute-docs?date=${date}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
