@@ -40,34 +40,35 @@ const Content = () => {
         ? new URLSearchParams(location.search)
         : null
       : null;
-  
+
   const { confirm, error } = Modal;
 
   // 처음 랜더링시 내용 가져오기
   React.useEffect(() => {
+    setRedirectInfo("");
     if (state == null) {
       getDocsContent(params.docsId)
-      .then((response) => {
-        //리다이렉트 문서인지 검사
-        let fromId = searchParams.get("fromId");
-        let fromTitle = searchParams.get("fromTitle");
-        console.log("from", fromId);
-        if (fromId != null && fromTitle != null) {
-          const url = `/res/content/${fromId}/${fromTitle}`;
-          setRedirectInfo(
-            <>
-              <p>
-                <a href={url}>{fromTitle}</a>에서 넘어옴
-              </p>
-            </>
-          );
-        }
+        .then((response) => {
+          //리다이렉트 문서인지 검사
+          let fromId = searchParams.get("fromId");
+          let fromTitle = searchParams.get("fromTitle");
+          console.log("from", fromId, fromTitle);
+          if (fromId != null && fromTitle != null) {
+            const url = `/res/content/${fromId}/${fromTitle}`;
+            setRedirectInfo(
+              <>
+                <p>
+                  <a href={url}>{fromTitle}</a>에서 넘어옴
+                </p>
+              </>
+            );
+          }
 
-        console.log(response);
-        setContent(response.content);
-        setTitle(response.title);
-        setModifedAt(convertDate(response.modifiedAt));
-      })
+          console.log(response);
+          setContent(response.content);
+          setTitle(response.title);
+          setModifedAt(convertDate(response.modifiedAt));
+        })
         .catch((err) => {
           console.log(err.response.data.message);
           setTitle(params.title);
@@ -95,23 +96,25 @@ const Content = () => {
       title: "신고",
       content: "관리자에게 부적절한 문서임을 알립니다.",
       onOk() {
-        reportDocument(params.docsId).then(() => {
-          openNotification(
-            "success",
-            "신고 완료",
-            `${title}문서가 신고되었습니다.`)
-        }).catch((err) => {
-          if (err.response.status == 403) {
-            error({
-              title: "권한이 없습니다."
-            })
-          }
-        });
-      }
-    })
+        reportDocument(params.docsId)
+          .then(() => {
+            openNotification(
+              "success",
+              "신고 완료",
+              `${title}문서가 신고되었습니다.`
+            );
+          })
+          .catch((err) => {
+            if (err.response.status == 403) {
+              error({
+                title: "권한이 없습니다.",
+              });
+            }
+          });
+      },
+    });
 
     // 유저
-
   };
 
   return (
@@ -178,6 +181,5 @@ const Content = () => {
     </div>
   );
 };
-
 
 export default Content;
