@@ -1,5 +1,5 @@
 import React from "react";
-import { Card, Space, Alert, Tooltip, Modal } from "antd";
+import { Card, Space, Alert, Tooltip, Modal, Tag } from "antd";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 import { FormOutlined, WarningTwoTone } from "@ant-design/icons";
@@ -30,6 +30,7 @@ const Content = () => {
   const [redirectInfo, setRedirectInfo] = React.useState("");
   const [searchParams] = useSearchParams();
   const [errMsg, setErrMsg] = React.useState("");
+  const [categories, setCategories] = React.useState();
   const navigate = useNavigate();
 
   const location = useLocation();
