@@ -108,4 +108,18 @@ export const getSearchDoc = async (docsTitle) => {
   } catch (error) {
     throw error;
   }
-}
+};
+
+export const getDocsList = async (idList) => {
+  try {
+    console.log(`{
+      docsIds: ${JSON.stringify(idList)}
+    }`);
+    const response = await axiosInstance.get(`/api/docs/list`,`{
+      docsIds: ${JSON.stringify(idList)}
+    }`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
