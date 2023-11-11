@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,13 +27,16 @@ public class CustomUserDetailsService implements UserDetailsService {
      * */
 
     @Override
-    public User loadUserByUsername(String email) throws UsernameNotFoundException {
+    public CustomUserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid authentication!"));
 
-        Set<GrantedAuthority> grantedAuthorities = new HashSet<>();
-        return user;
+        if(user.getBlockedAt()!=null && user.getBlockedAt().isAfter(LocalDateTime.now())) {
+            log.warn("로그인 불가능한 유저 "+user.getEmail());
+            throw new UsernameNotFoundException("로그인 불가능한 사용자 입니다.");
+        }
+        return new CustomUserDetails(user);
     }
 
 }

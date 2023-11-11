@@ -46,7 +46,12 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
+
+        log.info("d왜안들어와!!!!!!!!!!!!!!!!!!!!!!!!!!!! >>> ");
+
         String token = jwtTokenProvider.resolveToken(request);
+
+        log.info(token);
         // 토큰 없는 경우 로직 종료
         if(token == null || !token.startsWith(TOKEN_PREFIX)) {
             filterChain.doFilter(request, response);
@@ -55,6 +60,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
         // Bearer 제거
         token = token.replace(TOKEN_PREFIX, "");
+        if(token.equals("undefined")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // 사용자 인증
         log.info("doFilter >>> " + token);

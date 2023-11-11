@@ -9,8 +9,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,10 +28,13 @@ import org.springframework.security.web.server.authentication.logout.DelegatingS
 import org.springframework.security.web.server.authentication.logout.SecurityContextServerLogoutHandler;
 import org.springframework.security.web.server.authentication.logout.WebSessionServerLogoutHandler;
 import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -59,14 +66,30 @@ public class SecurityConfig {
         http
                 .authenticationProvider(authenticationProvider).addFilterBefore(
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+
+                .authorizeHttpRequests((req)->req.requestMatchers(CorsUtils::isPreFlightRequest).permitAll())
                 .authorizeHttpRequests((req) -> req
-                        // 인증이 필요 없는 곳
-                        /* 유저 */
+
+                        /* 4개 */
+                        .requestMatchers(mvcMatcherBuilder.pattern("/api/docs/bookmark/cnt/**")).permitAll()
+
+
+                        /* 3개 */
+                        .requestMatchers(mvcMatcherBuilder.pattern("/api/docs/bookmark/**")).hasAnyRole("USER10","USER9","COACH","CONSULTANT","PRO","ADMIN")
+
+                        /* 2개 */
+                        .requestMatchers(mvcMatcherBuilder.pattern("/api/admin/**")).hasRole("ADMIN")
+                        .requestMatchers(mvcMatcherBuilder.pattern("/api/user/**")).hasAnyRole("USER10","USER9","COACH","CONSULTANT","PRO","ADMIN")
                         .requestMatchers(mvcMatcherBuilder.pattern("/api/members/**")).permitAll()
+
+                        /* 문서 작성쪽 추가해야 함 */
+
+
                         /* 문서 */
-                        .requestMatchers(mvcMatcherBuilder.pattern("/api/docs/**")).permitAll()
+//                        .requestMatchers(mvcMatcherBuilder.pattern("/api/docs/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/api/version/**")).permitAll()
 
+                        // 기본
                         /* swagger v3 */
                         .requestMatchers(mvcMatcherBuilder.pattern("/swagger-ui/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/swagger-resources/**")).permitAll()
@@ -76,15 +99,6 @@ public class SecurityConfig {
                         .requestMatchers(mvcMatcherBuilder.pattern("/favicon.ico")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/error")).permitAll()
 
-                )
-                .authorizeHttpRequests((req) -> req
-                        // 권한이 필요한 곳
-                        /* 관리자 */
-                        .requestMatchers(mvcMatcherBuilder.pattern("/api/admin/**")).hasRole(Role.ADMIN.getKey())
-
-                )
-                .authorizeHttpRequests((req) -> req
-                        // 나머지는 인증이 필요한 곳
                         .anyRequest().permitAll()
 
                 )
@@ -99,4 +113,17 @@ public class SecurityConfig {
             new WebSessionServerLogoutHandler(), new SecurityContextServerLogoutHandler()
     );
 
+    @Bean
+    public AuthenticationManager authenticationManagerBean() {
+        List<AuthenticationProvider> authenticationProviderList = new ArrayList<>();
+        authenticationProviderList.add(authenticationProvider);
+        ProviderManager authenticationManager = new ProviderManager(authenticationProviderList);
+        authenticationManager.setAuthenticationEventPublisher(defaultAuthenticationEventPublisher());
+        return authenticationManager;
+    }
+
+    @Bean
+    DefaultAuthenticationEventPublisher defaultAuthenticationEventPublisher() {
+        return new DefaultAuthenticationEventPublisher();
+    }
 }

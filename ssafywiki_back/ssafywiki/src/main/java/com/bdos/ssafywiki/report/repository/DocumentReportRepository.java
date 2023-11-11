@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 public interface DocumentReportRepository extends JpaRepository<DocumentReport, Long> {
-    @Query(value = "SELECT dr FROM DocumentReport dr LEFT JOIN FETCH dr.document LEFT JOIN FETCH dr.user")
+    @Query(value = "SELECT dr FROM DocumentReport dr LEFT JOIN FETCH dr.document LEFT JOIN FETCH dr.user WHERE dr.status = 'Processing'")
     Page<DocumentReport> findAllDocumentReport(Pageable pageable);
 
 
