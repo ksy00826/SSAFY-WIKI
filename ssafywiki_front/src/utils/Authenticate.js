@@ -108,7 +108,7 @@ export const sendEmail = async (email, role) => {
   }
 };
 
-export const authEmail = async (email, role , authCode) => {
+export const authEmail = async (email, role, authCode) => {
   try {
     const response = await axiosInstanceNoTimeout
       .post(`/api/members/email/auth`, {
