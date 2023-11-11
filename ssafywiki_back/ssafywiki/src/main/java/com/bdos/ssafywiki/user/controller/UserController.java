@@ -91,7 +91,7 @@ public class UserController {
     public ResponseEntity<Boolean> isAdmin(@AuthenticationPrincipal User user) {
 //        System.out.println("유저 확인요~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         if(user == null) user = new GuestUser();
-        return new ResponseEntity<>(Role.ADMIN.equals(user.getRole()), HttpStatus.OK);
+        return new ResponseEntity<>(Role.ROLE_ADMIN.equals(user.getRole()), HttpStatus.OK);
     }
     
     @GetMapping("/info/contribute-docs")
