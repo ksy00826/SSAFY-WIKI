@@ -18,13 +18,16 @@ const DocsList = () => {
 
     getSearchDoc(title).then((data)=>{
       var output = data.data.hits.hits;
-      console.log(output);
+      // console.log(output);
       var newSearched = output.map(function(element) {
           return element._source.docs_id;
       });
-      console.log(newSearched);
-      var getDocsListResponse = getDocsList(newSearched);
-      // setDocs(getDocsListResponse);
+      // console.log(newSearched);
+      var getDocsListResponse = getDocsList(newSearched).then((data)=>{
+        // console.log(data[1]);
+        setDocs(data);
+      });
+      
     });
   }, [searchParams]);
 
@@ -41,11 +44,14 @@ const DocsList = () => {
     itemLayout="horizontal"
     dataSource={docs}
     renderItem={(item, index) => (
-      <List.Item>
+      <List.Item onClick={() => {
+        navigate(`/res/content/${item.docsId}/${item.title}`);
+        
+        }}>
         <List.Item.Meta
           avatar={<Avatar src={`https://xsgames.co/randomusers/avatar.php?g=pixel&key=${index}`} />}
-          title={<a href="https://ant.design">{item.label}</a>}
-          description="Ant Design, a design language for background applications, is refined by Ant UED Team"
+          title={item.title}
+          description={item.content.substr(0,60) + "..."}
         />
       </List.Item>
     )}

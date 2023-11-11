@@ -1,18 +1,23 @@
 import React from "react";
-import { Card, Space, Alert, Tooltip, Modal, Button } from "antd";
+import { Card, Space, Alert, Tooltip, Modal, Tag, Divider } from "antd";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 import { FormOutlined, WarningTwoTone } from "@ant-design/icons";
 
 import DocsNav from "./DocsNav";
 
-import { getDocsContent, getDocsVersionContent } from "utils/DocsApi";
+import {
+  getDocsContent,
+  getDocsVersionContent,
+  getRedirectKeyword,
+} from "utils/DocsApi";
 import { convertDate } from "utils/convertDate";
 import MarkdownRenderer from "components/Common/MarkDownRenderer";
 import BookMarkBtn from "components/Docs/atom/BookMarkBtn";
 
 import styles from "./Content.module.css";
-import { red, yellow } from "utils/ColorPicker";
+import { red } from "utils/ColorPicker";
+import { useSearchParams } from "react-router-dom";
 
 import { reportDocument } from "utils/ReportApi";
 import { openNotification } from "App";
@@ -23,7 +28,10 @@ const Content = () => {
   const [title, setTitle] = React.useState();
   const [modifiedAt, setModifedAt] = React.useState("");
   const [modifyCnt, setModifyCnt] = React.useState(0);
+  const [redirectInfo, setRedirectInfo] = React.useState("");
+  const [searchParams] = useSearchParams();
   const [errMsg, setErrMsg] = React.useState("");
+  const [categories, setCategories] = React.useState();
   const navigate = useNavigate();
 
   const location = useLocation();
@@ -42,10 +50,43 @@ const Content = () => {
     if (state == null) {
       getDocsContent(params.docsId)
         .then((response) => {
-          console.log(response);
+          //리다이렉트 문서인지 검사
+          let fromId = searchParams.get("fromId");
+          let fromTitle = searchParams.get("fromTitle");
+          console.log("from", fromId, fromTitle);
+          if (fromId != null && fromTitle != null) {
+            const url = `/res/content/${fromId}/${fromTitle}`;
+            setRedirectInfo(
+              <>
+                <p>
+                  <a href={url}>{fromTitle}</a>에서 넘어옴
+                </p>
+              </>
+            );
+          }
+          var colors = [
+            "magenta",
+            "red",
+            "volcano",
+            "orange",
+            "gold",
+            "lime",
+            "green",
+            "cyan",
+            "blue",
+            "geekblue",
+            "purple",
+          ];
           setContent(response.content);
           setTitle(response.title);
           setModifedAt(convertDate(response.modifiedAt));
+          setCategories(
+            response.categoryList.map((category) => (
+              <Tag color={colors[Math.floor(Math.random() * 11)]}>
+                {category.categoryName}
+              </Tag>
+            ))
+          );
         })
         .catch((err) => {
           console.log(err.response.data.message);
@@ -127,8 +168,17 @@ const Content = () => {
               <DocsNav current="content" />
             </div>
           </div>
+          {redirectInfo === "" ? (
+            <></>
+          ) : (
+            <Alert type="info" message={redirectInfo} showIcon />
+          )}
+          
           <Card className={styles.card}>
             <div className={styles.contentHeader}>
+              <Space size={[0, 8]} className={styles.tag} wrap>
+                {categories}
+              </Space>
               <Space>
                 <p>마지막 수정일: {modifiedAt}</p>
                 <Tooltip placement="bottom" title="문서 편집">

@@ -4,6 +4,8 @@ import { getToken } from "utils/Authenticate";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
 import { message, Upload, Card, Row, Col, Space, Button, Tooltip } from "antd";
 import { openNotification } from "App";
+import styles from "./ImageUpload.module.css";
+
 const S3_BUCKET_NAME = "ssafywiki-s3"; // S3 버킷 이름
 const S3_REGION = "ap-northeast-2"; // S3 버킷의 AWS 지역
 
@@ -85,7 +87,7 @@ function FileUpload() {
   );
   // 버튼에 적용할 스타일 객체
   const buttonStyle = {
-    width: "1000px", // 버튼의 너비를 100%로 설정하여 블록 레벨 버튼으로 만듭니다.
+    width: "850px", // 버튼의 너비를 100%로 설정하여 블록 레벨 버튼으로 만듭니다.
     height: "100%",
   };
   const copyToClipboard = () => {
@@ -101,55 +103,43 @@ function FileUpload() {
 
   return (
     <div>
-      <Space
-        direction="vertical"
-        size="middle"
-        style={{
-          display: "flex",
-        }}
-      >
-        <Row flex={10}>
-          <Col flex={2}>
-            <Upload
-              name="avatar"
-              listType="picture-card"
-              className="avatar-uploader"
-              showUploadList={false}
-              beforeUpload={beforeUpload}
-              onChange={handleChange}
-            >
-              {imageUrl ? (
-                <img
-                  src={imageUrl}
-                  alt="avatar"
-                  style={{
-                    width: "100%",
-                  }}
-                />
-              ) : (
-                uploadButton
-              )}
-            </Upload>
-          </Col>
-          <Col flex={8}>
-            <Tooltip title="copy">
-              <Button ghost block style={buttonStyle} onClick={copyToClipboard}>
-                <Card title="Image URL" style={{ overflow: "auto" }}>
-                  <div
-                    style={{
-                      whiteSpace: "nowrap",
-                      overflow: "auto",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    {imageUrl ? <p>{imageUrl}</p> : <p>URL</p>}
-                  </div>
-                </Card>
-              </Button>
-            </Tooltip>
-          </Col>
-        </Row>
-      </Space>
+      <div className={styles.Box}>
+        <div className={styles.Upload}>
+          <Upload
+            name="avatar"
+            listType="picture-card"
+            className="avatar-uploader"
+            showUploadList={false}
+            beforeUpload={beforeUpload}
+            onChange={handleChange}
+          >
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt="avatar"
+                style={{
+                  width: "100%",
+                }}
+              />
+            ) : (
+              uploadButton
+            )}
+          </Upload>
+        </div>
+        <div className={Button}>
+          <Tooltip title="copy" style={{ width: "400px" }}>
+            <Button ghost block style={buttonStyle} onClick={copyToClipboard}>
+              <Card
+                title="Image URL"
+                style={{ height:"100px", margin:"0", padding:"0" }}
+                bodyStyle={{ heigh:"50px", padding:"0" }}
+              >
+                {imageUrl ? <p className={styles.Url}>{imageUrl}</p> : <p>URL</p>}
+              </Card>
+            </Button>
+          </Tooltip>
+        </div>
+      </div>
     </div>
   );
 }
