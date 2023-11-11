@@ -89,10 +89,12 @@ const Navbar = () => {
     setUser(isLogin());
 
     //admin
-    getIsAdmin().then((response) => {
-      console.log("isAdmin", response);
-      setIsAdmin(response);
-    });
+    getIsAdmin()
+      .then((response) => {
+        console.log("isAdmin", response);
+        setIsAdmin(response);
+      })
+      .catch((err) => console.log("not admin"));
   });
 
   const goHome = () => {
