@@ -71,7 +71,8 @@ const App = () => {
   };
   const searchResult = (keyword) => {
     // 자동완성옵션검색
-    console.log("onChange");
+    console.log("onChange",keyword);
+    setDoctitle(keyword);
     getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
       // console.log(output);
