@@ -14,17 +14,13 @@ const WriteForm = ({
   setViewType,
 }) => {
   const changeContent = (e) => {
-    console.log(e.target.value);
+    // console.log(e.target.value);
     setContent(e.target.value);
   };
 
   const changeViewType = (e) => {
     setViewType(e);
   };
-
-  useEffect(() => {
-    console.log(content);
-  }, [content]);
 
   const textAreaRef = useRef(null);
   const insertAtCursor = (text) => {
@@ -58,7 +54,12 @@ const WriteForm = ({
       if (this.state.hasError) {
         // 여기서 에러 UI를 커스터마이징 할 수 있습니다.
         setIsError(true);
-        return <p>문서에 문법 오류가 있습니다. `&lt;` 또는 `&gt;` 사용시 오류가 발생 할 수 있습니다. 문법을 수정해주세요.</p>;
+        return (
+          <p>
+            문서에 문법 오류가 있습니다. `&lt;` 또는 `&gt;` 사용시 오류가 발생
+            할 수 있습니다. 문법을 수정해주세요.
+          </p>
+        );
       }
       setIsError(false);
       return this.props.children;
