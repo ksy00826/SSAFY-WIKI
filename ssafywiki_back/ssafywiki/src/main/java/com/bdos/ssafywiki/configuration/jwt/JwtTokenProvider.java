@@ -59,6 +59,7 @@ public class JwtTokenProvider {
 
         log.info("엑세스 토큰 진입 직후 >>> " + user.getId());
         Claims claims = Jwts.claims().setSubject(user.getEmail());
+        claims.put("roles", user.getAuthorities());
         Date now = new Date();
         Date expireDate = new Date(now.getTime() + expirationTime);
 
@@ -126,7 +127,7 @@ public class JwtTokenProvider {
 
         System.out.println("userDetails >>> " + userDetails);
 
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(userDetails, token, userDetails.getAuthorities());
     }
 
     /**
