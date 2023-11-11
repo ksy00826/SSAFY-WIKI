@@ -13,6 +13,7 @@ import {
 } from "utils/DocsApi";
 import { convertDate } from "utils/convertDate";
 import MarkdownRenderer from "components/Common/MarkDownRenderer";
+import BookMarkBtn from "components/Docs/atom/BookMarkBtn";
 
 import styles from "./Content.module.css";
 import { red } from "utils/ColorPicker";
@@ -160,6 +161,9 @@ const Content = () => {
                 </small>
               )}
             </h1>
+            <div className={styles.bookmark}>
+              <BookMarkBtn docsId={params.docsId} />
+            </div>
             <div className={styles.nav}>
               <DocsNav current="content" />
             </div>
