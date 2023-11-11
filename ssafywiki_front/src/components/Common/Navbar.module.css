@@ -1,0 +1,42 @@
+
+.NavBox {
+  display: flex;
+  justify-content: space-between;
+  background-color: #424242;
+  max-width: 1200px;
+  min-width: 600px;
+  margin: 0 auto;
+}
+
+.NavLogo {
+  width: 50px;
+  height: 50px;
+}
+.NavLogoBox {
+  display: flex;
+  align-items: center;
+  margin: 0 10px 0 10px;
+}
+
+.IconBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.NavSearch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 3rem;
+}
+
+.NavUser {
+  background-color: #424242;
+  color: white;
+}
+
+.ComponentBox {
+  display: flex;
+  justify-content: flex-end;
+}
