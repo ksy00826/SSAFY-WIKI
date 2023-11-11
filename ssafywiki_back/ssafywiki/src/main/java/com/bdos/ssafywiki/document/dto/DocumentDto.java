@@ -60,4 +60,16 @@ public class DocumentDto {
         private String title;
         private String modifiedAt;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    @Builder
+    public static class Report{
+        private Long id;
+        private String title;
+        private String modifiedAt;
+    }
 }

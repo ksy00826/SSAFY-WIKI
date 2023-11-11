@@ -15,8 +15,6 @@ import java.util.Collection;
 @ToString
 public class CustomUserDetails extends User implements UserDetails {
 
-    private User user;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return super.getAuthorities();
@@ -24,7 +22,7 @@ public class CustomUserDetails extends User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return this.user.getUsername();
+        return super.getUsername();
     }
 
     // 계정이 만료되지 않았는지
@@ -52,6 +50,6 @@ public class CustomUserDetails extends User implements UserDetails {
     }
 
     public CustomUserDetails(User user) {
-        this.user = user;
+        super(user.getId(), user.getEmail(),user.getPassword(),user.getName(),user.getNickname(),user.getRole(),user.getNumber(),user.getCampus(),user.getCreatedAt(),user.getModifiedAt(),user.getBlockedAt(),user.getRefreshToken());
     }
 }

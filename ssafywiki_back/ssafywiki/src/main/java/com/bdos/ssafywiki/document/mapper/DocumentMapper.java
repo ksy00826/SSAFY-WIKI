@@ -19,4 +19,6 @@ public interface DocumentMapper {
 
     @Mapping(source = "document.id", target = "docsId")
     DocumentDto.Recent documentToRecent(Document document);
+
+    DocumentDto.Report toReport(Document document);
 }
