@@ -64,9 +64,10 @@ public class DocumentService {
     private final DocumentMapper documentMapper;
 
     @Transactional
-    public RevisionDto.DocsResponse writeDocs(DocumentDto.Post post, User user) {
+    public RevisionDto.DocsResponse writeDocs(DocumentDto.Post post, User userDetail) {
         //일단 유저를 다른 곳에 연관관계로 등록하기 위해 임시로 저장
-        userRepository.save(user);
+        //userRepository.save(user);
+        User user = userRepository.findById(userDetail.getId()).get();
 
         //@@@@@@@1. Document entity 생성
         Document document = Document.builder()
@@ -165,7 +166,7 @@ public class DocumentService {
     }
 
     private boolean checkReadAuth(Long readAuth, Role role, Long id) {
-        if(role == Role.ADMIN) return true;
+        if(role == Role.ROLE_ADMIN) return true;
 
         // 권한테이블에서 권한있는지 체크
         return userDocsAuthRepository.findByDocsAuthIdAndUserId(readAuth, id).isPresent();

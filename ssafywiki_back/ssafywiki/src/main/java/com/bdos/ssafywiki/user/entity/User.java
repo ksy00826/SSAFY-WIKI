@@ -8,11 +8,14 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.jpa.repository.Temporal;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Getter
@@ -67,6 +70,8 @@ public class User implements UserDetails {
     @Column
     private String refreshToken;
 
+
+
     @Builder
     public User(String email, String password, String name, String nickname, Role role, String number, String campus, String refreshToken) {
         this.email = email;
@@ -79,13 +84,29 @@ public class User implements UserDetails {
         this.refreshToken = refreshToken;
     }
 
+    public User(Long id, String email, String password, String name, String nickname, Role role, String number, String campus, LocalDateTime createdAt, LocalDateTime modifiedAt, LocalDateTime blockedAt, String refreshToken) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.nickname = nickname;
+        this.role = role;
+        this.number = number;
+        this.campus = campus;
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
+        this.blockedAt = blockedAt;
+        this.refreshToken = refreshToken;
+    }
+
     public User orElseThrow(Object o) {
         return null;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+
+        return Arrays.asList(new SimpleGrantedAuthority(this.role.name()));
     }
 
     @Override

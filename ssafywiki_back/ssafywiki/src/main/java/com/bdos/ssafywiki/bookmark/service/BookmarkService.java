@@ -27,13 +27,38 @@ public class BookmarkService {
     private final DocumentRepository documentRepository;
     private final BookmarkMapper bookmarkMapper;
 
-    public void registBookmark(Long docsId, User user) {
+
+    public int countBookmark(Long docsId) {
+        Document document = documentRepository.findById(docsId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
+
+        int result = bookmarkRepository.countByDocument(document);
+        return result;
+    }
+
+    public boolean checkBookmark(Long docsId, User userDetail) {
+        User user = userRepository.findById(userDetail.getId()).get();
         //사용자, 문서 -> 북마크
         Document document = documentRepository.findById(docsId)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
 
         //이미 해당 문서의 북마크 존재하는지 검사
-        Bookmark bookmark = bookmarkRepository.findByDocsId(docsId).orElse(null);
+        Bookmark bookmark = bookmarkRepository.findByDocumentAndUser(document, user).orElse(null);
+        if(bookmark != null){
+            return true;
+        }
+        return false;
+    }
+
+    public int registBookmark(Long docsId, User userDetail) {
+        User user = userRepository.findById(userDetail.getId()).get();
+
+        //사용자, 문서 -> 북마크
+        Document document = documentRepository.findById(docsId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
+
+        //이미 해당 문서의 북마크 존재하는지 검사
+        Bookmark bookmark = bookmarkRepository.findByDocumentAndUser(document, user).orElse(null);
         if(bookmark != null){
             throw new BusinessLogicException(ExceptionCode.BOOKMARK_CONFLICT);
         }
@@ -42,20 +67,30 @@ public class BookmarkService {
         bookmark.setUser(user);
         bookmark.setDocument(document);
         bookmarkRepository.save(bookmark);
+
+        return bookmarkRepository.countByDocument(document);
     }
 
-    public List<BookmarkDto.Detail> getBookmark(Pageable pageable, User user) {
+    public List<BookmarkDto.Detail> getBookmark(Pageable pageable, User userDetail) {
+        User user = userRepository.findById(userDetail.getId()).get();
 
         //사용자의 북마크 불러오기
-        Page<Bookmark> bookmarkList = bookmarkRepository.findAllByUserId(user.getId(), pageable);
+        Page<Bookmark> bookmarkList = bookmarkRepository.findAllByUser(user, pageable);
 
         return bookmarkMapper.toDetailList(bookmarkList.getContent());
     }
 
-    public void deleteBookmark(Long docsId) {
-        Bookmark bookmark = bookmarkRepository.findByDocsId(docsId)
+    public int deleteBookmark(Long docsId, User userDetail) {
+        User user = userRepository.findById(userDetail.getId()).get();
+        Document document = documentRepository.findById(docsId)
+                .orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
+
+        Bookmark bookmark = bookmarkRepository.findByDocumentAndUser(document, user)
                 .orElseThrow(() -> new BusinessLogicException(ExceptionCode.BOOKMARK_NOT_FOUND));
 
+
         bookmarkRepository.delete(bookmark);
+
+        return bookmarkRepository.countByDocument(document);
     }
 }
