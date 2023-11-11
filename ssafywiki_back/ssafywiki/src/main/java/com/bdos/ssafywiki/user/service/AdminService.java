@@ -25,7 +25,7 @@ public class AdminService {
         if (user == null) user = new GuestUser();
 
         // user가 관리자인지 확인
-        if (!Role.ADMIN.equals(user.getRole())) {
+        if (!Role.ROLE_ADMIN.equals(user.getRole())) {
             throw new BusinessLogicException(ExceptionCode.MEMBER_UNAUTHORIZED);
         }
 
