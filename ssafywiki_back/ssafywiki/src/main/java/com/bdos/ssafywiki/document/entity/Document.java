@@ -3,10 +3,7 @@ package com.bdos.ssafywiki.document.entity;
 import com.bdos.ssafywiki.docs_category.entity.DocsCategory;
 import com.bdos.ssafywiki.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -46,6 +43,8 @@ public class Document {
     private String title;
     @Column(name = "docs_is_redirect")
     private boolean redirect;
+
+    @Setter
     @Column(name = "docs_is_deleted")
     private boolean deleted;
 

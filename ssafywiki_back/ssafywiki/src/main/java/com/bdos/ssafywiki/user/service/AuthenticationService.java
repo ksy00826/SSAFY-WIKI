@@ -98,6 +98,7 @@ public class AuthenticationService {
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .name(user.getName())
+                .auth(user.getRole().name())
                 .build();
 
     }
