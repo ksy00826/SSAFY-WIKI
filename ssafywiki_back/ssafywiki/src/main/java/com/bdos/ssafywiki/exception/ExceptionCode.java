@@ -26,7 +26,8 @@ public enum ExceptionCode {
     REQUEST_NOT_FOUND(404,"Requset Not Found"),
     BOOKMARK_CONFLICT(409, "Conflict"),
     DOCUMENT_NO_ACCESS(402, "Document Can Not Access"),
-    MERGE_CONFLICT(409, "Merge Conflict");
+    MERGE_CONFLICT(409, "Merge Conflict"),
+    REPORT_NOT_FOUND(404, "Report Not Found");
 
 
     @Getter

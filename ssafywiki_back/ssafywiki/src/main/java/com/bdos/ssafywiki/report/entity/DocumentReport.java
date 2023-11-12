@@ -5,10 +5,7 @@ import com.bdos.ssafywiki.report.enums.Status;
 import com.bdos.ssafywiki.user.entity.User;
 import com.bdos.ssafywiki.user.enums.Role;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.springframework.data.annotation.CreatedDate;
@@ -46,6 +43,7 @@ public class DocumentReport {
     @Column(name = "docs_report_modified_at", columnDefinition = "TIMESTAMP")
     private LocalDateTime modifiedAt;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'Processing'")
     @Column(name = "docs_report_status")

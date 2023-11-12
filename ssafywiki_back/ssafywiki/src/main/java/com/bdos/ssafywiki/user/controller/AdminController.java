@@ -2,6 +2,7 @@ package com.bdos.ssafywiki.user.controller;
 
 import com.bdos.ssafywiki.report.entity.DocumentReport;
 import com.bdos.ssafywiki.report.mapper.ReportMapper;
+import com.bdos.ssafywiki.user.dto.AdminDto;
 import com.bdos.ssafywiki.user.entity.User;
 import com.bdos.ssafywiki.user.enums.Role;
 import com.bdos.ssafywiki.user.service.AdminService;
@@ -15,9 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 // admin 유저 확인용
 @Tag(name = "ADMIN API", description = "ADMIN 권한")
@@ -52,5 +51,24 @@ public class AdminController {
 
 
         return new ResponseEntity(reportMapper.toDtoPage(documentReportPage), HttpStatus.OK);
+    }
+
+    @PostMapping("/docs-report")
+    public ResponseEntity<Long> deleteDocs(
+            @AuthenticationPrincipal User user,
+            @RequestBody AdminDto.DocumentReport requestBody) {
+
+        DocumentReport documentReport = adminService.deleteDocs(requestBody);
+
+        return new ResponseEntity<>(documentReport.getId(), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/docs-report/{reportId}")
+    public ResponseEntity<Long> rejectReport(
+            @AuthenticationPrincipal User user,
+            @PathVariable("reportId") Long reportId) {
+        DocumentReport documentReport = adminService.rejectReport(reportId);
+
+        return new ResponseEntity<>(documentReport.getId(), HttpStatus.OK);
     }
 }
