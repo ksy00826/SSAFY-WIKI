@@ -8,3 +8,12 @@ export const reportDocument = async (docsId) => {
         throw error;
     }
 }
+
+export const getDocumentReport = async (page, size) => {
+    try {
+        const response = await axiosInstanceWithLogin.get(`/api/admin/docs-report?page=${page}&size=${size}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
