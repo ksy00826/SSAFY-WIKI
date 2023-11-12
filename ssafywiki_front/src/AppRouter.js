@@ -23,13 +23,13 @@ const AppRouter = () => {
       <Route path="/res/*" element={<DocsPage />} />
       <Route path="/wrt" element={<WritePage />} />
       <Route path="/wrt/template" element={<WriteTemplatePage />} />
-      <Route path="/admin" element={<AdminPage />} />
       {/* member는 로그인 안해도 되는 페이지, userpage는 로그인해야 들어갈 수 있는 페이지 */}
       <Route element={<PublicRoute />}>
         <Route path="/member/*" element={<MemberPage />} />
       </Route>
       <Route element={<PrivateRoute />}>
         <Route path="/userpage/*" element={<UserPage />} />
+        <Route path="/adminpage/*" element={<AdminPage />} />
       </Route>
     </Routes>
   );
