@@ -1,3 +1,59 @@
 .MoveDocs {
-    font-weight: 700;
+  font-weight: 700;
+}
+
+.Note {
+  font-size: 0.6rem;
+  color: #1677ff;
+  vertical-align: text-top;
+  cursor: Default;
+}
+
+.noteContainer {
+  position: relative;
+}
+
+.tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 8px;
+  background-color: (255, 255, 255, 0);
+  color: black;
+  visibility: hidden;
+  transition: visibility 0s, opacity 0.5s ease;
+  min-width: 400px;
+  word-break: break-all;
+  display: flex;
+  justify-content: center;
+}
+
+.toolText {
+    display: inline-block;
+    background-color: white;
+    border: 1px solid;
+    border-color: #E6E6E6;
+    border-radius: 0.2rem;
+    padding: 0.4rem;
+}
+
+.noteContainer:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+.LinkTo {
+  text-decoration: none;
+  font-weight: 600;
+  color: #090;
+}
+
+.LinkTo:hover {
+  text-decoration: none;
+  color: #01df3a;
+}
+
+.Center {
+    text-align: center;
 }

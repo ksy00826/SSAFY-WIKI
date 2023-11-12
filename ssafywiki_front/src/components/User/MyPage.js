@@ -59,25 +59,19 @@ const MyPage = () => {
               <Col span={3}>
                 <h1>{nickname}</h1>
               </Col>
-              <Tooltip placement="top" title="내 문서 바로가기">
+              <Tooltip placement="top" title="내 문서">
                 <Button type="default" icon={<AuditOutlined />} />
               </Tooltip>
               <Col span={17}></Col>
             </Row>
 
-            <Divider orientation="left" orientationMargin="0">
-              <b>스트릭</b>
-            </Divider>
+            {/* <Divider orientation="left" orientationMargin="0">
+              <b>My Contribute</b>
+            </Divider> */}
             <Row justify="space-around" align="middle">
               <Col span={1}></Col>
             </Row>
             <LawnGraph></LawnGraph>
-            <Divider orientation="left" orientationMargin="0">
-              <b>내 신고 정보</b>
-            </Divider>
-            <Row justify="space-around" align="middle">
-              <Col span={1}></Col>
-            </Row>
           </div>
         </Content>
         <Footer

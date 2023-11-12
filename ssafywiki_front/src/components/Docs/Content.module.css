@@ -25,3 +25,9 @@
   text-align: left;
   min-height: 40rem;
 }
+
+.bookmark {
+  position: absolute;
+  right: 14.5rem;
+  top: 1.5rem;
+}

@@ -22,7 +22,6 @@ function getItem(label, key, icon, children) {
   };
 }
 
-
 const UserNavbar = (props) => {
   const [admin, setAdmin] = useState(false);
   
@@ -33,11 +32,11 @@ const UserNavbar = (props) => {
       "2",
       <UserOutlined />
     ),
-    getItem(
-      <Link to="/userpage/contribution">기여한 문서</Link>,
-      "3",
-      <FileOutlined />
-    ),
+    // getItem(
+    //   <Link to="/userpage/contribution">기여한 문서</Link>,
+    //   "3",
+    //   <FileOutlined />
+    // ),
     getItem(
       <Link to="/userpage/userchats">참여한 채팅</Link>,
       "4",

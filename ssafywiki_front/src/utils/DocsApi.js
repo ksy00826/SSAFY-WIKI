@@ -1,4 +1,8 @@
-import { axiosInstance, axiosInstanceWithLogin,axiosElasticInstance } from "./AxiosConfig";
+import {
+  axiosInstance,
+  axiosInstanceWithLogin,
+  axiosElasticInstance,
+} from "./AxiosConfig";
 
 export const getDocsContent = async (id) => {
   try {
@@ -89,7 +93,9 @@ export const createRedirectDocs = async (redirDocs) => {
 
 export const getSearchDoc = async (docsTitle) => {
   try {
-    const response = await axiosElasticInstance.post(`_search`,`{
+    const response = await axiosElasticInstance.post(
+      `_search`,
+      `{
       "query": {
         "bool": { 
           "should": [ 
@@ -103,21 +109,32 @@ export const getSearchDoc = async (docsTitle) => {
     
     }
       
-     `);
+     `
+    );
     return response;
   } catch (error) {
     throw error;
   }
 };
 
+export const getRedirectKeyword = async (docsId) => {
+  try {
+    const response = await axiosInstanceWithLogin.get(
+      `/api/redirect-docs/${docsId}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
 export const getDocsList = async (idList) => {
   try {
-    console.log(`{
-      docsIds: ${JSON.stringify(idList)}
-    }`);
-    const response = await axiosInstance.get(`/api/docs/list`,`{
-      docsIds: ${JSON.stringify(idList)}
-    }`);
+    // console.log(`{
+    //   docsIds: ${JSON.stringify(idList)}
+    // }`);
+    const response = await axiosInstanceWithLogin.post(`/api/docs/list`,JSON.stringify(idList));
     return response.data;
   } catch (error) {
     throw error;
