@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import { Input, Button, Select, Col, Row, Divider, Radio } from "antd";
 
 import WriteForm from "./WriteForm";
@@ -15,6 +15,9 @@ const WriteTemplate = ({
   setSecret,
   setSelectedClass,
 }) => {
+  const [isError, setIsError] = useState(false);
+  const [viewType, setViewType] = useState(1);
+
   const handleChange = (value) => {
     console.log(`selected ${value}`);
     setSelectedClass(value);
@@ -70,6 +73,9 @@ const WriteTemplate = ({
         content={content}
         setContent={setContent}
         isdisabled={disabled}
+        setIsError={setIsError}
+        viewType={viewType}
+        setViewType={setViewType}
       ></WriteForm>
       <Row>
         <Col flex="8"></Col>

@@ -35,58 +35,73 @@ const LawnGraph = () => {
 
   const handleDocs = (docsId, title) => {
     console.log(docsId, title);
-    navigate(`/res/content/${docsId}/${title}`);
+    navigate(`/res/history/${docsId}/${title}`);
   };
 
   const handleClickDay = (e) => {
     console.log(e.target.value);
     const date = e.target.value;
     setDay(date.substr(0, 10));
+    setChildren([]);
     getUserContributeOneDay(date).then((result) => {
       console.log(result);
+      // console.log(result[0].revisions);
 
-      const chi = [];
-      result.forEach((doc) => {
-        chi.push({
+      const chi = result.map((doc, index) => {
+        console.log(doc.revisions);
+        const btn = doc.revisions.map((rev, revIndex) => {
+          return (
+            <>
+              <br></br>
+              <Button
+                key={`${revIndex}`}
+                type="text"
+                onClick={() => handleDocs(doc.docsId, doc.title)}
+              >
+                {rev.revisionComment ? (
+                  rev.revisionComment
+                ) : (
+                  <span style={{ color: "gray" }}> No comment</span>
+                )}
+              </Button>
+              <span style={{ fontSize: "smaller", color: "gray" }}>
+                - {rev.createdAt.substr(11)}
+              </span>
+            </>
+          );
+        });
+        console.log("btn", btn);
+
+        return {
           dot: <FileProtectOutlined style={{ color: "green" }} />,
           children: (
             <>
-              <b>Create Document </b>
-              <span style={{ fontSize: "smaller", color: "gray" }}>
-                - {doc.createdAt.substr(12)}
-              </span>
-              <p>
-                <Button
-                  type="text"
-                  onClick={() => handleDocs(doc.docsId, doc.title)}
-                >
-                  {doc.title}
-                </Button>
-              </p>
+              <b>Contribute Document - {doc.title}</b>
+              {btn}
             </>
           ),
-        });
+        };
       });
       setChildren(chi);
     });
   };
-  //   React.useEffect(() => {
-  //     console.log("ch", children);
-  //   }, [children]);
+  React.useEffect(() => {
+    console.log("~~", children);
+  }, [children]);
 
   React.useEffect(() => {
     const now = new Date(); //현재 날짜 및 시간
-    console.log("현재시간", now);
+    // console.log("현재시간", now);
     const sixMonthAgo = new Date();
     sixMonthAgo.setDate(now.getDate() - now.getDay() - (weekAgo - 1) * 7);
     // console.log(now);
-    console.log(sixMonthAgo);
+    // console.log(sixMonthAgo);
 
     const curYear = sixMonthAgo.getFullYear();
     const curMonth = sixMonthAgo.getMonth() + 1;
     const curDay = sixMonthAgo.getDate();
     const day = curMonth + " / " + curDay;
-    console.log(sixMonthAgo);
+    // console.log(sixMonthAgo);
 
     const startDate =
       curYear +
@@ -97,9 +112,10 @@ const LawnGraph = () => {
     // console.log("go", startDate);
 
     if (loading) {
+      setRows([]);
       getUserContribute(startDate + "T00:00:00").then((result) => {
-        console.log(result);
-
+        // console.log(result);
+        const rowss = [];
         result.forEach((week) => {
           const row = [];
           week.forEach((cnt) => {
@@ -107,7 +123,7 @@ const LawnGraph = () => {
             const curYear = sixMonthAgo.getFullYear();
             const curMonth = sixMonthAgo.getMonth() + 1;
             const curDay = sixMonthAgo.getDate();
-            console.log(sixMonthAgo);
+            // console.log(sixMonthAgo);
 
             const date =
               curYear +
@@ -136,13 +152,14 @@ const LawnGraph = () => {
                 </Tooltip>
               </Row>
             );
-            console.log(sixMonthAgo);
+            // console.log(sixMonthAgo);
             sixMonthAgo.setDate(sixMonthAgo.getDate() + 1); // 다음 날
           });
-          rows.push(row);
+          rowss.push(row);
         });
-        console.log(rows);
+        // console.log(rows);
         setLoading(false);
+        setRows(rowss);
       });
     }
   }, []);
@@ -151,29 +168,13 @@ const LawnGraph = () => {
     <>
       <Card style={{ marginTop: 16 }} loading={loading}>
         <Row>
-          <Col>{rows[0]}</Col>
-          <Col>{rows[1]}</Col>
-          <Col>{rows[2]}</Col>
-          <Col>{rows[3]}</Col>
-          <Col>{rows[4]}</Col>
-          <Col>{rows[5]}</Col>
-          <Col>{rows[6]}</Col>
-          <Col>{rows[7]}</Col>
-          <Col>{rows[8]}</Col>
-          <Col>{rows[9]}</Col>
-          <Col>{rows[10]}</Col>
-          <Col>{rows[11]}</Col>
-          <Col>{rows[12]}</Col>
-          <Col>{rows[13]}</Col>
-          <Col>{rows[14]}</Col>
-          <Col>{rows[15]}</Col>
-          <Col>{rows[16]}</Col>
-          <Col>{rows[17]}</Col>
-          <Col>{rows[18]}</Col>
-          <Col>{rows[19]}</Col>
-          <Col>{rows[20]}</Col>
-          <Col>{rows[21]}</Col>
-          <Col>{rows[22]}</Col>
+          {loading ? (
+            <></>
+          ) : (
+            rows.map((row) => {
+              return <Col>{row}</Col>;
+            })
+          )}
         </Row>
       </Card>
       <Divider orientation="left" orientationMargin="0">
