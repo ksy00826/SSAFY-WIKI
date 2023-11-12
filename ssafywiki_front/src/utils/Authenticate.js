@@ -1,5 +1,5 @@
 import cookie from "react-cookies";
-import { axiosInstance, axiosInstanceNoTimeout } from "./AxiosConfig";
+import { axiosInstance, axiosInstanceNoTimeout, axiosInstanceWithLogin } from "./AxiosConfig";
 
 // 로그인 되어있는지 확인하는 함수
 export const isLogin = () => {
@@ -120,6 +120,15 @@ export const authEmail = async (email, role, authCode) => {
         console.log(data);
         return data;
       });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const isAdmin = async () => {
+  try {
+    const response = await axiosInstanceWithLogin.get(`/api/user/admin`);
+    return response.data;
   } catch (error) {
     throw error;
   }
