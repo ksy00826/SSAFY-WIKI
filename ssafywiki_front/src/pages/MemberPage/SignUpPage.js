@@ -1,6 +1,6 @@
 import React from "react";
 import { Input, Steps, Card, Button } from "antd";
-
+import { useNavigate } from "react-router-dom";
 import styles from "./SignUpPage.module.css";
 import Form1 from "components/Member/SignUpForm1";
 import Form2 from "components/Member/SignUpForm2";
@@ -32,7 +32,10 @@ const SignUp = () => {
     setInfo(e);
     console.log(e);
   };
-
+  const navigate = useNavigate();
+  const makeDocs = () => {
+    navigate(`/wrt?title=${info.username}`);
+  };
   return (
     <Card
       style={{
@@ -49,6 +52,9 @@ const SignUp = () => {
       {current === 2 ? (
         <>
           <h3>안녕하세요, {info.username}님</h3>
+          <Button type="default" onClick={makeDocs}>
+            {info.username} 문서 작성하러 가기
+          </Button>
           <Button type="default" href="/member/login">
             로그인 화면으로
           </Button>
