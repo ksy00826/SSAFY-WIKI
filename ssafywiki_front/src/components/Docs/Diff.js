@@ -55,6 +55,9 @@ const Diff = () => {
     {
       dataIndex: 'line',
       key: 'line',
+      render: (text, record) => (
+        <div>{text}</div>
+      ),
       onCell: (record) => ({
         className: record.type === 'source' ? styles.CellSource : styles.CellTarget
       })
