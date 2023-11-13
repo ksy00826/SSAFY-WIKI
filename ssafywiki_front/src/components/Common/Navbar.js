@@ -21,6 +21,8 @@ const Navbar = () => {
   const [isAdmin, setIsAdmin] = React.useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  // 현재 경로에 따라 선택된 메뉴 키를 결정
+  const selectedKeys = location.pathname === "/" ? [] : [location.pathname];
 
   const handleLogout = () => {
     logout();
@@ -40,11 +42,11 @@ const Navbar = () => {
       children: [
         {
           label: <a onClick={handleLogin}>로그인</a>,
-          key: "login",
+          key: "/login",
         },
         {
           label: <Link to="/member/signup">회원가입</Link>,
-          key: "singup",
+          key: "/member/signup",
         },
       ],
     },
@@ -56,7 +58,7 @@ const Navbar = () => {
       children: [
         {
           label: <Link to="/userpage">마이페이지</Link>,
-          key: "mypage",
+          key: "/userpage",
         },
         {
           label: <a onClick={handleLogout}>로그아웃</a>,
@@ -71,7 +73,7 @@ const Navbar = () => {
       key: "SubMenu",
       label: <UserOutlined style={{ fontSize: "30px" }} />,
       children: [
-        { label: <Link to="/userpage">관리자 페이지</Link>, key: "admin" },
+        { label: <Link to="/userpage">관리자 페이지</Link>, key: "userpage" },
         {
           label: <a onClick={handleLogout}>로그아웃</a>,
           key: "logout",
@@ -82,6 +84,8 @@ const Navbar = () => {
   // 위치 이동하고 랜더링 될때마다 로그인 되어있는지 확인
   React.useEffect(() => {
     setUser(isLogin());
+
+    console.log("location.pathname", location.pathname);
 
     //admin
     getIsAdmin()
@@ -116,16 +120,23 @@ const Navbar = () => {
                 className={styles.NavUser}
                 mode="horizontal"
                 items={items3}
+                selectedKeys={selectedKeys}
               />
             ) : (
               <Menu
                 className={styles.NavUser}
                 mode="horizontal"
                 items={items2}
+                selectedKeys={selectedKeys}
               />
             )
           ) : (
-            <Menu className={styles.NavUser} mode="horizontal" items={items1} />
+            <Menu
+              className={styles.NavUser}
+              mode="horizontal"
+              items={items1}
+              selectedKeys={selectedKeys}
+            />
           )}
         </ConfigProvider>
       </div>
