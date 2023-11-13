@@ -21,7 +21,7 @@ import styles from "./SignUpForm2.module.css";
 
 const { Search } = Input;
 
-const SignUp = ({ goNext, info, saveInfo }) => {
+const SignUp = ({ goNext, info, saveInfo, saveGithub }) => {
   const [checking, setChecking] = React.useState(false);
   const [emailBtn, setEmailBtn] = React.useState("이메일 확인");
   const [emailSuccess, setEmailSuccess] = React.useState(false);
@@ -57,8 +57,9 @@ const SignUp = ({ goNext, info, saveInfo }) => {
         saveInfo({
           access_token : response.access_token,
           email : responseBody.email,
-          number : responseBody.number
+          number : responseBody.number,
         });
+        saveGithub((responseBody.email || "").split('@')[0]);
         goNext();
       })
       .catch((e) => console.error(e.message));
