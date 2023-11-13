@@ -16,40 +16,39 @@ const App = () => {
   const [searchInput, setSearchInput] = useState("");
 
   const onInputChange = (event) => {
-    console.log("onInputChange " + event.target.value );
+    //console.log("onInputChange " + event.target.value );
     setSearchInput(event.target.value); // 사용자 입력을 상태에 저장
   };
 
   const onSearchClick = () => {
-    console.log("onSearchClick " + searchInput);
+    //console.log("onSearchClick " + searchInput);
     onSearch(searchInput); // 버튼 클릭 시 현재 입력된 텍스트로 검색 수행
   };
 
   const onKeyDown = (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === "Enter") {
       onSearchClick(searchInput); // 사용자가 엔터 키를 누를 때 onSearchClick 호출
     }
   };
-
 
   // const handleSearch = (value) => {
   //   setDoctitle(value);
   //   setOptions(value ? searchResult(value) : []);
   // };
   const onSelect = (val, option) => {
-    console.log("onSelect");
+    //console.log("onSelect");
     setDoctitle(option.label);
     setDocid(option.value);
-    console.log("여기서 분명 셋하고있어", option.label);
+    //console.log("여기서 분명 셋하고있어", option.label);
     setSearchInput(option.label);
     onSearch(option.label);
     // navigate(`res/content/${option.key}/${option.label}`);
   };
   const onSearch = (keyword) => {
-    console.log("onSearch", keyword);
+    //console.log("onSearch", keyword);
     getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
-      // console.log(output);
+      // //console.log(output);
       var seq = 0;
       var newSearched = output.map(function (element) {
         seq = seq + 1;
@@ -86,15 +85,17 @@ const App = () => {
     setDoctitle(keyword);
     getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
-      // console.log(output);
-      var newSearched = output.map(function (element) {
-        if(element._source.docs_is_deleted) return null;
-        return {
-          label: element._source.docs_title,
-          value: element._source.docs_title,
-          key: element._source.docs_id,
-        };
-      }).filter(opt => opt != null);
+      // //console.log(output);
+      var newSearched = output
+        .map(function (element) {
+          if (element._source.docs_is_deleted) return null;
+          return {
+            label: element._source.docs_title,
+            value: element._source.docs_title,
+            key: element._source.docs_id,
+          };
+        })
+        .filter((opt) => opt != null);
       setOptions(newSearched);
     });
     // return [

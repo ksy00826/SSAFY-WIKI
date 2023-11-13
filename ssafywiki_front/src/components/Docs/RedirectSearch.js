@@ -9,7 +9,7 @@ const RedirectSearch = () => {
   const onSearch = (keyword, preId, preTitle) => {
     getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
-      console.log(output);
+      //console.log(output);
       var seq = 0;
       var newSearched = output.map(function (element) {
         seq = seq + 1;
@@ -38,7 +38,7 @@ const RedirectSearch = () => {
     const title = searchParams.get("title");
     const preId = searchParams.get("preId");
     const preTitle = searchParams.get("preTitle");
-    console.log(title);
+    //console.log(title);
     onSearch(title, preId, preTitle);
   }, []);
 

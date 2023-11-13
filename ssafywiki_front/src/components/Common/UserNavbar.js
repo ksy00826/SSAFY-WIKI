@@ -59,7 +59,7 @@ const UserNavbar = (props) => {
   ];
 
   const [collapsed, setCollapsed] = useState(false);
-  // console.log(props.selectedKey);
+  // //console.log(props.selectedKey);
 
   // const [menuItem, setMenuItem] = useState(items);
 
@@ -67,7 +67,7 @@ const UserNavbar = (props) => {
   useEffect(() => {
     isAdmin()
       .then((response) => {
-        // console.log(response);
+        // //console.log(response);
         setAdmin(response);
       })
       .catch((err) => {});

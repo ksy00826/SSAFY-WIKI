@@ -7,7 +7,7 @@ export const getTemplate = async (page, isMyTemplate) => {
     );
     return response.data;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     throw error;
   }
 };
@@ -19,7 +19,7 @@ export const getTemplateDetail = async (templateId) => {
     );
     return response.data;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     throw error;
   }
 };
@@ -35,7 +35,7 @@ export const searchTemplateWithKeyword = async (
     );
     return response.data;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     throw error;
   }
 };
@@ -48,7 +48,7 @@ export const getTemplateList = async (page, isMyTemplate, keyword) => {
       );
       return response.data;
     } catch (error) {
-      console.log(error);
+      //console.log(error);
       throw error;
     }
   } else {
@@ -58,14 +58,14 @@ export const getTemplateList = async (page, isMyTemplate, keyword) => {
       );
       return response.data;
     } catch (error) {
-      console.log(error);
+      //console.log(error);
       throw error;
     }
   }
 };
 
 export const createTemplate = async (template) => {
-  console.log(template);
+  //console.log(template);
   try {
     const response = await axiosInstanceWithLogin.post(
       `/api/docs/template`,
@@ -73,7 +73,7 @@ export const createTemplate = async (template) => {
     );
     return response.data;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     throw error;
   }
 };
@@ -85,7 +85,7 @@ export const deleteTemplate = async (templateId) => {
     );
     return response.data;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     throw error;
   }
 };
@@ -103,7 +103,7 @@ export const changeTemplateAuthority = async (
     );
     return response.data;
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     throw error;
   }
 };

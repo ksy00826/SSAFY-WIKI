@@ -48,7 +48,7 @@ const SearchTemplete = ({ next, title }) => {
   const navigate = useNavigate();
 
   const makeTemplate = () => {
-    // console.log("make로 이동");
+    // //console.log("make로 이동");
     navigate(`/wrt/template?title=${title}`);
   };
   const handleOk = () => {
@@ -61,7 +61,7 @@ const SearchTemplete = ({ next, title }) => {
   const handleDelete = () => {
     setIsModalOpen(false);
 
-    // console.log("delete", templateId);
+    // //console.log("delete", templateId);
     deleteTemplate(templateId).then(() => {
       window.location.reload();
       // setTimeout(() => {
@@ -87,8 +87,8 @@ const SearchTemplete = ({ next, title }) => {
 
   //탭 바꾸면 템플릿 가져오기
   const changeTap = (key) => {
-    // console.log("key", key);
-    // console.log("changeTab", searchKeyword);
+    // //console.log("key", key);
+    // //console.log("changeTab", searchKeyword);
 
     getTemplateList(0, key == 1 ? true : false, searchKeyword).then((res) => {
       setPageNum(1); //페이지 초기화
@@ -98,8 +98,8 @@ const SearchTemplete = ({ next, title }) => {
 
       //비동기적 실행
       setActiveKey(key);
-      // console.log("change", activeKey);
-      // console.log(res);
+      // //console.log("change", activeKey);
+      // //console.log(res);
 
       getTemplateList(1, key == 1 ? true : false, searchKeyword).then(
         (res2) => {
@@ -110,12 +110,12 @@ const SearchTemplete = ({ next, title }) => {
   };
 
   useEffect(() => {
-    // console.log("useEffect: ", lastPage);
+    // //console.log("useEffect: ", lastPage);
   }, [lastPage]);
 
   const onLoadMore = () => {
     setLoading(true);
-    // console.log("onLoadMore", searchKeyword, pageNum);
+    // //console.log("onLoadMore", searchKeyword, pageNum);
 
     getTemplateList(pageNum, activeKey == 1 ? true : false, searchKeyword).then(
       (res) => {
@@ -125,15 +125,15 @@ const SearchTemplete = ({ next, title }) => {
         setList(newData);
         // setLoading(false);
         window.dispatchEvent(new Event("resize"));
-        // console.log(res);
+        // //console.log(res);
 
         getTemplateList(
           pageNum + 1, //비동기로 나중에 바뀌기 때문에 +1
           activeKey == 1 ? true : false,
           searchKeyword
         ).then((res2) => {
-          // console.log(res2.length == 0);
-          // console.log(res2);
+          // //console.log(res2.length == 0);
+          // //console.log(res2);
           if (res2.length == 0) setLastPage(true);
         });
       }
@@ -141,9 +141,9 @@ const SearchTemplete = ({ next, title }) => {
   };
 
   const showTemplate = (templateId) => {
-    // console.log(templateId);
+    // //console.log(templateId);
     getTemplateDetail(templateId).then((res) => {
-      // console.log(res);
+      // //console.log(res);
       setTemplateId(res.templateId);
       setTemplateTitle(res.title);
       setTemplateContent(res.content);
@@ -152,7 +152,7 @@ const SearchTemplete = ({ next, title }) => {
   };
 
   const onSearch = (value) => {
-    // console.log(value, _e, info); e(에러), info(입력 소스?)
+    // //console.log(value, _e, info); e(에러), info(입력 소스?)
 
     getTemplateList(0, activeKey == 1 ? true : false, value).then((res) => {
       // const newData = templateData.concat(res);
@@ -161,10 +161,10 @@ const SearchTemplete = ({ next, title }) => {
       setList(res);
       setLastPage(false);
       setLoading(false);
-      // console.log(res);
+      // //console.log(res);
 
       getTemplateList(1, activeKey == 1 ? true : false, value).then((res2) => {
-        // console.log(res2.length == 0);
+        // //console.log(res2.length == 0);
         if (res2.length == 0) setLastPage(true);
       });
     });
@@ -172,7 +172,7 @@ const SearchTemplete = ({ next, title }) => {
     setSearchKeyword(value);
   };
   const changeKeyword = (e) => {
-    // console.log(e.target.value);
+    // //console.log(e.target.value);
     const value = e.target.value;
     getTemplateList(0, activeKey == 1 ? true : false, value).then((res) => {
       // const newData = templateData.concat(res);
@@ -181,10 +181,10 @@ const SearchTemplete = ({ next, title }) => {
       setList(res);
       setLastPage(false);
       setLoading(false);
-      // console.log(res);
+      // //console.log(res);
 
       getTemplateList(1, activeKey == 1 ? true : false, value).then((res2) => {
-        // console.log(res2.length == 0);
+        // //console.log(res2.length == 0);
         if (res2.length == 0) setLastPage(true);
       });
     });
@@ -211,10 +211,10 @@ const SearchTemplete = ({ next, title }) => {
       item.templateId != undefined &&
       item.secret != undefined
     ) {
-      // console.log(item);
+      // //console.log(item);
       changeTemplateAuthority(item.templateId, !item.secret, pageNum).then(
         (res) => {
-          // console.log(res);
+          // //console.log(res);
           setData(res);
           setList(res);
         }

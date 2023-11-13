@@ -10,7 +10,7 @@ const RecentDocs = () => {
   const client = useRef({});
   useEffect(() => {
     connect();
-    console.log("");
+    //console.log("");
     getRecentDocsList().then((response) => {
       setRecentDocsList(response);
     });
@@ -21,14 +21,14 @@ const RecentDocs = () => {
     client.current = new StompJs.Client({
       brokerURL: process.env.REACT_APP_SERVER_WS_URL,
       onConnect: () => {
-        console.log("Connected");
+        //console.log("Connected");
         subscribe();
       },
     });
     client.current.activate();
   };
   const subscribe = () => {
-    console.log("subRecent");
+    //console.log("subRecent");
     subscribeRecentDocs();
     client.current.subscribe("/sub/recent/", (body) => {
       const json_body = JSON.parse(body.body);

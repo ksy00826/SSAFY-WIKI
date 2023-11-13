@@ -31,9 +31,9 @@ const SignUp = ({ goNext, info, saveInfo, saveGithub }) => {
   const [form] = Form.useForm();
 
   const finish = (e) => {
-    console.log("finish????");
-    console.log(e);
-    console.log(info);
+    //console.log("finish????");
+    //console.log(e);
+    //console.log(info);
 
     const responseBody = {
       name: info.username,
@@ -49,17 +49,17 @@ const SignUp = ({ goNext, info, saveInfo, saveGithub }) => {
     } else {
       responseBody.role = info.roll;
     }
-    console.log(responseBody);
+    //console.log(responseBody);
     // axios 회원가입 처리
     signup(responseBody)
       .then((response) => {
-        console.log(response);
+        //console.log(response);
         saveInfo({
-          access_token : response.access_token,
-          email : responseBody.email,
-          number : responseBody.number,
+          access_token: response.access_token,
+          email: responseBody.email,
+          number: responseBody.number,
         });
-        saveGithub((responseBody.email || "").split('@')[0]);
+        saveGithub((responseBody.email || "").split("@")[0]);
         goNext();
       })
       .catch((e) => console.error(e.message));
@@ -68,14 +68,14 @@ const SignUp = ({ goNext, info, saveInfo, saveGithub }) => {
   const checkEmail = (value) => {
     // 실제 SSAFY 이메일인지 검증
     //axios
-    console.log(info);
-    console.log("checking", value, info.roll);
+    //console.log(info);
+    //console.log("checking", value, info.roll);
     setChecking(true);
 
     let result = true;
     if (info.roll === "학생") {
       checkSSAFYEmail(value).then((data) => {
-        console.log(data);
+        //console.log(data);
         if (data === "아이디가 존재하지 않습니다.") {
           result = false;
         }
@@ -92,7 +92,7 @@ const SignUp = ({ goNext, info, saveInfo, saveGithub }) => {
       if (!(emails[1] === "multicampus.com" || emails[1] === "ssafy.com")) {
         result = false;
       }
-      console.log(result);
+      //console.log(result);
       if (!result) {
         setEmailBtn("이메일 확인");
         setEmailSuccess(false);
@@ -109,7 +109,7 @@ const SignUp = ({ goNext, info, saveInfo, saveGithub }) => {
 
   const handleSendEmail = async () => {
     const email = form.getFieldValue(["email"]);
-    console.log(email, "에 인증 메일을 보낸다.");
+    //console.log(email, "에 인증 메일을 보낸다.");
     openNotification(
       "success",
       "인증메일 전송",
@@ -117,21 +117,21 @@ const SignUp = ({ goNext, info, saveInfo, saveGithub }) => {
     );
     try {
       sendEmail(email, info.roll).then((data) => {
-        console.log(data);
+        //console.log(data);
         setAuthBtn("재전송");
       });
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   };
 
   const validateEmail = () => {
     const email = form.getFieldValue(["email"]);
     const value = form.getFieldValue(["auth"]);
-    console.log("인증번호를 확인한다.");
+    //console.log("인증번호를 확인한다.");
     let result = true;
     authEmail(email, info.roll, value).then((data) => {
-      console.log(data);
+      //console.log(data);
       if (data === "실패") {
         result = false;
       }
@@ -146,12 +146,12 @@ const SignUp = ({ goNext, info, saveInfo, saveGithub }) => {
   };
 
   useEffect(() => {
-    console.log("s", emailSuccess, "f", emailFail);
+    //console.log("s", emailSuccess, "f", emailFail);
     form.validateFields(["email"]);
   }, [emailSuccess, emailFail]);
 
   useEffect(() => {
-    console.log("s", emailSuccess, "f", emailFail);
+    //console.log("s", emailSuccess, "f", emailFail);
     form.validateFields(["auth"]);
   }, [authSuccess]);
 
@@ -177,7 +177,7 @@ const SignUp = ({ goNext, info, saveInfo, saveGithub }) => {
               if (
                 /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/.test(value)
               ) {
-                console.log("1");
+                //console.log("1");
               } else {
                 setEmailFail(false);
                 return Promise.reject(

@@ -35,7 +35,7 @@ const Edit = () => {
   // 처음 랜더링시 내용과 권한 가져오기
   React.useEffect(() => {
     getUpdateContent(params.docsId).then((response) => {
-      console.log(response);
+      //console.log(response);
       setContent(response.content);
       setTitle(response.title);
       setClasses(response.categoryList);
@@ -69,7 +69,7 @@ const Edit = () => {
       });
     } else {
       // axios로 등록 데이터 넣어줘야함
-      console.log(comment);
+      //console.log(comment);
       updateDocs({
         docsId: id,
         content: content,
@@ -80,7 +80,7 @@ const Edit = () => {
       })
         .then((result) => {
           //완료
-          console.log(result);
+          //console.log(result);
           openNotification(
             "success",
             "문서수정 완료",
@@ -90,7 +90,7 @@ const Edit = () => {
           navigate(`/res/content/${result.docsId}/${result.title}`);
         })
         .catch((err) => {
-          // console.log(err.response);
+          // //console.log(err.response);
           if (err.response.status == 409) {
             error({
               title: "버전 충돌",
@@ -150,7 +150,7 @@ const Edit = () => {
               minRows: 4,
             }}
             onChange={(value) => {
-              // console.log(value);
+              // //console.log(value);
               setComment(value.target.value);
             }}
           />

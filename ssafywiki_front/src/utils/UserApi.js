@@ -123,7 +123,7 @@ export const getStarDocs = async (id) => {
 
 export const checkSSAFYEmail = async (id) => {
   try {
-    console.log(`{"usernameOrEmail":"${id}","password":"aaaaa"}`);
+    //console.log(`{"usernameOrEmail":"${id}","password":"aaaaa"}`);
     let data = `{"usernameOrEmail":"${id}","password":"aaaaa"}`;
     const response = await axiosSsafygitInstance.post(`/signin`, data);
     return response.data;
@@ -132,7 +132,7 @@ export const checkSSAFYEmail = async (id) => {
       error.response.data.message === "아이디가 존재하지 않습니다." ||
       error.response.data.message.startsWith("비밀번호가 ")
     ) {
-      console.log("noID on API");
+      //console.log("noID on API");
       return error.response.data.message;
     }
     return error;

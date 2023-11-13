@@ -60,7 +60,7 @@ const AuthorityForm = ({
   const [invitloading, setInvitLoading] = React.useState();
 
   const checkEmail = (value) => {
-    console.log(value);
+    //console.log(value);
     // 이메일이 존재하는 유저인지 체크하고 추가.
     handleInvite(value);
   };

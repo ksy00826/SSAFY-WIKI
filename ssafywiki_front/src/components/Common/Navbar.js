@@ -31,14 +31,19 @@ const Navbar = () => {
   };
 
   const handleLogin = () => {
-    console.log(location);
+    //console.log(location);
     navigate(`/member/login?redirect=${location.pathname}`);
   };
 
   const items1 = [
     {
       key: "SubMenu",
-      label: <div className={styles.label}><span className={styles.labelText}>/</span><UserOutlined style={{ fontSize: "30px" }} /></div>,
+      label: (
+        <div className={styles.label}>
+          <span className={styles.labelText}>/</span>
+          <UserOutlined style={{ fontSize: "30px" }} />
+        </div>
+      ),
       children: [
         {
           label: <a onClick={handleLogin}>로그인</a>,
@@ -54,7 +59,12 @@ const Navbar = () => {
   const items2 = [
     {
       key: "SubMenu",
-      label: <div className={styles.label}><span className={styles.labelText}>/</span><UserOutlined style={{ fontSize: "30px" }} /></div>,
+      label: (
+        <div className={styles.label}>
+          <span className={styles.labelText}>/</span>
+          <UserOutlined style={{ fontSize: "30px" }} />
+        </div>
+      ),
       children: [
         {
           label: <Link to="/userpage">마이페이지</Link>,
@@ -71,7 +81,12 @@ const Navbar = () => {
   const items3 = [
     {
       key: "SubMenu",
-      label: <div className={styles.label}><span className={styles.labelText}>/</span><UserOutlined style={{ fontSize: "30px" }} /></div>,
+      label: (
+        <div className={styles.label}>
+          <span className={styles.labelText}>/</span>
+          <UserOutlined style={{ fontSize: "30px" }} />
+        </div>
+      ),
       children: [
         { label: <Link to="/userpage">관리자 페이지</Link>, key: "userpage" },
         {
@@ -85,15 +100,17 @@ const Navbar = () => {
   React.useEffect(() => {
     setUser(isLogin());
 
-    console.log("location.pathname", location.pathname);
+    //console.log("location.pathname", location.pathname);
 
     //admin
     getIsAdmin()
       .then((response) => {
-        console.log("isAdmin", response);
+        //console.log("isAdmin", response);
         setIsAdmin(response);
       })
-      .catch((err) => console.log("not admin"));
+      .catch((err) => {
+        // console.log("not admin");
+      });
   });
 
   const goHome = () => {

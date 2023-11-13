@@ -12,7 +12,7 @@ const UserGroup = () => {
   // 처음 랜더링시 내용 가져오기
   React.useEffect(() => {
     getMyAuthDocs().then((response) => {
-      console.log(response);
+      //console.log(response);
       setRenderList(
         response.map((item) => (
           <Col key={item.docsId} span={8}>

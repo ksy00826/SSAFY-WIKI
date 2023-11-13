@@ -19,15 +19,15 @@ const WriteTemplate = ({
   const [viewType, setViewType] = useState(1);
 
   const handleChange = (value) => {
-    console.log(`selected ${value}`);
+    //console.log(`selected ${value}`);
     setSelectedClass(value);
   };
   const titleChange = (value) => {
     setTitle(value.target.value);
-    console.log(value.target.value);
+    //console.log(value.target.value);
   };
   const changeSecret = (e) => {
-    console.log(e.target.value);
+    //console.log(e.target.value);
     setSecret(e.target.value);
   };
 
