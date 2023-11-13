@@ -23,7 +23,6 @@ function Discussion() {
     if (token) {
       getUserInfo().then((response) => {
         setEmail(response.email);
-        console.log("유저정보", response);
       });
     }
     const match = location.pathname.match(
@@ -36,7 +35,6 @@ function Discussion() {
       currentDocsId = parseInt(match[2], 10);
     }
     getDiscussList(currentDocsId).then((response) => {
-      console.log("응답", currentDocsId, response);
       setDocsId(currentDocsId);
       setChatList(response);
     });
@@ -68,14 +66,12 @@ function Discussion() {
       console.error("인증 토큰이 누락되었습니다");
       return;
     }
-    console.log(token);
     client.current = new StompJs.Client({
       brokerURL: process.env.REACT_APP_SERVER_WS_URL,
       connectHeaders: {
         Authorization: `Bearer ${token}`,
       },
       onConnect: () => {
-        console.log("Connected");
         subscribe(currentDocsId);
       },
       onStompError: (frame) => {
@@ -94,7 +90,6 @@ function Discussion() {
 
   const publish = (chat) => {
     if (!client.current.connected || chat.length == 0) return;
-    console.log("pub", chat, docsId, email);
     client.current.publish({
       destination: "/pub/chat",
       headers: { Authorization: `Bearer ${token}` },
@@ -109,7 +104,6 @@ function Discussion() {
   };
 
   const subscribe = (currentDocsId) => {
-    console.log("sub", currentDocsId);
     client.current.subscribe("/sub/chat/" + currentDocsId, (body) => {
       const json_body = JSON.parse(body.body);
       setChatList((_chat_list) => [..._chat_list, json_body]);
@@ -133,14 +127,11 @@ function Discussion() {
   const handleSubmit = (event, chat) => {
     // 보내기 버튼 눌렀을 때 publish
     event.preventDefault();
-    console.log("버튼", chat);
-    console.log("주소", docsId);
     publish(chat);
   };
 
   const formatTime = (dateString, flag) => {
     const date = new Date(dateString);
-    console.log(date);
     // 한 자리 숫자일 경우 앞에 '0'을 붙여줌
     if (flag === "time") {
       let hours = date.getHours();
@@ -154,7 +145,6 @@ function Discussion() {
       let month = date.getMonth();
       let day = date.getDate();
       day = day < 10 ? `0${day}` : day;
-      console.log("날짜", date, month, day);
       return `${year}-${month + 1}-${day}`;
     }
   };
