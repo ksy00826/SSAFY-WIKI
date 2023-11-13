@@ -41,7 +41,7 @@ function App() {
           <Layout className="Content">
             <AppRouter />
           </Layout>
-          <Footer>
+          <Footer style={{ minWidth: "1200px" }}>
             <MyFooter />
           </Footer>
         </Layout>
