@@ -1,5 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
+import { Alert } from "antd";
 
 import DocsNav from "./DocsNav";
 import AuthorityForm from "components/Write/AuthorityForm";
@@ -16,6 +17,7 @@ const Authority = () => {
   const [write, setWrite] = React.useState();
   const [users, setUsers] = React.useState([]);
   const [info, setInfo] = React.useState();
+  const [errMsg, setErrMsg] = React.useState("");
 
   const invite = (value) => {
     console.log(value);
@@ -24,17 +26,25 @@ const Authority = () => {
 
   React.useEffect(() => {
     // 첫 랜더링시
-    getAuth(params.docsId).then((response) => {
-      console.log(response);
-      setRead(response.read);
-      setWrite(response.write);
-      if (response.user !== undefined) {
-        setUsers(response.users);
-      }
-      setLoading(false);
+    setErrMsg("");
+    getAuth(params.docsId)
+      .then((response) => {
+        console.log(response);
+        setRead(response.read);
+        setWrite(response.write);
+        if (response.users !== undefined) {
+          setUsers(response.users);
+        }
+        setLoading(false);
 
-      setInfo(response);
-    });
+        setInfo(response);
+      })
+      .catch((err) => {
+        if (!err.response.data.message) setErrMsg(err.response.data.message);
+        else {
+          setErrMsg("문서권한에 접근할 수 없습니다.");
+        }
+      });
   }, []);
 
   const handleUpdate = () => {
@@ -66,16 +76,20 @@ const Authority = () => {
         docsId: params.docsId,
         read: read,
         write: write,
-      }).then((response) => {
-        console.log(response);
-        setInfo(response);
-        openNotification(
-          "success",
-          "권한 수정 완료",
-          `${params.title}문서 권한이 수정되었습니다.`
-        );
-        return response;
-      });
+      })
+        .then((response) => {
+          console.log(response);
+          setInfo(response);
+          openNotification(
+            "success",
+            "권한 수정 완료",
+            `${params.title}문서 권한이 수정되었습니다.`
+          );
+          return response;
+        })
+        .catch((err) => {
+          openNotification("error", "권한 수정 실패", err);
+        });
     } else return info;
   };
 
@@ -94,9 +108,17 @@ const Authority = () => {
       inviteUser({
         authId: id,
         email: email,
-      }).then((response) => {
-        setUsers([response, ...users]);
-      });
+      })
+        .then((response) => {
+          setUsers([response, ...users]);
+        })
+        .catch((err) => {
+          openNotification(
+            "error",
+            "권한 수정 실패",
+            err.response.data.message
+          );
+        });
     });
   };
 
@@ -124,19 +146,25 @@ const Authority = () => {
         </div>
       </div>
 
-      {!loading ? (
-        <AuthorityForm
-          modify={handleUpdate}
-          selectedRead={read}
-          setSelectedRead={setRead}
-          selectedWrite={write}
-          setSelectedWrite={setWrite}
-          userList={users}
-          handleInvite={handleInvite}
-          handleDelete={handleDelete}
-        />
+      {errMsg ? (
+        <Alert type="warning" message={errMsg} showIcon />
       ) : (
-        <></>
+        <>
+          {!loading ? (
+            <AuthorityForm
+              modify={handleUpdate}
+              selectedRead={read}
+              setSelectedRead={setRead}
+              selectedWrite={write}
+              setSelectedWrite={setWrite}
+              userList={users}
+              handleInvite={handleInvite}
+              handleDelete={handleDelete}
+            />
+          ) : (
+            <></>
+          )}
+        </>
       )}
     </div>
   );
