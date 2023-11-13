@@ -16,10 +16,12 @@ const App = () => {
   const [searchInput, setSearchInput] = useState("");
 
   const onInputChange = (event) => {
+    console.log("onInputChange " + event.target.value );
     setSearchInput(event.target.value); // 사용자 입력을 상태에 저장
   };
 
   const onSearchClick = () => {
+    console.log("onSearchClick " + searchInput);
     onSearch(searchInput); // 버튼 클릭 시 현재 입력된 텍스트로 검색 수행
   };
 
