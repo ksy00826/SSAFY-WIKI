@@ -8,7 +8,7 @@ import {
   AlertOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme, ConfigProvider } from "antd";
-import { } from "antd";
+import {} from "antd";
 import { isAdmin } from "utils/Authenticate";
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -24,7 +24,7 @@ function getItem(label, key, icon, children) {
 
 const UserNavbar = (props) => {
   const [admin, setAdmin] = useState(false);
-  
+
   const items = [
     getItem(<Link to="/userpage">마이페이지</Link>, "1", <UserOutlined />),
     getItem(
@@ -32,11 +32,6 @@ const UserNavbar = (props) => {
       "2",
       <UserOutlined />
     ),
-    // getItem(
-    //   <Link to="/userpage/contribution">기여한 문서</Link>,
-    //   "3",
-    //   <FileOutlined />
-    // ),
     getItem(
       <Link to="/userpage/userchats">참여한 채팅</Link>,
       "4",
@@ -48,11 +43,12 @@ const UserNavbar = (props) => {
       <TeamOutlined />
       // [getItem('Team 1', '6'), getItem('Team 2', '8')]
     ),
-    (admin && (getItem(
-      <Link to="/adminpage/report">신고받은 문서</Link>,
-      "6",
-      <AlertOutlined />
-    )))
+    admin &&
+      getItem(
+        <Link to="/adminpage/report">신고받은 문서</Link>,
+        "6",
+        <AlertOutlined />
+      ),
   ];
 
   const [collapsed, setCollapsed] = useState(false);
@@ -62,10 +58,12 @@ const UserNavbar = (props) => {
 
   // user권한 확인
   useEffect(() => {
-    isAdmin().then((response) => {
-      // console.log(response);
-      setAdmin(response);
-    }).catch((err) => { });
+    isAdmin()
+      .then((response) => {
+        // console.log(response);
+        setAdmin(response);
+      })
+      .catch((err) => {});
   }, []);
 
   return (
