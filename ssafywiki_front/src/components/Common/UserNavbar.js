@@ -6,9 +6,10 @@ import {
   TeamOutlined,
   UserOutlined,
   AlertOutlined,
+  StarOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme, ConfigProvider } from "antd";
-import { } from "antd";
+import {} from "antd";
 import { isAdmin } from "utils/Authenticate";
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -24,7 +25,7 @@ function getItem(label, key, icon, children) {
 
 const UserNavbar = (props) => {
   const [admin, setAdmin] = useState(false);
-  
+
   const items = [
     getItem(<Link to="/userpage">마이페이지</Link>, "1", <UserOutlined />),
     getItem(
@@ -43,16 +44,23 @@ const UserNavbar = (props) => {
       <PieChartOutlined />
     ),
     getItem(
-      <Link to="/userpage">참여한 그룹</Link>,
+      <Link to="/userpage/usergroup">참여한 그룹</Link>,
       "5",
       <TeamOutlined />
       // [getItem('Team 1', '6'), getItem('Team 2', '8')]
     ),
-    (admin && (getItem(
-      <Link to="/adminpage/report">신고받은 문서</Link>,
+    getItem(
+      <Link to="/userpage/bookmark">북마크 문서</Link>,
       "6",
-      <AlertOutlined />
-    )))
+      <StarOutlined />
+      // [getItem('Team 1', '6'), getItem('Team 2', '8')]
+    ),
+    admin &&
+      getItem(
+        <Link to="/adminpage/report">신고받은 문서</Link>,
+        "10",
+        <AlertOutlined />
+      ),
   ];
 
   const [collapsed, setCollapsed] = useState(false);
@@ -62,10 +70,12 @@ const UserNavbar = (props) => {
 
   // user권한 확인
   useEffect(() => {
-    isAdmin().then((response) => {
-      // console.log(response);
-      setAdmin(response);
-    }).catch((err) => { });
+    isAdmin()
+      .then((response) => {
+        // console.log(response);
+        setAdmin(response);
+      })
+      .catch((err) => {});
   }, []);
 
   return (

@@ -178,3 +178,40 @@ export const getIsAdmin = async () => {
     throw error;
   }
 };
+
+export const getMyAuthDocs = async () => {
+  try {
+    const response = await axiosInstanceWithLogin.get(`/api/user/myauth`);
+    if (response == null) {
+      return [
+        {
+          docsId: 1,
+          title: "그룹 문서가 없습니다.",
+          lastModifyTime: "NOTIME",
+        },
+      ];
+    }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getBookMarks = async () => {
+  try {
+    const response = await axiosInstanceWithLogin.get(
+      `/api/docs/bookmark?page=0&size=1&sort=asc`
+    );
+    if (response == null) {
+      return [
+        {
+          docsId: 1,
+          title: "북마크 문서가 없습니다.",
+        },
+      ];
+    }
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
