@@ -27,7 +27,8 @@ public enum ExceptionCode {
     BOOKMARK_CONFLICT(409, "Conflict"),
     DOCUMENT_NO_ACCESS(402, "Document Can Not Access"),
     MERGE_CONFLICT(409, "Merge Conflict"),
-    REPORT_NOT_FOUND(404, "Report Not Found");
+    REPORT_NOT_FOUND(404, "Report Not Found"),
+    DOC_AUTH_NOT_ACCESS(401, "문서권한에 접근할 수 없습니다.");
 
 
     @Getter
