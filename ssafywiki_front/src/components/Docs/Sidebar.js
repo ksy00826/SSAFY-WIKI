@@ -7,13 +7,13 @@ const Sidebar = () => {
     <div>
       <div className={styles.Card}>
         <Card bodyStyle={{ padding: 0 }}>
-          <h3 className={styles.RecentTitle}>최근 수정된 문서</h3>
+          <h3>최근 수정된 문서</h3>
           <RecentDocs></RecentDocs>
         </Card>
       </div>
       <div className={styles.Card}>
         <Card bodyStyle={{ padding: 10 }}>
-          <div>토론</div>
+          <h3 className={styles.RecentTitle}>토론</h3>
           <Discussion></Discussion>
         </Card>
       </div>
