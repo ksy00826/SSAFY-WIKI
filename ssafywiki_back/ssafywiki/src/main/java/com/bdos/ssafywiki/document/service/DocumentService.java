@@ -137,7 +137,6 @@ public class DocumentService {
 
         //해당 문서 엔티티 찾기
         Document document = documentRepository.findById(docsId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
-        if (document.isDeleted()) throw new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND);
 
         //유저의 권한과 문서의 권한을 체크해서 처리
         log.info(user.toString());
@@ -145,15 +144,15 @@ public class DocumentService {
         if (document.getReadAuth() < 4) {
             result = user.getRole().havePrivilege(Privilege.getOptionLv('R', document.getReadAuth()));
         } else {  // private 문서
-            if(!checkReadAuth(document.getReadAuth(), user.getRole(), user.getId()))
+            if (!checkReadAuth(document.getReadAuth(), user.getRole(), user.getId()))
                 throw new BusinessLogicException(ExceptionCode.REQUIRED_PRIVATE);
         }
 
         // 권한이 없으면 error
         if (!result) {
-            if(document.getReadAuth() == 2)
+            if (document.getReadAuth() == 2)
                 throw new BusinessLogicException(ExceptionCode.REQUIRED_LOGIN);
-            if(document.getReadAuth() == 3)
+            if (document.getReadAuth() == 3)
                 throw new BusinessLogicException(ExceptionCode.REQUIRED_MANAGER);
             else
                 throw new BusinessLogicException(ExceptionCode.REQUIRED_PRIVATE);
@@ -165,11 +164,14 @@ public class DocumentService {
         if (revId == null) revision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
         else revision = revisionRepository.findByDocumentIdAndRevisionId(docsId, revId);
 
-        return revisionMapper.toResponse(revision);
+        RevisionDto.DocsResponse response = revisionMapper.toResponse(revision);
+        if ("".equals(revision.getContent().getText())) response.setContent("이 문서는 삭제되었습니다.");
+
+        return response;
     }
 
     private boolean checkReadAuth(Long readAuth, Role role, Long id) {
-        if(role == Role.ROLE_ADMIN) return true;
+        if (role == Role.ROLE_ADMIN) return true;
 
         // 권한테이블에서 권한있는지 체크
         return userDocsAuthRepository.findByDocsAuthIdAndUserId(readAuth, id).isPresent();
@@ -275,7 +277,7 @@ public class DocumentService {
 //            saveRecentDocsToRedis(document);
 
 
-        List<Long> ids =  docsCategoryRepository.findAllByDocsId(put.getDocsId());
+        List<Long> ids = docsCategoryRepository.findAllByDocsId(put.getDocsId());
         ids.stream().forEach(
                 docsCategoryId -> {
                     docsCategoryRepository.deleteById(docsCategoryId);
@@ -309,8 +311,6 @@ public class DocumentService {
                 .topRevId(topRevision.getId())
                 .modifiedAt(revision.getModifiedAt())
                 .content(revision.getContent().getText()).exceptionCode(null).build();
-
-
 
 
     }
