@@ -22,8 +22,9 @@ const DocsList = () => {
       var output = data.data.hits.hits;
       // console.log(output);
       var newSearched = output.map(function (element) {
+        if(element._source.docs_is_deleted) return null;
         return element._source.docs_id;
-      });
+      }).filter(opt => opt != null);;
       // console.log(newSearched);
 
       var getDocsListResponse = getDocsList(newSearched).then((data) => {

@@ -40,10 +40,13 @@ const App = () => {
     console.log("onSelect");
     setDoctitle(option.label);
     setDocid(option.value);
-    navigate(`res/content/${option.key}/${option.label}`);
+    console.log("여기서 분명 셋하고있어", option.label);
+    setSearchInput(option.label);
+    onSearch(option.label);
+    // navigate(`res/content/${option.key}/${option.label}`);
   };
   const onSearch = (keyword) => {
-    console.log("onSearch");
+    console.log("onSearch", keyword);
     getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
       // console.log(output);
@@ -80,7 +83,6 @@ const App = () => {
   };
   const searchResult = (keyword) => {
     // 자동완성옵션검색
-    console.log("onChange",keyword);
     setDoctitle(keyword);
     getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
@@ -93,7 +95,6 @@ const App = () => {
           key: element._source.docs_id,
         };
       }).filter(opt => opt != null);
-      console.log(newSearched);
       setOptions(newSearched);
     });
     // return [
