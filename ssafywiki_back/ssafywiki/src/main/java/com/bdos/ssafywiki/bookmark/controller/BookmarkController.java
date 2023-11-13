@@ -3,6 +3,7 @@ package com.bdos.ssafywiki.bookmark.controller;
 import com.bdos.ssafywiki.bookmark.dto.BookmarkDto;
 import com.bdos.ssafywiki.bookmark.service.BookmarkService;
 import com.bdos.ssafywiki.configuration.jwt.CustomUserDetails;
+import com.bdos.ssafywiki.docs_auth.dto.DocsAuthDto;
 import com.bdos.ssafywiki.document.dto.DocumentDto;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import com.bdos.ssafywiki.user.entity.User;
@@ -55,9 +56,8 @@ public class BookmarkController {
 
     @Operation(summary = "북마크 목록 조회하기", description = "사용자가 북마크한 문서 목록을 불러옵니다.")
     @GetMapping ("/api/docs/bookmark")
-    public ResponseEntity<List<BookmarkDto.Detail>> readBookmark(@PageableDefault(size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
-                                                                @AuthenticationPrincipal User userDetails){
-        List<BookmarkDto.Detail> list = bookmarkService.getBookmark(pageable, userDetails);
+    public ResponseEntity<List<DocsAuthDto.SimpleDocs>> readBookmark(@AuthenticationPrincipal User userDetails){
+        List<DocsAuthDto.SimpleDocs> list = bookmarkService.getBookmark(userDetails);
 
         return ResponseEntity.ok(list);
     }
