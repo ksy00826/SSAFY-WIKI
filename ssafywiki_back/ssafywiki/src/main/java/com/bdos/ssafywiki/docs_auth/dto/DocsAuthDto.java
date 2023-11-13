@@ -1,7 +1,9 @@
 package com.bdos.ssafywiki.docs_auth.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class DocsAuthDto {
@@ -64,5 +66,18 @@ public class DocsAuthDto {
     public static class MemberDeleteRequest {
         private Long authId;
         private Long userId;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @ToString
+    @Builder
+    public static class SimpleDocs {
+        private Long docsId;
+        private String title;
+        @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+        private LocalDateTime lastModifyTime;
     }
 }

@@ -2,6 +2,8 @@ package com.bdos.ssafywiki.user.controller;
 
 import com.bdos.ssafywiki.configuration.jwt.JwtTokenProvider;
 import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
+import com.bdos.ssafywiki.docs_auth.dto.DocsAuthDto;
+import com.bdos.ssafywiki.docs_auth.service.DocsAuthService;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.report.dto.DocumentReportDto;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
@@ -19,6 +21,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -42,6 +45,7 @@ public class UserController {
 
     private final UserService userService;
     private final RevisionService revisionService;
+    private final DocsAuthService docsAuthService;
     private final RevisionMapper revisionMapper;
     private final UserMapper userMapper;
 
@@ -107,5 +111,14 @@ public class UserController {
 
         List<RevisionDto.UserContribute> revisions = revisionService.getUserContributeDocsWithDate(user, date);
         return new ResponseEntity(revisions, HttpStatus.OK);
+    }
+
+
+    @Operation(summary = "내 그룹 목록", description = "유저가 프라이빗 권한을 가지고있는 문서 목록을 반환합니다.")
+    @PatchMapping("api/docs/auth/my")
+    public ResponseEntity<List<DocsAuthDto.SimpleDocs>> myDocs (@AuthenticationPrincipal User userDetails) {
+        List<DocsAuthDto.SimpleDocs> response = docsAuthService.myDocs(userDetails);
+
+        return ResponseEntity.ok(response);
     }
 }
