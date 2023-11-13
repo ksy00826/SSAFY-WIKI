@@ -162,7 +162,8 @@ public class DocumentService {
         else revision = revisionRepository.findByDocumentIdAndRevisionId(docsId, revId);
 
         RevisionDto.DocsResponse response = revisionMapper.toResponse(revision);
-        if ("".equals(revision.getContent().getText())) response.setContent("이 문서는 삭제되었습니다.");
+        if ("".equals(revision.getContent() != null ? revision.getContent().getText() : ""))
+            response.setContent("이 문서는 삭제되었습니다.");
 
         return response;
     }
