@@ -56,7 +56,7 @@ const Diff = () => {
       dataIndex: 'line',
       key: 'line',
       render: (text, record) => (
-        <div>{text}</div>
+        <div style={{wordBreak: 'break-all'}}>{text}</div>
       ),
       onCell: (record) => ({
         className: record.type === 'source' ? styles.CellSource : styles.CellTarget
