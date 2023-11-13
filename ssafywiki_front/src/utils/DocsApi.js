@@ -144,7 +144,7 @@ export const getRedirectKeyword = async (docsId) => {
 
 export const getDocsList = async (idList) => {
   try {
-    // console.log(`{
+    // //console.log(`{
     //   docsIds: ${JSON.stringify(idList)}
     // }`);
     const response = await axiosInstanceWithLogin.post(

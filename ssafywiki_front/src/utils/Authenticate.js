@@ -1,5 +1,9 @@
 import cookie from "react-cookies";
-import { axiosInstance, axiosInstanceNoTimeout, axiosInstanceWithLogin } from "./AxiosConfig";
+import {
+  axiosInstance,
+  axiosInstanceNoTimeout,
+  axiosInstanceWithLogin,
+} from "./AxiosConfig";
 
 // 로그인 되어있는지 확인하는 함수
 export const isLogin = () => {
@@ -20,7 +24,7 @@ export const signup = async (info) => {
   try {
     const response = await axiosInstance.post(`/api/members/signup`, info);
 
-    console.log(response.data);
+    //console.log(response.data);
     return response.data;
   } catch (error) {
     throw error;
@@ -37,7 +41,7 @@ export const login = async (email, password) => {
     });
 
     // 2. 성공시 쿠키에 저장
-    console.log(response.data);
+    //console.log(response.data);
     saveCookie(response.data.access_token);
 
     return { state: 200 };
@@ -100,7 +104,7 @@ export const sendEmail = async (email, role) => {
         authCode: "null",
       })
       .then((data) => {
-        console.log(data);
+        //console.log(data);
         return data;
       });
   } catch (error) {
@@ -117,7 +121,7 @@ export const authEmail = async (email, role, authCode) => {
         authCode: authCode,
       })
       .then((data) => {
-        console.log(data);
+        //console.log(data);
         return data;
       });
   } catch (error) {

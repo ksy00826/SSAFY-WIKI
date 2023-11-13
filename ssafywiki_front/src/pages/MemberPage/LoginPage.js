@@ -20,7 +20,7 @@ const Login = () => {
   const navigate = useNavigate();
 
   const doLogin = async (e) => {
-    console.log(e);
+    //console.log(e);
     login(e.email, e.password)
       .then((result) => {
         if (result.state === 200) {
@@ -39,7 +39,7 @@ const Login = () => {
         }
       })
       .catch((error) => {
-        console.log(error.response.data.message);
+        //console.log(error.response.data.message);
         setErrMsg(error.response.data.message);
       });
   };

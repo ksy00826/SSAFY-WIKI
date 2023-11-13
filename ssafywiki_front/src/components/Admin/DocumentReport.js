@@ -23,7 +23,7 @@ const DocumentReport = () => {
   const appendData = () => {
     setLoading(true);
     getDocumentReport(page - 1, 10).then((response) => {
-      console.log(response);
+      //console.log(response);
       if (response.content != null) {
         setData((prevData) => {
           const newData = response.content.filter((item) => {
@@ -32,7 +32,7 @@ const DocumentReport = () => {
           return [...prevData, ...newData];
         });
         setPage(page + 1);
-        console.log(page);
+        //console.log(page);
       }
       setLoading(false);
     });

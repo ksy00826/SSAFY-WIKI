@@ -47,7 +47,7 @@ export const deleteBookMark = async (docsId) => {
     const response = await axiosInstanceWithLogin.delete(
       `/api/docs/bookmark/${docsId}`
     );
-    console.log(response);
+    //console.log(response);
     return response.data;
   } catch (error) {
     throw error;

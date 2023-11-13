@@ -38,10 +38,10 @@ const MyPage = () => {
   React.useEffect(() => {
     getUserProfile().then((result) => {
       setInfo(result);
-      console.log(result);
+      //console.log(result);
       setNickname(result.nickname);
       setUserDocs(result.name + " (" + result.number + ")");
-      // console.log(result.name + " " + result.number);
+      // //console.log(result.name + " " + result.number);
     });
   }, []);
 
@@ -54,7 +54,7 @@ const MyPage = () => {
       writeAuth: 2,
     }).then((result) => {
       //완료
-      console.log(result);
+      //console.log(result);
       openNotification(
         "success",
         "문서작성 완료",
@@ -67,10 +67,10 @@ const MyPage = () => {
   const handleUserDocs = () => {
     const keyword = userDocs;
 
-    console.log("onSearch", userDocs);
+    //console.log("onSearch", userDocs);
     getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
-      console.log("output", output);
+      //console.log("output", output);
       var seq = 0;
       var newSearched = output.map(function (element) {
         seq = seq + 1;
@@ -80,8 +80,8 @@ const MyPage = () => {
           isDeleted: element._source.docs_is_deleted,
         };
       });
-      console.log(newSearched[0].label === keyword);
-      console.log(newSearched[0].isDeleted == false);
+      //console.log(newSearched[0].label === keyword);
+      //console.log(newSearched[0].isDeleted == false);
       if (
         newSearched.length > 0 &&
         newSearched[0].label === keyword &&
@@ -171,7 +171,7 @@ const MyPage = () => {
         <Input
           onChange={(e) => {
             setGithubId(e.target.value);
-            console.log(e.target.value);
+            // //console.log(e.target.value);
           }}
         ></Input>
       </Modal>

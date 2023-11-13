@@ -32,23 +32,35 @@ const SignUp = () => {
   };
   const saveGithub = (element) => {
     setGithub(element);
-  }
+  };
   const save = (e) => {
     setInfo(e);
-    console.log(e);
+    //console.log(e);
   };
   const save2 = (e) => {
     setInfo2(e);
-    console.log(e);
+    //console.log(e);
   };
   const makeDefaultDocs = () => {
-    console.log(info2);
-    console.log(github);
-    console.log(info.username + (` (${info.number})` || "" ));
+    //console.log(info2);
+    //console.log(github);
+    //console.log(info.username + (` (${info.number})` || "" ));
     createDocsWithoutLogin(
       {
-        title: info.username + (` (${info.number})` || "" ) ,
-        content: `### Hi there 👋\nI'm ${info.username}, a software engineer 💻 currently working at [Takeaway.com](https://www.ssafy.com/) 🍲🥡\n\nI have a passion for clean code, Java, teaching, PHP, Lifeguarding and Javascript\n\n# Here are some good things to introduce yourself\n<h1><span style={{color : \"red\"}}> ***  change several \"${github || ""}\" to your github Id ***</span></h1>\n# 문서를 꾸미기 위한 마크다운 뱃지들\n![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)\n![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)\n![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)\n![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)\n![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)\n\nhttps://ileriayo.github.io/markdown-badges/#markdown-badges\n\n# 깃허브에서 사용한 언어 그래프\n[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${github || ""}&layout=compact)](https://github.com/anuraghazra/github-readme-stats)\n\n# 깃허브 스탯\n[![${github || ""}'s github stats](https://github-readme-stats.vercel.app/api?username=${github || ""}&show_icons=true&theme=default)](https://github.com/${github || ""}/)\n\n### thema can be one of [ dark radical merko gruvbox tokyonight ondark cobalt synthwave highcontrast dracula ]\n\n# 하이퍼링크\n[Email 📬](mailto:hallo@dannyverpoort.nl)\n[LinkedIn 💼](https://linkedin.com/in/dannyverpoort)\n[Twitter 🐦](https://twitter.com/dannyverp)\n[Website 🌍](https://dannyverpoort.dev/)`,
+        title: info.username + (` (${info.number})` || ""),
+        content: `### Hi there 👋\nI'm ${
+          info.username
+        }, a software engineer 💻 currently working at [Takeaway.com](https://www.ssafy.com/) 🍲🥡\n\nI have a passion for clean code, Java, teaching, PHP, Lifeguarding and Javascript\n\n# Here are some good things to introduce yourself\n<h1><span style={{color : \"red\"}}> ***  change several \"${
+          github || ""
+        }\" to your github Id ***</span></h1>\n# 문서를 꾸미기 위한 마크다운 뱃지들\n![C++](https://img.shields.io/badge/c++-%2300599C.svg?style=for-the-badge&logo=c%2B%2B&logoColor=white)\n![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)\n![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)\n![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)\n![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)\n\nhttps://ileriayo.github.io/markdown-badges/#markdown-badges\n\n# 깃허브에서 사용한 언어 그래프\n[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${
+          github || ""
+        }&layout=compact)](https://github.com/anuraghazra/github-readme-stats)\n\n# 깃허브 스탯\n[![${
+          github || ""
+        }'s github stats](https://github-readme-stats.vercel.app/api?username=${
+          github || ""
+        }&show_icons=true&theme=default)](https://github.com/${
+          github || ""
+        }/)\n\n### thema can be one of [ dark radical merko gruvbox tokyonight ondark cobalt synthwave highcontrast dracula ]\n\n# 하이퍼링크\n[Email 📬](mailto:hallo@dannyverpoort.nl)\n[LinkedIn 💼](https://linkedin.com/in/dannyverpoort)\n[Twitter 🐦](https://twitter.com/dannyverp)\n[Website 🌍](https://dannyverpoort.dev/)`,
         categories: [info.roll],
         readAuth: 1,
         writeAuth: 2,
@@ -56,7 +68,7 @@ const SignUp = () => {
       info2.access_token
     ).then((result) => {
       //완료
-      console.log(result);
+      //console.log(result);
       openNotification(
         "success",
         "문서작성 완료",
@@ -78,14 +90,23 @@ const SignUp = () => {
 
       {current === 0 ? <Form1 goNext={next} saveInfo={save}></Form1> : <></>}
       {current === 1 ? (
-        <Form2 goNext={next} info={info} saveInfo={save2} saveGithub={saveGithub}></Form2>
+        <Form2
+          goNext={next}
+          info={info}
+          saveInfo={save2}
+          saveGithub={saveGithub}
+        ></Form2>
       ) : (
         <></>
       )}
       {current === 2 ? (
         <>
           <h3>안녕하세요, {info.username}님</h3>
-          <Input addonBefore="GITHUB ID" onChange={saveGithub} defaultValue={(info2.email || "").split('@')[0]}></Input>
+          <Input
+            addonBefore="GITHUB ID"
+            onChange={saveGithub}
+            defaultValue={(info2.email || "").split("@")[0]}
+          ></Input>
           <Button type="default" onClick={makeDefaultDocs}>
             {info.username} 문서 생성하기
           </Button>

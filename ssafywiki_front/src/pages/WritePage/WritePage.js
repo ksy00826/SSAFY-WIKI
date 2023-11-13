@@ -39,10 +39,10 @@ const WritePage = () => {
   }, []);
 
   React.useEffect(() => {
-    console.log(readAuth);
+    //console.log(readAuth);
   }, [readAuth]);
   React.useEffect(() => {
-    console.log(writeAuth);
+    //console.log(writeAuth);
   }, [writeAuth]);
 
   const create = () => {
@@ -55,7 +55,7 @@ const WritePage = () => {
       writeAuth: writeAuth,
     }).then((result) => {
       //완료
-      console.log(result);
+      //console.log(result);
       openNotification(
         "success",
         "문서작성 완료",
@@ -72,7 +72,7 @@ const WritePage = () => {
       title: title,
       redirectTitle: redirectKeyword,
     }).then((result) => {
-      console.log(result);
+      //console.log(result);
       openNotification(
         "success",
         "문서작성 완료",

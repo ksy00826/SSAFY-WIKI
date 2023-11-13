@@ -20,15 +20,17 @@ const DocsList = () => {
 
     getSearchDoc(title).then((data) => {
       var output = data.data.hits.hits;
-      // console.log(output);
-      var newSearched = output.map(function (element) {
-        if(element._source.docs_is_deleted) return null;
-        return element._source.docs_id;
-      }).filter(opt => opt != null);;
-      // console.log(newSearched);
+      // //console.log(output);
+      var newSearched = output
+        .map(function (element) {
+          if (element._source.docs_is_deleted) return null;
+          return element._source.docs_id;
+        })
+        .filter((opt) => opt != null);
+      // //console.log(newSearched);
 
       var getDocsListResponse = getDocsList(newSearched).then((data) => {
-        console.log(data[0]);
+        //console.log(data[0]);
         if (data[0] !== undefined) {
           setExist(data[0].title === title);
         }
@@ -68,7 +70,10 @@ const DocsList = () => {
                   </h1>
                   <h1 className={stlyes.title}>{item.title}</h1>
                 </div>
-                <div className={stlyes.content}>{item.content.substr(0, 400)}{item.content.length > 400 && ("...")}</div>
+                <div className={stlyes.content}>
+                  {item.content.substr(0, 400)}
+                  {item.content.length > 400 && "..."}
+                </div>
               </div>
             </List.Item>
           )}

@@ -11,7 +11,7 @@ const WriteRedirect = ({
 }) => {
   const keywordChange = (value) => {
     setRedirectKeyword(value.target.value);
-    console.log("redirect: ", value.target.value);
+    //console.log("redirect: ", value.target.value);
   };
 
   return (

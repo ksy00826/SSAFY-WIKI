@@ -17,17 +17,16 @@ const DocsList = ({
   const [isError, setIsError] = useState(false);
   const [viewType, setViewType] = useState(1);
   const handleChange = (value) => {
-    
-    console.log(`selected ${value}`);
+    //console.log(`selected ${value}`);
 
     setSelectedClass(value);
   };
 
   // const titleChange = (value) => {
   //   setTitle(value.target.value);
-  //   console.log(value.target.value);
+  //   //console.log(value.target.value);
   // };
-  
+
   return (
     <div>
       <Row>
@@ -70,7 +69,7 @@ const DocsList = ({
         setViewType={setViewType}
       ></WriteForm>
 
-      {!disabled&&!isError&&(viewType==2) ? (
+      {!disabled && !isError && viewType == 2 ? (
         <Row>
           <Col flex={8}></Col>
           <Col>

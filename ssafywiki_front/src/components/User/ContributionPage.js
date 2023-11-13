@@ -9,13 +9,13 @@ const ContributionPage = () => {
   const [docc, setdocc] = React.useState();
   const navigate = useNavigate();
   const handleDocument = (id, content) => {
-    console.log(id, content);
+    //console.log(id, content);
     navigate(`/res/content/${id}/${content}`);
   };
   // 처음 랜더링시 내용 가져오기
   React.useEffect(() => {
     getContributedDocs().then((response) => {
-      console.log(response);
+      //console.log(response);
       setdocc(
         response.map((doc) => (
           <Col key={doc.createdAt} span={8}>

@@ -22,7 +22,7 @@ const EdituserPage = () => {
   const [password, setPassword] = React.useState("");
   React.useEffect(() => {
     getUserProfile().then((response) => {
-      console.log(response);
+      //console.log(response);
       setEmail(response.email);
       setNickname(response.nickname);
       setCampus(response.campus);
@@ -32,7 +32,7 @@ const EdituserPage = () => {
   }, []);
 
   const handleNicknameChange = (e) => {
-    console.log(e.target.value);
+    //console.log(e.target.value);
     setNickname(e.target.value);
   };
 
@@ -41,10 +41,10 @@ const EdituserPage = () => {
       nickname: nickname,
       password: e.password,
     };
-    console.log(responseBody);
+    //console.log(responseBody);
     editUserProfile(responseBody)
       .then((response) => {
-        console.log(response);
+        //console.log(response);
         openNotification("success", "회원정보 수정 완료");
       })
       .catch((e) => console.error(e.message));

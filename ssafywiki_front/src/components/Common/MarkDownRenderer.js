@@ -69,7 +69,7 @@ const LinkTo = ({ children, link }) => {
     link.includes("http://") || link.includes("https://")
       ? link
       : `https://${link}`;
-  console.log(absoluteLink);
+  //console.log(absoluteLink);
   return (
     <a href={absoluteLink} className={style.LinkTo}>
       #{children}
