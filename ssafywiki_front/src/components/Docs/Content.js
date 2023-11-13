@@ -47,9 +47,12 @@ const Content = () => {
 
   // 처음 랜더링시 내용 가져오기
   React.useEffect(() => {
+    console.log("state", state);
     if (state == null) {
       getDocsContent(params.docsId)
         .then((response) => {
+          setErrMsg("");
+          console.log("response", response);
           //리다이렉트 문서인지 검사
           let fromId = searchParams.get("fromId");
           let fromTitle = searchParams.get("fromTitle");
@@ -95,7 +98,8 @@ const Content = () => {
         });
     } else {
       getDocsVersionContent(params.docsId, state.revId).then((response) => {
-        console.log(response);
+        setErrMsg("");
+        console.log("not null response", response);
         setContent(response.content);
         setTitle(response.title);
         setModifedAt(convertDate(response.modifiedAt));
@@ -173,7 +177,7 @@ const Content = () => {
           ) : (
             <Alert type="info" message={redirectInfo} showIcon />
           )}
-          
+
           <Card className={styles.card}>
             <div className={styles.contentHeader}>
               <Space size={[0, 8]} className={styles.tag} wrap>
