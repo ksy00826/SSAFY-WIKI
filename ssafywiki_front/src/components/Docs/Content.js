@@ -61,11 +61,9 @@ const Content = () => {
           if (fromId != null && fromTitle != null) {
             const url = `/res/content/${fromId}/${fromTitle}`;
             setRedirectInfo(
-              <>
-                <p>
+                <p className={styles.redirectInfo}>
                   <a href={url}>{fromTitle}</a>에서 넘어옴
                 </p>
-              </>
             );
           }
           var colors = [
@@ -177,7 +175,7 @@ const Content = () => {
           {redirectInfo === "" ? (
             <></>
           ) : (
-            <Alert type="info" message={redirectInfo} showIcon />
+            <Alert type="info" message={redirectInfo} showIcon style={{margin:"0 1.5rem 0 1.5rem"}}/>
           )}
 
           <Card className={styles.card}>
@@ -201,6 +199,7 @@ const Content = () => {
                 type="warning"
                 message="현재 문서를 수정하는 사용자가 있습니다. 문서 수정에 유의해 주세요."
                 showIcon
+                style={{margin:"0 1.5rem 0 1.5rem"}}
               />
             ) : (
               <></>
