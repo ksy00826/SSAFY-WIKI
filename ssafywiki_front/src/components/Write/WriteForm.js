@@ -2,7 +2,7 @@ import { useState, useRef, useEffect, Component } from "react";
 import { Input, Tabs, Button } from "antd";
 import styles from "./WriteForm.module.css";
 import MarkdownRenderer from "components/Common/MarkDownRenderer";
-
+import {InfoCircleOutlined} from "@ant-design/icons"
 const { TextArea } = Input;
 
 const WriteForm = ({
@@ -89,6 +89,7 @@ const WriteForm = ({
           }}
           type="card"
         />
+        <span className={styles.info}><InfoCircleOutlined /> 반드시 문서확인을 통해 올바르게 문서가 작성되어 있는지 확인 후 작성 버튼을 눌러주세요</span>
         <div className={styles.TabBox}>
           <Button
             type="text"
@@ -110,6 +111,11 @@ const WriteForm = ({
             onClick={() => insertAtCursor("<Note></Note>")}
           >
             주석
+          </Button>
+          <Button type="text"
+            className={styles.Button}
+            onClick={() => insertAtCursor(`<span style={{ color:"" }}></span>`)}>
+            스타일
           </Button>
         </div>
       </div>
