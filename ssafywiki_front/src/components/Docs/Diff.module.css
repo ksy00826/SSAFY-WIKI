@@ -1,0 +1,17 @@
+.CellSource{
+    padding-block: 0;
+    padding-inline: 0;
+    background-color: #FCD2C9;
+}
+
+.CellTarget{
+    padding-block: 0;
+    padding-inline: 0;
+    background-color: #D8FCC9;
+}
+
+.CellPosition{
+    padding-block: 0;
+    padding-inline: 0;
+    background-color: #D8D8D8;
+}
