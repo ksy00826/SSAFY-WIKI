@@ -14,14 +14,14 @@ import {
 import { LockOutlined } from "@ant-design/icons";
 import { checkSSAFYEmail } from "utils/UserApi";
 import { axiosInstance } from "utils/AxiosConfig";
-
+import { openNotification } from "App";
 import { signup, sendEmail, authEmail } from "utils/Authenticate";
 
 import styles from "./SignUpForm2.module.css";
 
 const { Search } = Input;
 
-const SignUp = ({ goNext, info }) => {
+const SignUp = ({ goNext, info, saveInfo }) => {
   const [checking, setChecking] = React.useState(false);
   const [emailBtn, setEmailBtn] = React.useState("이메일 확인");
   const [emailSuccess, setEmailSuccess] = React.useState(false);
@@ -54,6 +54,10 @@ const SignUp = ({ goNext, info }) => {
     signup(responseBody)
       .then((response) => {
         console.log(response);
+        saveInfo({
+          access_token : response.access_token,
+          email : responseBody.email
+        });
         goNext();
       })
       .catch((e) => console.error(e.message));
@@ -104,7 +108,11 @@ const SignUp = ({ goNext, info }) => {
   const handleSendEmail = async () => {
     const email = form.getFieldValue(["email"]);
     console.log(email, "에 인증 메일을 보낸다.");
-
+    openNotification(
+      "success",
+      "인증메일 전송",
+      `${email}로 이메일이 전송되었습니다.`
+    );
     try {
       sendEmail(email, info.roll).then((data) => {
         console.log(data);
