@@ -3,6 +3,12 @@ import {} from "@ant-design/icons";
 import { Layout, theme, Row, Col, Image, Divider, Tooltip, Button } from "antd";
 import { getUserProfile } from "utils/UserApi";
 import { AuditOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+import {
+  getSearchDoc,
+  getDocsContent,
+  getRedirectKeyword,
+} from "utils/DocsApi";
 
 import UserNavbar from "components/Common/UserNavbar";
 import LawnGraph from "./LawnGraph";
@@ -10,7 +16,9 @@ import LawnGraph from "./LawnGraph";
 const { Header, Content, Footer, Sider } = Layout;
 
 const MyPage = () => {
+  const navigate = useNavigate();
   const [nickname, setNickname] = React.useState();
+  const [userDocs, setUserDocs] = React.useState();
 
   const {
     token: { colorBgContainer },
@@ -20,8 +28,46 @@ const MyPage = () => {
     getUserProfile().then((result) => {
       console.log(result);
       setNickname(result.nickname);
+      setUserDocs(result.name + " (" + result.number + ")");
+      // console.log(result.name + " " + result.number);
     });
   }, []);
+
+  const handleUserDocs = () => {
+    const keyword = userDocs;
+
+    console.log("onSearch");
+    getSearchDoc(keyword).then((data) => {
+      var output = data.data.hits.hits;
+      // console.log(output);
+      var seq = 0;
+      var newSearched = output.map(function (element) {
+        seq = seq + 1;
+        return {
+          label: element._source.docs_title,
+          value: element._source.docs_id,
+        };
+      });
+      if (newSearched.length > 0 && newSearched[0].label === keyword) {
+        getDocsContent(newSearched[0].value).then((response) => {
+          //리다이렉트 문서인지 검사
+          if (response.redirect) {
+            getRedirectKeyword(newSearched[0].value).then((res) => {
+              navigate(
+                `/res/redirect?title=${res.originDocsTitle}&preId=${newSearched[0].value}&preTitle=${newSearched[0].label}`
+              );
+            });
+          } else {
+            navigate(
+              `/res/content/${newSearched[0].value}/${newSearched[0].label}`
+            );
+          }
+        });
+      } else {
+        navigate(`/res/list?title=${keyword}`);
+      }
+    });
+  };
 
   return (
     <Layout
@@ -54,7 +100,11 @@ const MyPage = () => {
                 <h1>{nickname}</h1>
               </Col>
               <Tooltip placement="top" title="내 문서">
-                <Button type="default" icon={<AuditOutlined />} />
+                <Button
+                  type="default"
+                  icon={<AuditOutlined />}
+                  onClick={handleUserDocs}
+                />
               </Tooltip>
               <Col span={17}></Col>
             </Row>
