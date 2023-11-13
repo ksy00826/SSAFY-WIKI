@@ -1,5 +1,7 @@
 package com.bdos.ssafywiki.document.controller;
 
+import com.bdos.ssafywiki.docs_auth.dto.DocsAuthDto;
+import com.bdos.ssafywiki.docs_auth.service.DocsAuthService;
 import com.bdos.ssafywiki.document.dto.DocumentDto;
 import com.bdos.ssafywiki.document.mapper.DocumentMapper;
 import com.bdos.ssafywiki.document.service.DocumentService;
@@ -29,6 +31,7 @@ import java.util.List;
 public class DocumentController {
 
     private final DocumentService documentService;
+    private final DocsAuthService docsAuthService;
     private final TopicService topicService;
     private final RedisPublisher redisPublisher;
     private final DocumentMapper documentMapper;
@@ -38,6 +41,10 @@ public class DocumentController {
     public ResponseEntity<RevisionDto.DocsResponse> writeDocs(@RequestBody DocumentDto.Post post,
                                                               @AuthenticationPrincipal User userDetails){
         RevisionDto.DocsResponse response = documentService.writeDocs(post, userDetails);
+
+        if(post.getReadAuth() == 100 || post.getWriteAuth() == 100) {
+            docsAuthService.updateAuth(new DocsAuthDto.AuthRequest(response.getDocsId(), post.getReadAuth(), post.getWriteAuth()), userDetails);
+        }
 
         return ResponseEntity.ok(response);
     }
