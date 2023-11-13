@@ -31,12 +31,23 @@ export const createDocs = async (docs) => {
   }
 };
 
-export const createDocsWithoutLogin = async (docs,token) => {
+export const createDocsWithoutLogin = async (docs, token) => {
   try {
-    const response = await axiosInstanceWithLogin.post(`/api/docs`, docs, {headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    }});
+    const response = await axiosInstanceWithLogin.post(`/api/docs`, docs, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const createDocsBeforeLogin = async (docs, token) => {
+  try {
+    const response = await axiosInstanceWithLogin.post(`/api/docs`, docs);
     return response.data;
   } catch (error) {
     throw error;
@@ -140,13 +151,15 @@ export const getRedirectKeyword = async (docsId) => {
   }
 };
 
-
 export const getDocsList = async (idList) => {
   try {
     // console.log(`{
     //   docsIds: ${JSON.stringify(idList)}
     // }`);
-    const response = await axiosInstanceWithLogin.post(`/api/docs/list`,JSON.stringify(idList));
+    const response = await axiosInstanceWithLogin.post(
+      `/api/docs/list`,
+      JSON.stringify(idList)
+    );
     return response.data;
   } catch (error) {
     throw error;
