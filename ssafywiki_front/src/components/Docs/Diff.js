@@ -70,8 +70,7 @@ const Diff = () => {
       <Card>
         <strong>r{queryParams.get('oldrev')} vs r{queryParams.get('rev')}</strong>
       </Card>
-      <div style={{ width: '80%' }}>
-        <br></br>
+      <Card>
         <ConfigProvider
           theme={{
             components: {
@@ -86,7 +85,7 @@ const Diff = () => {
           <Table showHeader={false} dataSource={diffsToLines} columns={columns} pagination={false} bordered />
         </ConfigProvider>
 
-      </div>
+      </Card>
 
     </div>
   );
