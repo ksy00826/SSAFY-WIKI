@@ -6,6 +6,7 @@ import { BrowserRouter } from "react-router-dom";
 import AppRouter from "./AppRouter";
 import Navbar from "./components/Common/Navbar";
 import MyFooter from "./components/Common/Footer";
+import ScrollToTop from "components/Common/ScrollToTop";
 
 import { notification } from "antd";
 
@@ -33,6 +34,7 @@ function App() {
             minHeight: "100vh",
           }}
         >
+          <ScrollToTop />
           <Header className="App-header">
             <Navbar />
           </Header>
