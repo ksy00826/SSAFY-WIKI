@@ -31,6 +31,18 @@ export const createDocs = async (docs) => {
   }
 };
 
+export const createDocsWithoutLogin = async (docs,token) => {
+  try {
+    const response = await axiosInstanceWithLogin.post(`/api/docs`, docs, {headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    }});
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getDiscussList = async (docsId) => {
   try {
     const response = await axiosInstanceWithLogin.get(
