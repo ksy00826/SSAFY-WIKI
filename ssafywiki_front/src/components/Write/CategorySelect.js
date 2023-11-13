@@ -12,9 +12,9 @@ const CategorySelect = ({ next, setReadAuth, setWriteAuth, setIsRedirect }) => {
     setWriteAuth(2);
     next();
   };
-  const clickCS = () => {
-    setReadAuth(1);
-    setWriteAuth(1);
+  const clickPrivate = () => {
+    setReadAuth(2);
+    setWriteAuth(100);
     next();
   };
   const clickRedirect = () => {
@@ -42,7 +42,7 @@ const CategorySelect = ({ next, setReadAuth, setWriteAuth, setIsRedirect }) => {
         <Col xs={6} sm={8} md={8} lg={10}>
           <Button ghost block onClick={clickSsafyOpen} style={buttonStyle}>
             <Card title="SSAFY 공개 문서" size="small">
-              <p>SSAFY에 대한 흥미로운 정보!</p>
+              <p>여러 목적으로 작성되는 문서!</p>
               <p>외부인 열람이 가능해요</p>
             </Card>
           </Button>
@@ -60,10 +60,10 @@ const CategorySelect = ({ next, setReadAuth, setWriteAuth, setIsRedirect }) => {
       <Row gutter={24}>
         <Col xs={0} sm={1} md={1} lg={2}></Col>
         <Col xs={6} sm={8} md={8} lg={10}>
-          <Button ghost block onClick={clickCS} style={buttonStyle}>
-            <Card title="일반 문서" size="small">
+          <Button ghost block onClick={clickPrivate} style={buttonStyle}>
+            <Card title="프라이빗 문서" size="small">
               <p>여러 목적으로 작성되는 문서!</p>
-              <p>인물, CS 등 본인이 원하는 정보를 작성할 수 있어요</p>
+              <p>원하는 사용자를 초대해 공개/수정 할 수 있어요</p>
             </Card>
           </Button>
         </Col>
