@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styles from "./Navbar.module.css";
-import Logoimg from "assets/img/logo.png";
+import Logoimg from "assets/img/ssafywiki.png";
 import {
   AppstoreOutlined,
   MailOutlined,
@@ -36,7 +36,7 @@ const Navbar = () => {
   const items1 = [
     {
       key: "SubMenu",
-      label: <UserOutlined style={{ fontSize: "30px" }} />,
+      label: <div className={styles.label}><span className={styles.labelText}>/</span><UserOutlined style={{ fontSize: "30px" }} /></div>,
       children: [
         {
           label: <a onClick={handleLogin}>로그인</a>,
@@ -52,21 +52,16 @@ const Navbar = () => {
   const items2 = [
     {
       key: "SubMenu",
-      label: <UserOutlined style={{ fontSize: "30px" }} />,
+      label: <div className={styles.label}><span className={styles.labelText}>/</span><UserOutlined style={{ fontSize: "30px" }} /></div>,
       children: [
+        {
+          label: <Link to="/userpage">마이페이지</Link>,
+          key: "mypage",
+        },
         {
           label: <a onClick={handleLogout}>로그아웃</a>,
           key: "logout",
         },
-        // {
-        //   label: <Link to="/userpage">마이페이지</Link>,
-        //   key: "mypage",
-        // },
-        {
-          label: <Link to="/userpage">내 기여 목록</Link>,
-          key: "mypage",
-        },
-        { label: <Link to="/userpage">스크랩 목록</Link>, key: "bookmark" },
       ],
     },
   ];
@@ -74,13 +69,13 @@ const Navbar = () => {
   const items3 = [
     {
       key: "SubMenu",
-      label: <UserOutlined style={{ fontSize: "30px" }} />,
+      label: <div className={styles.label}><span className={styles.labelText}>/</span><UserOutlined style={{ fontSize: "30px" }} /></div>,
       children: [
+        { label: <Link to="/userpage">관리자 페이지</Link>, key: "admin" },
         {
           label: <a onClick={handleLogout}>로그아웃</a>,
           key: "logout",
         },
-        { label: <Link to="/userpage">관리자 페이지</Link>, key: "admin" },
       ],
     },
   ];
@@ -113,7 +108,7 @@ const Navbar = () => {
           theme={{
             token: {},
           }}
-          style={{ width: "30px", paddingTop: "5px" }}
+          style={{ width: "30px", paddingTop: "10px", marginTop: "5px" }}
         >
           {user ? (
             isAdmin ? (
