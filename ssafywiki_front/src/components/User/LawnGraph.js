@@ -15,7 +15,7 @@ import {
 import { getUserContribute, getUserContributeOneDay } from "utils/UserApi";
 import { FileProtectOutlined, SearchOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import styled from "styled-components";
+// import styled from "styled-components";
 // import "./LawnGraph.css"; // CSS 파일 임포트
 const { Meta } = Card;
 const LawnGraph = () => {
@@ -176,37 +176,37 @@ const LawnGraph = () => {
     overflowY: "hidden",
   };
 
-  const ScrollStyleComponent = styled.nav`
-    display: flex;
-    overflow: auto;
-    height: 45px;
-    &::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.4);
-    }
-    &::-webkit-scrollbar-thumb {
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 6px;
-    }
-  `;
-  const ScrollStyleRow = styled(Row)`
-    display: flex;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
-    &::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-      border-radius: 6px;
-      background: rgba(255, 255, 255, 0.4);
-    }
-    &::-webkit-scrollbar-thumb {
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 6px;
-    }
-  `;
+  // const ScrollStyleComponent = styled.nav`
+  //   display: flex;
+  //   overflow: auto;
+  //   height: 45px;
+  //   &::-webkit-scrollbar {
+  //     width: 8px;
+  //     height: 8px;
+  //     border-radius: 6px;
+  //     background: rgba(255, 255, 255, 0.4);
+  //   }
+  //   &::-webkit-scrollbar-thumb {
+  //     background: rgba(0, 0, 0, 0.3);
+  //     border-radius: 6px;
+  //   }
+  // `;
+  // const ScrollStyleRow = styled(Row)`
+  //   display: flex;
+  //   flex-wrap: nowrap;
+  //   overflow-x: auto;
+  //   overflow-y: hidden;
+  //   &::-webkit-scrollbar {
+  //     width: 8px;
+  //     height: 8px;
+  //     border-radius: 6px;
+  //     background: rgba(255, 255, 255, 0.4);
+  //   }
+  //   &::-webkit-scrollbar-thumb {
+  //     background: rgba(0, 0, 0, 0.3);
+  //     border-radius: 6px;
+  //   }
+  // `;
 
   return (
     <>
