@@ -59,7 +59,11 @@ public class AdminService {
         documentReportRepository.save(documentReport);
 
         Revision topRevision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
-        String content = topRevision.getContent().getText();
+        String content = topRevision.getContent() != null ? topRevision.getContent().getText() : null;
+
+        if(content == null) {
+            return documentReport;
+        }
 
         long diffAmount = myDiffUtils.diffLength(DiffUtils.diff(myDiffUtils.splitIntoLines(content), myDiffUtils.splitIntoLines("")));
         Revision revision = Revision.builder()
