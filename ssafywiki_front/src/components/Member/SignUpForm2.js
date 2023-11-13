@@ -56,7 +56,8 @@ const SignUp = ({ goNext, info, saveInfo }) => {
         console.log(response);
         saveInfo({
           access_token : response.access_token,
-          email : responseBody.email
+          email : responseBody.email,
+          number : responseBody.number
         });
         goNext();
       })
