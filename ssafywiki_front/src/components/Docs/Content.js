@@ -52,6 +52,7 @@ const Content = () => {
       getDocsContent(params.docsId)
         .then((response) => {
           setErrMsg("");
+          setRedirectInfo("");
           console.log("response", response);
           //리다이렉트 문서인지 검사
           let fromId = searchParams.get("fromId");
@@ -99,6 +100,7 @@ const Content = () => {
     } else {
       getDocsVersionContent(params.docsId, state.revId).then((response) => {
         setErrMsg("");
+        setRedirectInfo("");
         console.log("not null response", response);
         setContent(response.content);
         setTitle(response.title);
