@@ -9,6 +9,11 @@ public enum Privilege {
     WRITE_LV2,
     UPDATE_LV2,
     DELETE,
+
+
+    READ_LV3,
+    WRITE_LV3,
+    UPDATE_LV3,
     ;
 
 
@@ -25,6 +30,11 @@ public enum Privilege {
             if(option=='R') return READ_LV2;
             if(option=='U') return UPDATE_LV2;
             if(option=='W') return WRITE_LV2;
+        }
+        if(lv==3) {
+            if(option=='R') return READ_LV3;
+            if(option=='U') return UPDATE_LV3;
+            if(option=='W') return WRITE_LV3;
         }
         return null;
     }
