@@ -1,36 +1,65 @@
 import React, { useEffect, useState } from "react";
-import { Card, Row, Col, Typography, Table } from "antd";
+import { Card, Table, ConfigProvider } from "antd";
 import { useParams, useLocation } from "react-router-dom";
 import { compareVersions } from "utils/RevisionApi";
-
+import styles from "components/Docs/Diff.module.css"
 
 const Diff = () => {
   const params = useParams();
   const { state, search } = useLocation();
   const queryParams = new URLSearchParams(search);
-  const { Text } = Typography;
   const [diffs, setDiffs] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       const result = await compareVersions(state.oldRev, state.rev);
       setDiffs(result);
-    }
+    };
     fetchData();
   }, [state.oldRev, state.rev]);
 
-  const diffsTolines = diffs.map(diff => ({
-    source: diff.source.lines.map((line, index) => ({
-      position: diff.source.position + index + 1,
-      line: line
+  const diffsToLines = diffs.flatMap(diff => [
+    ...diff.source.lines.map((line, index) => ({
+      key: `source-${index}`,
+      sourcePosition: diff.source.position + index + 1,
+      targetPosition: null,
+      line: line,
+      type: 'source'
     })),
-    target: diff.target.lines.map((line, index) => ({
-      position: diff.target.position + index + 1,
-      line: line
-    })),
-    type: diff.type
-  }));
+    ...diff.target.lines.map((line, index) => ({
+      key: `target-${index}`,
+      sourcePosition: null,
+      targetPosition: diff.target.position + index + 1,
+      line: line,
+      type: 'target'
+    }))
+  ]);
 
+  const columns = [
+    {
+      dataIndex: 'sourcePosition',
+      key: 'sourcePosition',
+      width: '5%',
+      onCell: () => ({
+        className: styles.CellPosition
+      })
+    },
+    {
+      dataIndex: 'targetPosition',
+      key: 'targetPosition',
+      width: '5%',
+      onCell: () => ({
+        className: styles.CellPosition
+      })
+    },
+    {
+      dataIndex: 'line',
+      key: 'line',
+      onCell: (record) => ({
+        className: record.type === 'source' ? styles.CellSource : styles.CellTarget
+      })
+    },
+  ];
 
   return (
     <div>
@@ -38,29 +67,25 @@ const Diff = () => {
       <Card>
         <strong>r{queryParams.get('oldrev')} vs r{queryParams.get('rev')}</strong>
       </Card>
-      <table>
-        <tbody>
-          {diffsTolines.map((diff, idx) => (
-            <>
-              {diff.source.map((item) => (
-                <tr>
-                  <th className="ant-table-cell">{item.position}</th>
-                  <th className="ant-table-cell"></th>
-                  <td bgcolor="#FCD2C9">{item.line}</td>
-                </tr>
-              ))}
-              {diff.target.map((item) => (
-                <tr>
-                  <th className="ant-table-cell"></th>
-                  <th className="ant-table-cell">{item.position}</th>
-                  <td bgcolor="#D8FCC9">{item.line}</td>
-                </tr>
-              ))}
-            </>
-          ))}
-        </tbody>
-      </table>
-    </div >
+      <div style={{ width: '80%' }}>
+        <br></br>
+        <ConfigProvider
+          theme={{
+            components: {
+              Table: {
+                cellPaddingBlock: 10,
+                cellPaddingInline: 10,
+                rowHoverBg: null
+              }
+            }
+          }}
+        >
+          <Table showHeader={false} dataSource={diffsToLines} columns={columns} pagination={false} bordered />
+        </ConfigProvider>
+
+      </div>
+
+    </div>
   );
 };
 
