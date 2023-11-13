@@ -6,7 +6,7 @@ const DocsList = () => {
   const [title, setTitle] = useState("");
   const [docs, setDocs] = useState([]);
   const [searchParams] = useSearchParams();
-
+  const [isExist, setExist] = useState(false);
   const navigate = useNavigate();
   const makeDocs = () => {
     navigate(`/wrt?title=${title}`);
@@ -23,8 +23,12 @@ const DocsList = () => {
           return element._source.docs_id;
       });
       // console.log(newSearched);
+      
       var getDocsListResponse = getDocsList(newSearched).then((data)=>{
         // console.log(data[1]);
+
+        setExist(data[0].title === title)
+
         setDocs(data);
       });
       
@@ -34,10 +38,9 @@ const DocsList = () => {
   return (
     <div>
     <div>
-      <Button type="primary">DocsList</Button>
-      <Button type="default" onClick={makeDocs}>
+      {!isExist && (<Button type="default" onClick={makeDocs}>
         '{title}' 문서 생성하기
-      </Button>
+      </Button>)}
     </div>
     <div>
     <List
