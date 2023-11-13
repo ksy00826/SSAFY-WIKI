@@ -32,7 +32,7 @@ const BookMark = ({ docsId }) => {
         setBookmark(response);
       })
       .catch((err) => console.log(err));
-  }, []);
+  });
 
   const handleAddStar = () => {
     writeBookMark(docsId)
