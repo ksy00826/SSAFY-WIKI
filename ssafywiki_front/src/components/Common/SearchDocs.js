@@ -77,12 +77,13 @@ const App = () => {
       var output = data.data.hits.hits;
       // console.log(output);
       var newSearched = output.map(function (element) {
+        if(element._source.docs_is_deleted) return null;
         return {
           label: element._source.docs_title,
           value: element._source.docs_title,
           key: element._source.docs_id,
         };
-      });
+      }).filter(opt => opt != null);
       console.log(newSearched);
       setOptions(newSearched);
     });
