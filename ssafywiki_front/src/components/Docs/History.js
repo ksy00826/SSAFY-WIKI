@@ -38,7 +38,7 @@ const History = () => {
   }, [params, currentPage]);
 
   const handlePageChange = (page, pageSize) => {
-    console.log(page, pageSize);
+    //console.log(page, pageSize);
     setCurrentPage(page);
     setPageSize(pageSize);
   };
@@ -51,7 +51,7 @@ const History = () => {
         ? { oldRevNum: item.number }
         : { revNum: item.number }),
     }));
-    console.log(selectedRevision);
+    //console.log(selectedRevision);
   };
 
   const isOldRevDisabled = (item) => {

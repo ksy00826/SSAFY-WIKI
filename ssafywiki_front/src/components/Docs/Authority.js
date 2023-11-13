@@ -20,7 +20,7 @@ const Authority = () => {
   const [errMsg, setErrMsg] = React.useState("");
 
   const invite = (value) => {
-    console.log(value);
+    //console.log(value);
     // 이메일이 존재하는 유저인지 체크하고 추가.
   };
 
@@ -29,7 +29,7 @@ const Authority = () => {
     setErrMsg("");
     getAuth(params.docsId)
       .then((response) => {
-        console.log(response);
+        //console.log(response);
         setRead(response.read);
         setWrite(response.write);
         if (response.users) {
@@ -48,7 +48,7 @@ const Authority = () => {
   }, []);
 
   const handleUpdate = () => {
-    // console.log("update", selectedRead, selectedWrite);
+    // //console.log("update", selectedRead, selectedWrite);
     // selected값이 변했는지 체크
     let flag1 = true;
     let flag2 = true;
@@ -71,14 +71,14 @@ const Authority = () => {
 
     // 바꼈다면 axios로 전송
     if (flag1 || flag2) {
-      console.log("axios");
+      //console.log("axios");
       updateAuth({
         docsId: params.docsId,
         read: read,
         write: write,
       })
         .then((response) => {
-          console.log(response);
+          //console.log(response);
           setInfo(response);
           openNotification(
             "success",
@@ -103,7 +103,7 @@ const Authority = () => {
 
   const handleInvite = (email) => {
     findAuthId().then((id) => {
-      console.log(id);
+      //console.log(id);
 
       inviteUser({
         authId: id,
@@ -128,7 +128,7 @@ const Authority = () => {
         authId: id,
         userId: item.userId,
       }).then((response) => {
-        console.log(response);
+        //console.log(response);
         setUsers(users.filter((user) => user.userId != item.userId));
       });
     });

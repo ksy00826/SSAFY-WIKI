@@ -17,14 +17,14 @@ const WritePage = () => {
 
   const create = () => {
     // axios로 등록 데이터 넣어줘야함
-    console.log(title, content, secret);
+    //console.log(title, content, secret);
     createTemplate({
       title: title,
       content: content,
       secret: secret,
     }).then((result) => {
       //완료
-      console.log(result);
+      //console.log(result);
       openNotification(
         "success",
         "템플릿 생성 완료",

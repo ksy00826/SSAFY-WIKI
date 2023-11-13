@@ -107,7 +107,7 @@ function Discussion() {
     client.current.subscribe("/sub/chat/" + currentDocsId, (body) => {
       const json_body = JSON.parse(body.body);
       setChatList((_chat_list) => [..._chat_list, json_body]);
-      console.log(body.body);
+      //console.log(body.body);
     });
   };
 

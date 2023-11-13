@@ -47,23 +47,23 @@ const Content = () => {
 
   // 처음 랜더링시 내용 가져오기
   React.useEffect(() => {
-    console.log("state", state);
+    //console.log("state", state);
     if (state == null) {
       getDocsContent(params.docsId)
         .then((response) => {
           setErrMsg("");
           setRedirectInfo("");
-          console.log("response", response);
+          //console.log("response", response);
           //리다이렉트 문서인지 검사
           let fromId = searchParams.get("fromId");
           let fromTitle = searchParams.get("fromTitle");
-          console.log("from", fromId, fromTitle);
+          //console.log("from", fromId, fromTitle);
           if (fromId != null && fromTitle != null) {
             const url = `/res/content/${fromId}/${fromTitle}`;
             setRedirectInfo(
-                <p className={styles.redirectInfo}>
-                  <a href={url}>{fromTitle}</a>에서 넘어옴
-                </p>
+              <p className={styles.redirectInfo}>
+                <a href={url}>{fromTitle}</a>에서 넘어옴
+              </p>
             );
           }
           var colors = [
@@ -91,7 +91,7 @@ const Content = () => {
           );
         })
         .catch((err) => {
-          console.log(err.response.data.message);
+          //console.log(err.response.data.message);
           setTitle(params.title);
           setErrMsg(err.response.data.message);
         });
@@ -99,7 +99,7 @@ const Content = () => {
       getDocsVersionContent(params.docsId, state.revId).then((response) => {
         setErrMsg("");
         setRedirectInfo("");
-        console.log("not null response", response);
+        //console.log("not null response", response);
         setContent(response.content);
         setTitle(response.title);
         setModifedAt(convertDate(response.modifiedAt));
@@ -175,7 +175,12 @@ const Content = () => {
           {redirectInfo === "" ? (
             <></>
           ) : (
-            <Alert type="info" message={redirectInfo} showIcon style={{margin:"0 1.5rem 0 1.5rem"}}/>
+            <Alert
+              type="info"
+              message={redirectInfo}
+              showIcon
+              style={{ margin: "0 1.5rem 0 1.5rem" }}
+            />
           )}
 
           <Card className={styles.card}>
@@ -199,7 +204,7 @@ const Content = () => {
                 type="warning"
                 message="현재 문서를 수정하는 사용자가 있습니다. 문서 수정에 유의해 주세요."
                 showIcon
-                style={{margin:"0 1.5rem 0 1.5rem"}}
+                style={{ margin: "0 1.5rem 0 1.5rem" }}
               />
             ) : (
               <></>

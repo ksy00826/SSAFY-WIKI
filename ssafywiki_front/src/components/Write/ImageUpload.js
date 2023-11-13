@@ -40,7 +40,7 @@ function FileUpload() {
   const [loading, setLoading] = useState(false);
 
   const handleChange = (info) => {
-    console.log(info);
+    //console.log(info);
     setLoading(true);
     setImageUrl("");
     // S3 업로드
@@ -60,13 +60,13 @@ function FileUpload() {
         console.error("S3 업로드 오류:", err);
       } else {
         uploadUrl = data.Location;
-        console.log("이미지 URL:", uploadUrl);
+        //console.log("이미지 URL:", uploadUrl);
         info.file.status = "done";
       }
     });
 
     setTimeout(function () {
-      console.log("--", info.file.originFileObj);
+      //console.log("--", info.file.originFileObj);
       // 클라이언트에 보여주기
       setImageUrl(uploadUrl);
       setLoading(false);
@@ -91,9 +91,9 @@ function FileUpload() {
     height: "100%",
   };
   const copyToClipboard = () => {
-    console.log("click");
+    //console.log("click");
     const textArea = document.createElement("textarea");
-    textArea.value = "![](" + imageUrl + ")";
+    textArea.value = `<img src="${imageUrl}" style={{ maxWidth:"900px" }}/>`
     document.body.appendChild(textArea);
     textArea.select();
     document.execCommand("copy");
@@ -131,10 +131,14 @@ function FileUpload() {
             <Button ghost block style={buttonStyle} onClick={copyToClipboard}>
               <Card
                 title="Image URL"
-                style={{ height:"100px", margin:"0", padding:"0" }}
-                bodyStyle={{ heigh:"50px", padding:"0" }}
+                style={{ height: "100px", margin: "0", padding: "0" }}
+                bodyStyle={{ heigh: "50px", padding: "0" }}
               >
-                {imageUrl ? <p className={styles.Url}>{imageUrl}</p> : <p>URL</p>}
+                {imageUrl ? (
+                  <p className={styles.Url}>{imageUrl}</p>
+                ) : (
+                  <p>URL</p>
+                )}
               </Card>
             </Button>
           </Tooltip>
