@@ -14,6 +14,7 @@ import com.bdos.ssafywiki.revision.dto.RevisionDto;
 import com.bdos.ssafywiki.revision.entity.Revision;
 import com.bdos.ssafywiki.revision.repository.RevisionRepository;
 import com.bdos.ssafywiki.user.entity.User;
+import com.bdos.ssafywiki.user.enums.Role;
 import com.bdos.ssafywiki.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,10 +40,15 @@ public class DocsAuthService {
 
     public DocsAuthDto.AuthResponse getAuth(Long docsId, User userDetails) {
 
-        // 사용자 확인.
-
         // 문서 찾기
         Document document = documentRepository.findById(docsId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
+
+        // 사용자 확인.
+        boolean flag = false;
+        if(userDetails.getRole() == Role.ROLE_ADMIN) flag = true;
+        if(document.getUser().getId() == userDetails.getId()) flag = true;
+        if(!flag) throw new BusinessLogicException(ExceptionCode.DOC_AUTH_NOT_ACCESS);
+
 
         DocsAuthDto.AuthResponse.AuthResponseBuilder builder = DocsAuthDto.AuthResponse.builder()
                 .read(document.getReadAuth())
@@ -64,7 +70,6 @@ public class DocsAuthService {
     }
 
     public DocsAuthDto.AuthResponse updateAuth(DocsAuthDto.AuthRequest request, User userDetails) {
-        // 사용자 확인.
 
         // 문서 찾기
         Document document = documentRepository.findById(request.getDocsId()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
