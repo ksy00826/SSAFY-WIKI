@@ -2,6 +2,8 @@ package com.bdos.ssafywiki.document.service;
 
 import com.bdos.ssafywiki.diff.MergeDto;
 import com.bdos.ssafywiki.diff.MyDiffUtils;
+import com.bdos.ssafywiki.docs_auth.dto.DocsAuthDto;
+import com.bdos.ssafywiki.docs_auth.entity.DocsAuth;
 import com.bdos.ssafywiki.docs_auth.repository.DocsAuthRepository;
 import com.bdos.ssafywiki.docs_auth.repository.UserDocsAuthRepository;
 import com.bdos.ssafywiki.docs_category.entity.Category;
@@ -56,6 +58,7 @@ public class DocumentService {
     private final CategoryRepository categoryRepository;
     private final DocsCategoryRepository docsCategoryRepository;
     private final UserDocsAuthRepository userDocsAuthRepository;
+    private final DocsAuthRepository docsAuthRepository;
 
     //mapstruct
     private final RevisionMapper revisionMapper;
