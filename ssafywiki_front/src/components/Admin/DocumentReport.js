@@ -3,8 +3,7 @@ import { Link } from "react-router-dom";
 import { Layout, theme, List, Flex, Button } from "antd";
 import VirtualList from 'rc-virtual-list';
 import UserNavbar from "components/Common/UserNavbar";
-import { getDocumentReport } from "utils/ReportApi"
-
+import { getDocumentReport, deleteDocument, rejectReport } from "utils/ReportApi"
 
 const { Header, Content, Footer } = Layout;
 
@@ -28,7 +27,7 @@ const DocumentReport = () => {
                     })
                     return [...prevData, ...newData];
                 });
-                setPage(page+1);
+                setPage(page + 1);
                 console.log(page);
             }
             setLoading(false);
@@ -36,7 +35,7 @@ const DocumentReport = () => {
     }
 
     const handleScroll = (event) => {
-        const { scrollHeight , scrollTop , clientHeight } = event.target;
+        const { scrollHeight, scrollTop, clientHeight } = event.target;
         if (clientHeight + scrollTop >= scrollHeight - 5) { // 스크롤이 바닥에 도달하면 추가 데이터 로드
             appendData();
         }
@@ -45,6 +44,25 @@ const DocumentReport = () => {
     useEffect(() => {
         appendData();
     }, [])
+
+    const clickDeleteDocument = (docsId, reportId) => {
+        deleteDocument({
+            docsId : docsId,
+            reportId : reportId
+        }).then(() => {
+            setData((prevData) => {
+                return prevData.filter(item => item.id !== reportId);
+            })
+        });
+    }
+
+    const clickRejectReport = (reportId) => {
+        rejectReport(reportId).then(() => {
+            setData((prevData) => {
+                return prevData.filter(item => item.id !== reportId);
+            })
+        });
+    }
 
     return (
         <Layout
@@ -73,12 +91,13 @@ const DocumentReport = () => {
                         }}
                     >
                         <h2>신고 목록</h2>
+                        <br></br>
                         <List>
                             <VirtualList
                                 id="my-virtual-list"
                                 data={data}
                                 height={600}
-                                itemHeight={40}
+                                itemHeight={46}
                                 itemKey="id"
                                 onScroll={handleScroll}
                             >
@@ -88,11 +107,11 @@ const DocumentReport = () => {
                                             title={<Link to={`/res/content/${item.document.id}/${item.document.title}`}>{item.document.title}</Link>}
                                             description={item.user.nickname}
                                         />
+                                        <div>{item.modifiedAt}</div>
                                         <div>
-                                            <Button>문서 삭제</Button>
-                                            <Button>반려</Button>
+                                            <Button onClick={() => clickDeleteDocument(item.document.id, item.id)}>문서 삭제</Button>
+                                            <Button onClick={() => clickRejectReport(item.id)}>반려</Button>
                                         </div>
-
                                     </List.Item>
                                 )}
                             </VirtualList>

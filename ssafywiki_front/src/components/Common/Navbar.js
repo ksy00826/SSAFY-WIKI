@@ -55,18 +55,13 @@ const Navbar = () => {
       label: <UserOutlined style={{ fontSize: "30px" }} />,
       children: [
         {
+          label: <Link to="/userpage">마이페이지</Link>,
+          key: "mypage",
+        },
+        {
           label: <a onClick={handleLogout}>로그아웃</a>,
           key: "logout",
         },
-        // {
-        //   label: <Link to="/userpage">마이페이지</Link>,
-        //   key: "mypage",
-        // },
-        {
-          label: <Link to="/userpage">내 기여 목록</Link>,
-          key: "mypage",
-        },
-        { label: <Link to="/userpage">스크랩 목록</Link>, key: "bookmark" },
       ],
     },
   ];
@@ -76,11 +71,11 @@ const Navbar = () => {
       key: "SubMenu",
       label: <UserOutlined style={{ fontSize: "30px" }} />,
       children: [
+        { label: <Link to="/userpage">관리자 페이지</Link>, key: "admin" },
         {
           label: <a onClick={handleLogout}>로그아웃</a>,
           key: "logout",
         },
-        { label: <Link to="/userpage">관리자 페이지</Link>, key: "admin" },
       ],
     },
   ];

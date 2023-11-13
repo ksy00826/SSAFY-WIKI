@@ -17,6 +17,7 @@
   color: white;
   background-color: #424242;
   padding: 0;
+  min-width: 1200px;
 }
 
 .App-link {
@@ -36,8 +37,4 @@
   max-width: 2000px;
   min-width: 1200px;
   margin: 0 auto;
-}
-
-.HeaderBox {
-  background-color: #424242;
 }
