@@ -1,23 +1,25 @@
 import React, { useState, useParams } from "react";
 import UserNavbar from "components/Common/UserNavbar";
 import { Layout, theme, Card, Col, Row } from "antd";
-import { getContributedChats } from "utils/UserApi";
+import { getMyAuthDocs } from "utils/UserApi";
 import DocsItem from "./atom/DocsItem";
-const { Header, Content, Footer } = Layout;
 
-const UserChatsPage = () => {
-  const [chatc, setchatc] = React.useState([]);
+const { Header, Content } = Layout;
+
+const UserGroup = () => {
+  const [renderList, setRenderList] = React.useState([]);
 
   // 처음 랜더링시 내용 가져오기
   React.useEffect(() => {
-    getContributedChats().then((response) => {
-      setchatc(
-        response.map((chat) => (
-          <Col key={chat.docsId} span={8}>
+    getMyAuthDocs().then((response) => {
+      console.log(response);
+      setRenderList(
+        response.map((item) => (
+          <Col key={item.docsId} span={8}>
             <DocsItem
-              docsId={chat.docsId}
-              title={chat.content}
-              content={chat.createdAt}
+              title={item.title}
+              docsId={item.docsId}
+              content={`마지막 수정일: ${item.lastModifyTime}`}
             />
           </Col>
         ))
@@ -35,7 +37,7 @@ const UserChatsPage = () => {
         minHeight: "100vh",
       }}
     >
-      <UserNavbar selectedKey="4"></UserNavbar>
+      <UserNavbar selectedKey="5"></UserNavbar>
       <Layout style={{ paddingTop: 24 }}>
         <Content
           style={{
@@ -49,11 +51,11 @@ const UserChatsPage = () => {
               background: colorBgContainer,
             }}
           >
-            <Row gutter={16}>{chatc}</Row>
+            <Row gutter={16}>{renderList}</Row>
           </div>
         </Content>
       </Layout>
     </Layout>
   );
 };
-export default UserChatsPage;
+export default UserGroup;
