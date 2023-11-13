@@ -32,7 +32,7 @@ const Authority = () => {
         console.log(response);
         setRead(response.read);
         setWrite(response.write);
-        if (response.users !== undefined) {
+        if (response.users) {
           setUsers(response.users);
         }
         setLoading(false);
