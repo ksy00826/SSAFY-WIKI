@@ -130,7 +130,7 @@ const MyPage = () => {
               <Col span={1}>
                 <Image
                   width={50}
-                  src="https://ssafywiki-s3.s3.ap-northeast-2.amazonaws.com/Wed%20Nov%2008%202023%2017%3A41%3A06%20GMT%2B0900%20%28%ED%95%9C%EA%B5%AD%20%ED%91%9C%EC%A4%80%EC%8B%9C%29eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJsb3ZlMDA4MjZAbmF2ZXIuY29tIiwiaWF0IjoxNjk5NDMxMzA4LCJleHAiOjE2OTk1MjEzMDh9.5dTeMKW4GBzrVv1B7JFWJWlDycf855gJEl2qogVy9Vc.jpg"
+                  src="https://ssafywiki-s3.s3.ap-northeast-2.amazonaws.com/Mon%20Nov%2013%202023%2017%3A27%3A53%20GMT%2B0900%20%28%ED%95%9C%EA%B5%AD%20%ED%91%9C%EC%A4%80%EC%8B%9C%29eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbkBzc2FmeS5jb20iLCJyb2xlcyI6W3siYXV0aG9yaXR5IjoiUk9MRV9BRE1JTiJ9XSwiaWF0IjoxNjk5ODYzNTA2LCJleHAiOjE3MDExNTk1MDZ9.M88ZUo5_aAhY3_4i852w-0vWPsSFIzHEnvG_RDQaOtM.jpg"
                 />
               </Col>
               <Col span={3}>
