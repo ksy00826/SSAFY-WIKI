@@ -10,6 +10,7 @@ import com.bdos.ssafywiki.report.enums.Status;
 import com.bdos.ssafywiki.report.repository.DocumentReportRepository;
 import com.bdos.ssafywiki.revision.entity.Content;
 import com.bdos.ssafywiki.revision.entity.Revision;
+import com.bdos.ssafywiki.revision.repository.ContentRepository;
 import com.bdos.ssafywiki.revision.repository.RevisionRepository;
 import com.bdos.ssafywiki.user.dto.AdminDto;
 import com.bdos.ssafywiki.user.entity.GuestUser;
@@ -33,6 +34,7 @@ public class AdminService {
     private final DocumentRepository documentRepository;
     private final RevisionRepository revisionRepository;
     private final MyDiffUtils myDiffUtils;
+    private final ContentRepository contentRepository;
 
     public Page<DocumentReport> getDocumentReports(User user, Pageable pageable) {
         if (user == null) user = new GuestUser();
@@ -60,6 +62,8 @@ public class AdminService {
 
         Revision topRevision = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
         String content = topRevision.getContent() != null ? topRevision.getContent().getText() : null;
+        Content newContent = Content.builder().text("").build();
+        contentRepository.save(newContent);
 
         if(content == null) {
             return documentReport;
@@ -72,6 +76,7 @@ public class AdminService {
                 .diffAmount(diffAmount)
                 .parent(topRevision)
                 .number(topRevision.getNumber() + 1)
+                .content(newContent)
                 .build();
 
         revisionRepository.save(revision);
