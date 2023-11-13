@@ -115,7 +115,7 @@ public class UserController {
 
 
     @Operation(summary = "내 그룹 목록", description = "유저가 프라이빗 권한을 가지고있는 문서 목록을 반환합니다.")
-    @PatchMapping("myauth")
+    @PatchMapping("/myauth")
     public ResponseEntity<List<DocsAuthDto.SimpleDocs>> myDocs (@AuthenticationPrincipal User userDetails) {
         List<DocsAuthDto.SimpleDocs> response = docsAuthService.myDocs(userDetails);
 
