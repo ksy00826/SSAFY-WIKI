@@ -23,6 +23,13 @@ const App = () => {
     onSearch(searchInput); // 버튼 클릭 시 현재 입력된 텍스트로 검색 수행
   };
 
+  const onKeyDown = (event) => {
+    if (event.key === 'Enter') {
+      onSearchClick(searchInput); // 사용자가 엔터 키를 누를 때 onSearchClick 호출
+    }
+  };
+
+
   // const handleSearch = (value) => {
   //   setDoctitle(value);
   //   setOptions(value ? searchResult(value) : []);
@@ -106,6 +113,7 @@ const App = () => {
           onSearch={onSearch}
           className={styles.search}
           onChange={onInputChange}
+          onKeyDown={onKeyDown}
         />
       </AutoComplete>
       <div className={styles.Button} onClick={onSearchClick}>
