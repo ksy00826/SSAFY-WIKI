@@ -34,7 +34,7 @@ public interface RevisionMapper {
                 .docsId(revision.getDocument().getId())
                 .author(revision.getDocument().getUser().getName())
                 .title(revision.getDocument().getTitle())
-                .content(revision.getContent().getText())
+                .content(revision.getContent() != null ? revision.getContent().getText() : "")
                 .createdAt(revision.getDocument().getCreatedAt())
                 .modifiedAt(revision.getModifiedAt())
                 .redirect(revision.getDocument().isRedirect())
