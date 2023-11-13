@@ -30,13 +30,7 @@ const MyPage = () => {
       }}
     >
       <UserNavbar selectedKey="1"></UserNavbar>
-      <Layout>
-        <Header
-          style={{
-            padding: 0,
-            background: colorBgContainer,
-          }}
-        />
+      <Layout style={{ paddingTop: 24 }}>
         <Content
           style={{
             margin: "0 16px",

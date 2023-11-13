@@ -6,6 +6,7 @@ import {
   TeamOutlined,
   UserOutlined,
   AlertOutlined,
+  StarOutlined,
 } from "@ant-design/icons";
 import { Breadcrumb, Layout, Menu, theme, ConfigProvider } from "antd";
 import {} from "antd";
@@ -38,15 +39,21 @@ const UserNavbar = (props) => {
       <PieChartOutlined />
     ),
     getItem(
-      <Link to="/userpage">참여한 그룹</Link>,
+      <Link to="/userpage/usergroup">참여한 그룹</Link>,
       "5",
       <TeamOutlined />
+      // [getItem('Team 1', '6'), getItem('Team 2', '8')]
+    ),
+    getItem(
+      <Link to="/userpage/bookmark">북마크 문서</Link>,
+      "6",
+      <StarOutlined />
       // [getItem('Team 1', '6'), getItem('Team 2', '8')]
     ),
     admin &&
       getItem(
         <Link to="/adminpage/report">신고받은 문서</Link>,
-        "6",
+        "10",
         <AlertOutlined />
       ),
   ];

@@ -57,7 +57,7 @@ const EdituserPage = () => {
       }}
     >
       <UserNavbar selectedKey="2"></UserNavbar>
-      <Layout>
+      <Layout style={{ paddingTop: 24 }}>
         <Content
           style={{
             margin: "0 16px",
