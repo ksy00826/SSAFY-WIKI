@@ -10,10 +10,10 @@ const items = [
     label: "기록",
     key: "history",
   },
-  {
-    label: "권한",
-    key: "auth",
-  },
+  // {
+  //   label: "권한",
+  //   key: "auth",
+  // },
 ];
 
 const Navbar = ({ current }) => {
