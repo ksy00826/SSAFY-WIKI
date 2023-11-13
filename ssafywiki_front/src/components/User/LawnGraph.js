@@ -9,10 +9,14 @@ import {
   Timeline,
   Card,
   Avatar,
+  Space,
+  Flex,
 } from "antd";
 import { getUserContribute, getUserContributeOneDay } from "utils/UserApi";
 import { FileProtectOutlined, SearchOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
+// import "./LawnGraph.css"; // CSS 파일 임포트
 const { Meta } = Card;
 const LawnGraph = () => {
   const [cols, setCols] = React.useState([]);
@@ -29,7 +33,7 @@ const LawnGraph = () => {
     minWidth: "0",
     minHeight: "0",
     // padding: "10px 10px 10px 10px", // 원하는 패딩 값을 설정
-    margin: "3px 3px",
+    margin: "2px 2px",
     background: "#EBF3E8",
   };
 
@@ -164,18 +168,63 @@ const LawnGraph = () => {
     }
   }, []);
 
+  const cardStyle = {
+    height: "320px",
+    width: "900px",
+    // overflow: "auto" /* 내용이 넘칠 때 스크롤바 자동 생성 */,
+    overflowX: "auto",
+    overflowY: "hidden",
+  };
+
+  const ScrollStyleComponent = styled.nav`
+    display: flex;
+    overflow: auto;
+    height: 45px;
+    &::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.4);
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+    }
+  `;
+  const ScrollStyleRow = styled(Row)`
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    &::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.4);
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 6px;
+    }
+  `;
+
   return (
     <>
-      <Card style={{ marginTop: 16 }} loading={loading}>
-        <Row>
-          {loading ? (
-            <></>
-          ) : (
-            rows.map((row) => {
-              return <Col>{row}</Col>;
-            })
-          )}
-        </Row>
+      <Card loading={loading} style={cardStyle}>
+        {!loading && (
+          <Row
+            style={{
+              display: "flex",
+              flexWrap: "nowrap",
+              overflowX: "auto",
+              overflowY: "hidden",
+            }}
+          >
+            {rows.map((row, index) => (
+              <Col key={index}>{row}</Col>
+            ))}
+          </Row>
+        )}
       </Card>
       <Divider orientation="left" orientationMargin="0">
         <b>Timeline</b>
@@ -194,4 +243,3 @@ const LawnGraph = () => {
   );
 };
 export default LawnGraph;
-//
