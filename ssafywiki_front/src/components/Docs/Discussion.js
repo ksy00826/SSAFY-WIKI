@@ -29,16 +29,19 @@ function Discussion() {
     const match = location.pathname.match(
       /\/(history|edit|auth|content)\/(\d+)\/?/
     );
+    var currentDocsId = 1;
+    // 현재 문서 ID를 추출합니다.
+    // 현재 문서 ID를 사용하여 토론 목록을 가져옵니다.
     if (match && match[2]) {
-      const currentDocsId = parseInt(match[2], 10); // 현재 문서 ID를 추출합니다.
-      // 현재 문서 ID를 사용하여 토론 목록을 가져옵니다.
-      getDiscussList(currentDocsId).then((response) => {
-        console.log("응답", currentDocsId, response);
-        setDocsId(currentDocsId);
-        setChatList(response);
-      });
-      connect(currentDocsId);
+      currentDocsId = parseInt(match[2], 10);
     }
+    getDiscussList(currentDocsId).then((response) => {
+      console.log("응답", currentDocsId, response);
+      setDocsId(currentDocsId);
+      setChatList(response);
+    });
+    connect(currentDocsId);
+
     return () => disconnect();
   }, [location]);
 
@@ -151,8 +154,8 @@ function Discussion() {
       let month = date.getMonth();
       let day = date.getDate();
       day = day < 10 ? `0${day}` : day;
-      console.log('날짜', date, month, day);
-      return `${year}-${month+1}-${day}`;
+      console.log("날짜", date, month, day);
+      return `${year}-${month + 1}-${day}`;
     }
   };
   return (
