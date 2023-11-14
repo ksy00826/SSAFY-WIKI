@@ -90,60 +90,68 @@ const History = () => {
     });
   };
 
-  const timelineItems = historyData.map((item) => ({
-    children: (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <div>
-          {item.createdAt}&nbsp;
-          {"( "}
-          <Link
-            to={`/res/content/${params.docsId}/${title}?rev=${item.number}`}
-            state={{ revId: item.id }}
-          >
-            보기
-          </Link>
-          {" | "}
-          <Link
-            to={`/res/raw/${title}?rev=${item.number}`}
-            state={{ revId: item.id, docsId: params.docsId }}
-          >
-            RAW
-          </Link>
-          {" | "}
-          <Link to="#" onClick={(e) => showConfirm(e, item.id, item.number)}>
-            이 리비전으로 되돌리기
-          </Link>
-          {" ) "}
-          <Radio.Group
-            onChange={({ target }) => onSelectRevision(item, target.value)}
-            value={
-              selectedRevision.oldRev === item.id
-                ? "oldRev"
-                : selectedRevision.rev === item.id
-                  ? "rev"
-                  : null
-            }
-          >
-            <Radio value="oldRev" disabled={isOldRevDisabled(item)}></Radio>
-            <Radio value="rev" disabled={isRevDisabled(item)}></Radio>
-          </Radio.Group>
-          {item.originNumber != null && (
-            <em>(r{item.originNumber}으로 되돌림)</em>
-          )}
-          {<strong>r{item.number}</strong>}&nbsp;
-          {"(" + item.diffAmount + ")"}&nbsp;
-          {item.user.nickname}..
-          {item.comment != null ? `(${item.comment})` : ""}
+
+
+  const timelineItems = historyData.map((item) => {
+    const diffAmountStyle = {
+      color: item.diffAmount >= 0 ? "green" : "red",
+    }
+
+    return {
+      children: (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <div>
+            {item.createdAt}&nbsp;
+            {"( "}
+            <Link
+              to={`/res/content/${params.docsId}/${title}?rev=${item.number}`}
+              state={{ revId: item.id }}
+            >
+              보기
+            </Link>
+            {" | "}
+            <Link
+              to={`/res/raw/${title}?rev=${item.number}`}
+              state={{ revId: item.id, docsId: params.docsId }}
+            >
+              RAW
+            </Link>
+            {" | "}
+            <Link to="#" onClick={(e) => showConfirm(e, item.id, item.number)}>
+              이 리비전으로 되돌리기
+            </Link>
+            {" ) "}
+            <Radio.Group
+              onChange={({ target }) => onSelectRevision(item, target.value)}
+              value={
+                selectedRevision.oldRev === item.id
+                  ? "oldRev"
+                  : selectedRevision.rev === item.id
+                    ? "rev"
+                    : null
+              }
+            >
+              <Radio value="oldRev" disabled={isOldRevDisabled(item)}></Radio>
+              <Radio value="rev" disabled={isRevDisabled(item)}></Radio>
+            </Radio.Group>
+            {item.originNumber != null && (
+              <em>(r{item.originNumber}으로 되돌림)</em>
+            )}
+            {<strong>r{item.number}</strong>}&nbsp;
+            ({<span style={diffAmountStyle}>{item.diffAmount}</span>})&nbsp;
+            <Link to="#">{item.user.nickname}</Link>..
+            {item.comment != null ? `(${item.comment})` : ""}
+          </div>
         </div>
-      </div>
-    ),
-  }));
+      ),
+    }
+  });
 
   const onClickDiff = (e) => {
     navigate(
