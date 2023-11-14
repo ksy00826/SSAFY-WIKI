@@ -5,8 +5,13 @@ import {
   getSearchDoc,
   getDocsContent,
   getRedirectKeyword,
+  getRandomDocs,
 } from "utils/DocsApi";
-import { SearchOutlined, UnorderedListOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  UnorderedListOutlined,
+  RetweetOutlined,
+} from "@ant-design/icons";
 import styles from "./SearchDocs.module.css";
 const App = () => {
   const navigate = useNavigate();
@@ -103,8 +108,22 @@ const App = () => {
     // ];
   };
 
+  const handleRandomDocs = () => {
+    getRandomDocs().then((response) => {
+      // console.log(response);
+      navigate(`res/content/${response.id}/${response.title}`);
+    });
+  };
+
   return (
     <div className={styles.searchBox}>
+      <div
+        className={styles.Button}
+        onClick={handleRandomDocs}
+        style={{ borderRadius: "5px 0 0 5px" }}
+      >
+        <RetweetOutlined />
+      </div>
       <AutoComplete
         backfill="true"
         popupClassName="certain-category-search-dropdown"
