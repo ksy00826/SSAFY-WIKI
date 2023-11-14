@@ -15,7 +15,7 @@ export const getUserProfile = async () => {
 
 export const editUserProfile = async (info) => {
   try {
-    const response = await axiosInstanceWithLogin.post(`/api/user/info`, info);
+    const response = await axiosInstanceWithLogin.put(`/api/user/info`, info);
     return response.data;
   } catch (error) {
     throw error;
