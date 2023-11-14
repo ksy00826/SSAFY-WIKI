@@ -8,7 +8,6 @@ import com.bdos.ssafywiki.document.service.DocumentService;
 import com.bdos.ssafywiki.redis.service.RedisPublisher;
 import com.bdos.ssafywiki.redis.service.TopicService;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
-import com.bdos.ssafywiki.user.dto.UserDto;
 import com.bdos.ssafywiki.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -17,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -107,5 +105,13 @@ public class DocumentController {
         }
 
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "랜덤 문서 조회하기", description = "문서 여럿의 상세를 조회합니다.")
+    @GetMapping("/api/docs/random")
+    public ResponseEntity<DocumentDto.Detail> getRandomDocs(){
+        DocumentDto.Detail docs = documentService.getRandomDocs();
+
+        return ResponseEntity.ok(docs);
     }
 }
