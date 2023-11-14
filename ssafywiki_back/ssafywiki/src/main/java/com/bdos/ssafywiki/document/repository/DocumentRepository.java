@@ -11,7 +11,6 @@ import java.util.List;
 
 @Repository
 public interface DocumentRepository extends JpaRepository<Document, Long> {
-    List<Document> findTop10ByOrderByModifiedAtDesc();
     Page<Document> findAllBy(PageRequest pageRequest);
 
     @Query("SELECT COUNT(d) FROM Document d")
