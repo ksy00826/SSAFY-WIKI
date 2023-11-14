@@ -170,6 +170,28 @@ export const getUserContributeOneDay = async (date) => {
   }
 };
 
+export const getOtherUserContribute = async (startDate, userId) => {
+  try {
+    const response = await axiosInstanceWithLogin.get(
+      `/api/user/info/contribute-docs/${userId}?startDate=${startDate}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getOtherUserContributeOneDay = async (date, userId) => {
+  try {
+    const response = await axiosInstanceWithLogin.get(
+      `/api/user/info/day-contribute-docs/${userId}?date=${date}`
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getIsAdmin = async () => {
   try {
     const response = await axiosInstanceWithLogin.get(`/api/user/admin`);
@@ -215,3 +237,12 @@ export const getBookMarks = async () => {
     throw error;
   }
 };
+
+export const getMemberProfile = async (userId) => {
+  try {
+    const response = await axiosInstance.get(`/api/user/info/${userId}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+}
