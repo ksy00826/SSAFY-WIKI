@@ -8,6 +8,4 @@ import org.mapstruct.Mapper;
 public interface UserMapper {
 
     UserDto.Version toVersion(User user);
-
-    UserDto.Info toInfo(User user);
 }
