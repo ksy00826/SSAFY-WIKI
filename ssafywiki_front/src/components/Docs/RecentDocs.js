@@ -12,7 +12,7 @@ const RecentDocs = () => {
     connect();
     //console.log("");
     getRecentDocsList().then((response) => {
-      setRecentDocsList(response);
+      setRecentDocsList(response.content);
     });
     return () => disconnect();
   }, []);
