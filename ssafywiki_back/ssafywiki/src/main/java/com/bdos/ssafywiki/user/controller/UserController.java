@@ -58,13 +58,13 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/info")
-    public ResponseEntity<String> editUserInfo(@RequestBody UserDto.Registration request,
+    @PutMapping("/info")
+    public ResponseEntity<HttpStatus> editUserInfo(@RequestBody UserDto.Registration request,
                                                @AuthenticationPrincipal User user
     ) {
 
-        String response = userService.editUser(user, request);
-        return ResponseEntity.ok(response);
+        HttpStatus status = userService.editUser(user, request);
+        return new ResponseEntity<>(status);
     }
 
     @GetMapping("/info/contributeDocs")
