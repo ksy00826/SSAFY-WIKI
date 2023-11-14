@@ -2,8 +2,6 @@ package com.bdos.ssafywiki.document.service;
 
 import com.bdos.ssafywiki.diff.MergeDto;
 import com.bdos.ssafywiki.diff.MyDiffUtils;
-import com.bdos.ssafywiki.docs_auth.dto.DocsAuthDto;
-import com.bdos.ssafywiki.docs_auth.entity.DocsAuth;
 import com.bdos.ssafywiki.docs_auth.repository.DocsAuthRepository;
 import com.bdos.ssafywiki.docs_auth.repository.UserDocsAuthRepository;
 import com.bdos.ssafywiki.docs_category.entity.Category;
@@ -33,15 +31,12 @@ import com.github.difflib.DiffUtils;
 import com.github.difflib.patch.PatchFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Service
@@ -322,5 +317,16 @@ public class DocumentService {
                 .map(documentMapper::documentToRecent)
                 .collect(Collectors.toList());
         return recentsDocsList;
+    }
+
+    public DocumentDto.Detail getRandomDocs() {
+        Long docsCnt = documentRepository.getAllDocsCnt();
+        Document randomDoc = null;
+        do{
+            Long randomId = (long)((int) (Math.random() * docsCnt) + 1);
+            randomDoc = documentRepository.findById(randomId).orElse(null);
+        }while(randomDoc == null || randomDoc.isDeleted());
+
+        return documentMapper.toDetail(randomDoc);
     }
 }
