@@ -4,6 +4,8 @@ import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
 import com.bdos.ssafywiki.discussion.entity.Discussion;
 import com.bdos.ssafywiki.discussion.mapper.DiscussionMapper;
 import com.bdos.ssafywiki.discussion.repository.DiscussionRepository;
+import com.bdos.ssafywiki.exception.BusinessLogicException;
+import com.bdos.ssafywiki.exception.ExceptionCode;
 import com.bdos.ssafywiki.user.dto.UserDto;
 import com.bdos.ssafywiki.user.dto.UserDto.Registration;
 import com.bdos.ssafywiki.user.entity.User;
@@ -64,5 +66,9 @@ public class UserService {
             messageList.add(discussionDto);
         }
         return messageList;
+    }
+
+    public User getUserInfo(Long userId){
+        return userRepository.findById(userId).orElseThrow(()->new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
     }
 }
