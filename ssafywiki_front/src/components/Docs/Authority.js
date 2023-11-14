@@ -42,10 +42,7 @@ const Authority = () => {
         setInfo(response);
       })
       .catch((err) => {
-        if (!err.response.data.message) setErrMsg(err.response.data.message);
-        else {
-          setErrMsg("문서권한에 접근할 수 없습니다.");
-        }
+        setErrMsg("문서권한에 접근할 수 없습니다.");
       });
   }, []);
 
@@ -149,7 +146,9 @@ const Authority = () => {
       </div>
 
       {errMsg ? (
-        <Alert type="warning" message={errMsg} showIcon />
+        <div style={{ margin: 20 }}>
+          <Alert type="warning" message={errMsg} showIcon />
+        </div>
       ) : (
         <>
           {!loading ? (
