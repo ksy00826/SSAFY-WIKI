@@ -15,6 +15,7 @@
     "aws-sdk": "^2.1485.0",
     "axios": "^1.5.1",
     "http-proxy-middleware": "^2.0.6",
+    "openai": "^4.17.5",
     "path-browserify": "^1.0.1",
     "process": "^0.11.10",
     "react": "^18.2.0",
