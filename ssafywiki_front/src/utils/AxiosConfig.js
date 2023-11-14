@@ -45,3 +45,11 @@ export const axiosElasticInstance = axios.create({
   },
   
 });
+
+export const axiosGptInstance = axios.create({
+  baseURL: "https://api.openai.com/v1/chat/completions",
+  headers: {
+    'Content-Type': 'application/json', 
+    'Authorization': 'Bearer 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', 
+  },
+});

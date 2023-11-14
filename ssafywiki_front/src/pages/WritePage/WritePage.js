@@ -1,17 +1,16 @@
 import React from "react";
-import { Layout, Row, Col, Divider } from "antd";
+import { Layout, Row, Col, Divider, Input, Typography } from "antd";
 import { useNavigate, useSearchParams } from "react-router-dom";
-
 import SerachTemplete from "components/Write/SearchTemplete";
 import WriteForm from "components/Write/WriteDocs";
 import ImageUpload from "components/Write/ImageUpload";
 import CategorySelect from "components/Write/CategorySelect";
 import WriteRedirect from "components/Write/WriteRedirect";
 
-import { createDocs, createRedirectDocs } from "utils/DocsApi";
+import { createDocs, createRedirectDocs, getGptResponse } from "utils/DocsApi";
 import { openNotification } from "App";
-
-const { Content } = Layout;
+const { Search, TextArea } = Input;
+const { Header, Content, Footer, Sider } = Layout;
 const WritePage = () => {
   const [searchParams] = useSearchParams();
   const [title, setTitle] = React.useState("");
@@ -22,7 +21,7 @@ const WritePage = () => {
   const [writeAuth, setWriteAuth] = React.useState(1);
   const [isRedirect, setIsRedirect] = React.useState(false);
   const [redirectKeyword, setRedirectKeyword] = React.useState();
-
+  const [gpted, setGpted] = React.useState("");
   const navigate = useNavigate();
 
   const next = (content) => {
@@ -44,6 +43,15 @@ const WritePage = () => {
   React.useEffect(() => {
     //console.log(writeAuth);
   }, [writeAuth]);
+
+  const gptSearch = (data) => {
+    console.log("converty", data);
+    setGpted("기다려 주세요!");
+    getGptResponse(data).then((result) => {
+      console.log(result.choices[0].message.content);
+      setGpted(result.choices[0].message.content);
+    });
+  };
 
   const create = () => {
     // axios로 등록 데이터 넣어줘야함
@@ -136,6 +144,20 @@ const WritePage = () => {
           <></>
         )}
       </Content>
+      <Typography.Title level={5}>싸피위키 문법 교정기</Typography.Title>
+        <Search
+          count={{
+            show: true,
+            max: 200,
+          }}
+          placeholder="싸피위키 문체로 바꿔보세요!"
+          onSearch={gptSearch}
+          style={{ width: "300px" }}
+        />
+        <TextArea value={gpted} style={{width:"300px"}} autoSize={{
+          minRows: 3,
+          maxRows: 6,
+        }}/>
     </Layout>
   );
 };
