@@ -2,6 +2,8 @@ package com.bdos.ssafywiki.user.controller;
 
 import com.bdos.ssafywiki.configuration.jwt.JwtTokenProvider;
 import com.bdos.ssafywiki.discussion.dto.DiscussionDto;
+import com.bdos.ssafywiki.docs_auth.dto.DocsAuthDto;
+import com.bdos.ssafywiki.docs_auth.service.DocsAuthService;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.report.dto.DocumentReportDto;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
@@ -19,6 +21,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -42,6 +45,7 @@ public class UserController {
 
     private final UserService userService;
     private final RevisionService revisionService;
+    private final DocsAuthService docsAuthService;
     private final RevisionMapper revisionMapper;
     private final UserMapper userMapper;
 
@@ -54,13 +58,13 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/info")
-    public ResponseEntity<String> editUserInfo(@RequestBody UserDto.Registration request,
+    @PutMapping("/info")
+    public ResponseEntity<HttpStatus> editUserInfo(@RequestBody UserDto.Registration request,
                                                @AuthenticationPrincipal User user
     ) {
 
-        String response = userService.editUser(user, request);
-        return ResponseEntity.ok(response);
+        HttpStatus status = userService.editUser(user, request);
+        return new ResponseEntity<>(status);
     }
 
     @GetMapping("/info/contributeDocs")
@@ -134,5 +138,13 @@ public class UserController {
             return ResponseEntity.ok("false");
         }
         return ResponseEntity.ok(userMapper.toInfo(user));
+    }
+
+    @Operation(summary = "내 그룹 목록", description = "유저가 프라이빗 권한을 가지고있는 문서 목록을 반환합니다.")
+    @GetMapping("/myauth")
+    public ResponseEntity<List<DocsAuthDto.SimpleDocs>> myDocs (@AuthenticationPrincipal User userDetails) {
+        List<DocsAuthDto.SimpleDocs> response = docsAuthService.myDocs(userDetails);
+
+        return ResponseEntity.ok(response);
     }
 }

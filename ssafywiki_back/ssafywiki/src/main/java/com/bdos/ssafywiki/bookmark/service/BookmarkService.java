@@ -5,6 +5,7 @@ import com.bdos.ssafywiki.bookmark.entity.Bookmark;
 import com.bdos.ssafywiki.bookmark.mapper.BookmarkMapper;
 import com.bdos.ssafywiki.bookmark.repository.BookmarkRepository;
 import com.bdos.ssafywiki.configuration.jwt.CustomUserDetails;
+import com.bdos.ssafywiki.docs_auth.dto.DocsAuthDto;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.document.repository.DocumentRepository;
 import com.bdos.ssafywiki.exception.BusinessLogicException;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -71,13 +73,21 @@ public class BookmarkService {
         return bookmarkRepository.countByDocument(document);
     }
 
-    public List<BookmarkDto.Detail> getBookmark(Pageable pageable, User userDetail) {
+    public List<DocsAuthDto.SimpleDocs> getBookmark(User userDetail) {
         User user = userRepository.findById(userDetail.getId()).get();
 
         //사용자의 북마크 불러오기
-        Page<Bookmark> bookmarkList = bookmarkRepository.findAllByUser(user, pageable);
+        List<Bookmark> bookmarkList = bookmarkRepository.findAllByUser(user);
 
-        return bookmarkMapper.toDetailList(bookmarkList.getContent());
+        List<DocsAuthDto.SimpleDocs> details = new ArrayList<>(bookmarkList.size());
+        for(Bookmark mark : bookmarkList) {
+            details.add(DocsAuthDto.SimpleDocs.builder()
+                    .docsId(mark.getDocument().getId())
+                    .title(mark.getDocument().getTitle())
+                    .lastModifyTime(mark.getModifiedAt())
+                    .build());
+        }
+        return details;
     }
 
     public int deleteBookmark(Long docsId, User userDetail) {

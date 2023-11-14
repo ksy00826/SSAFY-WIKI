@@ -10,13 +10,20 @@ import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.document.repository.DocumentRepository;
 import com.bdos.ssafywiki.exception.BusinessLogicException;
 import com.bdos.ssafywiki.exception.ExceptionCode;
+import com.bdos.ssafywiki.revision.dto.RevisionDto;
+import com.bdos.ssafywiki.revision.entity.Revision;
+import com.bdos.ssafywiki.revision.repository.RevisionRepository;
 import com.bdos.ssafywiki.user.entity.User;
+import com.bdos.ssafywiki.user.enums.Role;
 import com.bdos.ssafywiki.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -27,15 +34,21 @@ public class DocsAuthService {
     private final DocsAuthRepository docsAuthRepository;
     private final UserDocsAuthRepository userDocsAuthRepository;
     private final UserRepository userRepository;
+    private final RevisionRepository revisionRepository;
 
     private final DocsAuthMapper docsAuthMapper;
 
     public DocsAuthDto.AuthResponse getAuth(Long docsId, User userDetails) {
 
-        // 사용자 확인.
-
         // 문서 찾기
         Document document = documentRepository.findById(docsId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
+
+        // 사용자 확인.
+        boolean flag = false;
+        if(userDetails.getRole() == Role.ROLE_ADMIN) flag = true;
+        if(document.getUser().getId() == userDetails.getId()) flag = true;
+        if(!flag) throw new BusinessLogicException(ExceptionCode.DOC_AUTH_NOT_ACCESS);
+
 
         DocsAuthDto.AuthResponse.AuthResponseBuilder builder = DocsAuthDto.AuthResponse.builder()
                 .read(document.getReadAuth())
@@ -57,7 +70,6 @@ public class DocsAuthService {
     }
 
     public DocsAuthDto.AuthResponse updateAuth(DocsAuthDto.AuthRequest request, User userDetails) {
-        // 사용자 확인.
 
         // 문서 찾기
         Document document = documentRepository.findById(request.getDocsId()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.DOCUMENT_NOT_FOUND));
@@ -119,5 +131,25 @@ public class DocsAuthService {
         userDocsAuthRepository.delete(find);
 
         return true;
+    }
+
+    public List<DocsAuthDto.SimpleDocs> myDocs(User userDetails) {
+
+        Set<UserDocsAuth> auths = userDocsAuthRepository.findAllByUserId(userDetails.getId());
+
+        List<DocsAuthDto.SimpleDocs> docs = auths.stream().map((auth)->{
+            Document doc = auth.getDocsAuth().getDocument();
+//            Revision rev = revisionRepository.findTop1ByDocumentOrderByIdDesc(doc);
+
+            return DocsAuthDto.SimpleDocs.builder()
+                    .title(doc.getTitle())
+                    .docsId(doc.getId())
+                    .lastModifyTime(doc.getModifiedAt())
+                    .build();
+
+        }).toList();
+
+
+        return docs;
     }
 }

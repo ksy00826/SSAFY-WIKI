@@ -194,7 +194,7 @@ public class RevisionService {
                 RevisionDto.ContributeDetail contributeDetail = RevisionDto.ContributeDetail.builder()
                         .createdAt(rev.getCreatedAt())
                         .revisionId(rev.getId())
-                        .revisionComment(rev.getComment().getContent())
+                        .revisionComment((rev.getComment() == null)? "" : rev.getComment().getContent())
                         .build();
                 revisionInfo.add(contributeDetail);
             }

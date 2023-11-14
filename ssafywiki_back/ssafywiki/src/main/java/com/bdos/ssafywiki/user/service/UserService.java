@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -42,18 +43,30 @@ public class UserService {
                 .build();
     }
 
-    public String editUser(User user, Registration request) {
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setNickname(request.getNickname());
-        userRepository.save(user);
-        if(userRepository.findByEmail(user.getEmail()).isEmpty()){
-            return "변경 실패";
+    public HttpStatus editUser(User loginUser, Registration request) {
+        User user = userRepository.findById(loginUser.getId()).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+
+        //비밀번호가 맞을 시 정보 수정 가능
+        if (passwordEncoder.matches(request.getPassword(), user.getPassword())){
+            user.setNickname(request.getNickname());
+            userRepository.save(user);
+            return HttpStatus.OK;
         }
-        boolean result = passwordEncoder.matches(request.getPassword(), user.getPassword());
-        if(result){
-            return "변경 완료";
+        else{
+            return HttpStatus.BAD_REQUEST;
         }
-        return "변경 안됨";
+
+//        user.setPassword(passwordEncoder.encode(request.getPassword()));
+//        user.setNickname(request.getNickname());
+//        userRepository.save(user);
+//        if(userRepository.findByEmail(user.getEmail()).isEmpty()){
+//            return "변경 실패";
+//        }
+//        boolean result = passwordEncoder.matches(request.getPassword(), user.getPassword());
+//        if(result){
+//            return "변경 완료";
+//        }
+//        return "변경 안됨";
     }
 
     public List<DiscussionDto> getChats(User user) {

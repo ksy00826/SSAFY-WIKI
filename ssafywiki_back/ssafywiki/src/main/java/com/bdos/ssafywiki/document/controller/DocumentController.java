@@ -1,12 +1,13 @@
 package com.bdos.ssafywiki.document.controller;
 
+import com.bdos.ssafywiki.docs_auth.dto.DocsAuthDto;
+import com.bdos.ssafywiki.docs_auth.service.DocsAuthService;
 import com.bdos.ssafywiki.document.dto.DocumentDto;
 import com.bdos.ssafywiki.document.mapper.DocumentMapper;
 import com.bdos.ssafywiki.document.service.DocumentService;
 import com.bdos.ssafywiki.redis.service.RedisPublisher;
 import com.bdos.ssafywiki.redis.service.TopicService;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
-import com.bdos.ssafywiki.user.dto.UserDto;
 import com.bdos.ssafywiki.user.entity.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,6 +29,7 @@ import java.util.List;
 public class DocumentController {
 
     private final DocumentService documentService;
+    private final DocsAuthService docsAuthService;
     private final TopicService topicService;
     private final RedisPublisher redisPublisher;
     private final DocumentMapper documentMapper;
@@ -38,6 +39,10 @@ public class DocumentController {
     public ResponseEntity<RevisionDto.DocsResponse> writeDocs(@RequestBody DocumentDto.Post post,
                                                               @AuthenticationPrincipal User userDetails){
         RevisionDto.DocsResponse response = documentService.writeDocs(post, userDetails);
+
+        if(post.getReadAuth() == 100 || post.getWriteAuth() == 100) {
+            docsAuthService.updateAuth(new DocsAuthDto.AuthRequest(response.getDocsId(), post.getReadAuth(), post.getWriteAuth()), userDetails);
+        }
 
         return ResponseEntity.ok(response);
     }
@@ -100,5 +105,13 @@ public class DocumentController {
         }
 
         return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "랜덤 문서 조회하기", description = "문서 여럿의 상세를 조회합니다.")
+    @GetMapping("/api/docs/random")
+    public ResponseEntity<DocumentDto.Detail> getRandomDocs(){
+        DocumentDto.Detail docs = documentService.getRandomDocs();
+
+        return ResponseEntity.ok(docs);
     }
 }

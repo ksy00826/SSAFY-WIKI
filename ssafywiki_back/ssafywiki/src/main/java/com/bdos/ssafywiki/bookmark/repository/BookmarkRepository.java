@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
-    Page<Bookmark> findAllByUser(User user, Pageable pageable);
+    List<Bookmark> findAllByUser(User user);
 
     @Query("select b from Bookmark b join fetch b.document where b.document.id = :docsId")
     Optional<Bookmark> findByDocsId(Long docsId);
@@ -22,4 +22,5 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     Optional<Bookmark> findByDocumentAndUser(Document document, User user);
 
     int countByDocument(Document document);
+
 }
