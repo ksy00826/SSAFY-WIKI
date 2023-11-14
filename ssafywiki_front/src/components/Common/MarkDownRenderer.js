@@ -115,6 +115,8 @@ const TableOfContents = () => {
     }
   };
 
+  if (toc.length < 1) return null;
+
   return (
     <ol className={style.index}>
       <p style={{margin:0, fontSize:"1.5rem"}}>목차</p>
@@ -138,7 +140,7 @@ const MarkdownRenderer = ({ content }) => {
   return (
     <div>
       <TableOfContentsProvider>
-        <TableOfContents />
+      <TableOfContents />
         <MDX components={components}>{content}</MDX>
       </TableOfContentsProvider>
     </div>
