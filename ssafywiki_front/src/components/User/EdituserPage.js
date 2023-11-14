@@ -44,7 +44,7 @@ const EdituserPage = () => {
     //console.log(responseBody);
     editUserProfile(responseBody)
       .then((response) => {
-        //console.log(response);
+        console.log(response);
         openNotification("success", "회원정보 수정 완료");
       })
       .catch((e) => console.error(e.message));
