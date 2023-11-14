@@ -70,7 +70,7 @@ const MyPage = () => {
     //console.log("onSearch", userDocs);
     getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
-      //console.log("output", output);
+      console.log("output", output);
       var seq = 0;
       var newSearched = output.map(function (element) {
         seq = seq + 1;
@@ -80,13 +80,20 @@ const MyPage = () => {
           isDeleted: element._source.docs_is_deleted,
         };
       });
-      //console.log(newSearched[0].label === keyword);
-      //console.log(newSearched[0].isDeleted == false);
-      if (
-        newSearched.length > 0 &&
-        newSearched[0].label === keyword &&
-        newSearched[0].isDeleted == false
-      ) {
+      console.log(newSearched[0].label === keyword);
+      console.log(newSearched[0].isDeleted == false);
+
+      let targetTitle = "";
+      let targetDocsId = -1;
+      newSearched.forEach((doc) => {
+        if (doc.label === keyword && doc.isDeleted === false) {
+          targetTitle = doc.label;
+          targetDocsId = doc.isDeleted;
+          return;
+        }
+      });
+
+      if (targetTitle != "" && targetDocsId != -1) {
         navigate(
           `/res/content/${newSearched[0].value}/${newSearched[0].label}`
         );
