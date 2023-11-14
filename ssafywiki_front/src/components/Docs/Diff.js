@@ -3,17 +3,20 @@ import { Card, Table, ConfigProvider } from "antd";
 import { useParams, useLocation } from "react-router-dom";
 import { compareVersions } from "utils/RevisionApi";
 import styles from "components/Docs/Diff.module.css"
+import titleStyles from "./Content.module.css";
 
 const Diff = () => {
   const params = useParams();
   const { state, search } = useLocation();
   const queryParams = new URLSearchParams(search);
   const [diffs, setDiffs] = useState([]);
+  const [title, setTitle] = useState();
 
   useEffect(() => {
     const fetchData = async () => {
       const result = await compareVersions(state.oldRev, state.rev);
       setDiffs(result);
+      setTitle(state.title);
     };
     fetchData();
   }, [state.oldRev, state.rev]);
@@ -56,7 +59,7 @@ const Diff = () => {
       dataIndex: 'line',
       key: 'line',
       render: (text, record) => (
-        <div style={{wordBreak: 'break-all'}}>{text}</div>
+        <div style={{ wordBreak: 'break-all' }}>{text}</div>
       ),
       onCell: (record) => ({
         className: record.type === 'source' ? styles.CellSource : styles.CellTarget
@@ -66,7 +69,12 @@ const Diff = () => {
 
   return (
     <div>
-      <h1>{params.title}</h1>
+       <div className={titleStyles.contentTitle}>
+        <h1 className={titleStyles.title}>
+          {title}{" "}
+          <small style={{ fontWeight: "normal" }}>(비교)</small>
+        </h1>
+      </div>
       <Card>
         <strong>r{queryParams.get('oldrev')} vs r{queryParams.get('rev')}</strong>
       </Card>
