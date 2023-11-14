@@ -198,7 +198,7 @@ const SignUp = ({ goNext, info, saveInfo, saveGithub }) => {
         ]}
       >
         <Search
-          placeholder="이메일"
+          placeholder="에듀싸피 이메일을 입력해주세요."
           onSearch={checkEmail}
           enterButton={emailBtn}
           loading={checking}
