@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -90,8 +91,8 @@ public class DocumentController {
 
     @Operation(summary = "최근 수정한 문서 리스트 조회하기", description = "최근 수정한 문서를 10개 조회합니다.")
     @GetMapping("/api/docs/recent")
-    public ResponseEntity<?> readRecentDocs() {
-        List<DocumentDto.Recent> recentDocs = documentService.loadRecentDocsList();
+    public ResponseEntity<?> readRecentDocs(@RequestParam(required = false) Integer page) {
+        Page<DocumentDto.Recent> recentDocs = documentService.loadRecentDocsList(page);
         return ResponseEntity.ok(recentDocs);
     }
 
