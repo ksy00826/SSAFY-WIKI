@@ -80,4 +80,8 @@ public class UserService {
         }
         return messageList;
     }
+
+    public User getUserInfo(Long userId){
+        return userRepository.findById(userId).orElseThrow(()->new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+    }
 }
