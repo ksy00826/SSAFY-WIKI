@@ -76,7 +76,6 @@ public class SecurityConfig {
 
                         /* 3개 */
                         .requestMatchers(mvcMatcherBuilder.pattern("/api/docs/bookmark/**")).hasAnyRole("USER10","USER9","COACH","CONSULTANT","PRO","ADMIN")
-                        .requestMatchers(mvcMatcherBuilder.pattern("/api/user/info/**")).permitAll()
                         .requestMatchers(mvcMatcherBuilder.pattern("/api/docs/auth/**")).hasAnyRole("USER10","USER9","COACH","CONSULTANT","PRO","ADMIN")
 
                         /* 2개 */

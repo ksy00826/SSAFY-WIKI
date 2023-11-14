@@ -78,17 +78,4 @@ public class UserDto {
         private String authCode;
     }
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    @ToString
-    public static class Info {
-        private Long id;
-        private String name;
-        private String nickname;
-        private String campus;
-        private String number;
-    }
 }
