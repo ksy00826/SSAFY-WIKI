@@ -110,6 +110,10 @@ const SignUp = ({ goNext, info, saveInfo, saveGithub }) => {
   const handleSendEmail = async () => {
     const email = form.getFieldValue(["email"]);
     //console.log(email, "에 인증 메일을 보낸다.");
+    if (!emailSuccess) {
+      openNotification("error", "인증메일 전송", `이메일을 확인해주세요`);
+      return;
+    }
     openNotification(
       "success",
       "인증메일 전송",
