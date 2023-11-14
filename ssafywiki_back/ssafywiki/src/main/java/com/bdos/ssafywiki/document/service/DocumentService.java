@@ -31,6 +31,9 @@ import com.github.difflib.DiffUtils;
 import com.github.difflib.patch.PatchFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -311,11 +314,13 @@ public class DocumentService {
 
     }
 
-    public List<DocumentDto.Recent> loadRecentDocsList() {
-        List<Document> dbDocumentList = documentRepository.findTop10ByOrderByModifiedAtDesc();
-        List<DocumentDto.Recent> recentsDocsList = dbDocumentList.stream()
-                .map(documentMapper::documentToRecent)
-                .collect(Collectors.toList());
+    public Page<DocumentDto.Recent> loadRecentDocsList(Integer page) {
+        if (page == null) page = 0;
+        Sort sort = Sort.by("ModifiedAt").descending();
+        PageRequest pageRequest = PageRequest.of(page, 10, sort);
+
+        Page<Document> dbDocumentList = documentRepository.findAllBy(pageRequest);
+        Page<DocumentDto.Recent> recentsDocsList = dbDocumentList.map(documentMapper::documentToRecent);
         return recentsDocsList;
     }
 
