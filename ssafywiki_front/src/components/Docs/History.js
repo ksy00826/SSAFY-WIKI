@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Pagination, Timeline, Radio, Button, Modal } from "antd";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate, Link, useAsyncError } from "react-router-dom";
 import { getHistory, revertVersion } from "utils/RevisionApi";
 import DocsNav from "./DocsNav";
 import { ExclamationCircleFilled } from "@ant-design/icons";
@@ -11,7 +11,7 @@ const History = () => {
   const params = useParams();
   const navigate = useNavigate();
   const { confirm, error } = Modal;
-
+  const [title, setTitle] = useState();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(20);
   const [historyData, setHistoryData] = useState([]);
@@ -24,6 +24,10 @@ const History = () => {
     oldRevNum: null,
     revNum: null,
   });
+
+  useEffect(() => {
+    setTitle(params.title + (params.subtitle !== undefined ? '/' + params.subtitle : ''));
+  }, [params])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -72,7 +76,7 @@ const History = () => {
       async onOk() {
         revertVersion(revId)
           .then((response) => {
-            navigate(`/res/content/${params.docsId}/${params.title}`);
+            navigate(`/res/content/${params.docsId}/${title}`);
           })
           .catch((err) => {
             if (err.response.data.status == 402) {
@@ -82,69 +86,77 @@ const History = () => {
             }
           });
       },
-      onCancel() {},
+      onCancel() { },
     });
   };
 
-  const timelineItems = historyData.map((item) => ({
-    children: (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <div>
-          {item.createdAt}&nbsp;
-          {"( "}
-          <Link
-            to={`/res/content/${params.docsId}/${params.title}?rev=${item.number}`}
-            state={{ revId: item.id }}
-          >
-            보기
-          </Link>
-          {" | "}
-          <Link
-            to={`/res/raw/${params.title}?rev=${item.number}`}
-            state={{ revId: item.id, docsId: params.docsId }}
-          >
-            RAW
-          </Link>
-          {" | "}
-          <Link to="#" onClick={(e) => showConfirm(e, item.id, item.number)}>
-            이 리비전으로 되돌리기
-          </Link>
-          {" ) "}
-          <Radio.Group
-            onChange={({ target }) => onSelectRevision(item, target.value)}
-            value={
-              selectedRevision.oldRev === item.id
-                ? "oldRev"
-                : selectedRevision.rev === item.id
-                ? "rev"
-                : null
-            }
-          >
-            <Radio value="oldRev" disabled={isOldRevDisabled(item)}></Radio>
-            <Radio value="rev" disabled={isRevDisabled(item)}></Radio>
-          </Radio.Group>
-          {item.originNumber != null && (
-            <em>(r{item.originNumber}으로 되돌림)</em>
-          )}
-          {<strong>r{item.number}</strong>}&nbsp;
-          {"(" + item.diffAmount + ")"}&nbsp;
-          {item.user.nickname}..
-          {item.comment != null ? `(${item.comment})` : ""}
+
+
+  const timelineItems = historyData.map((item) => {
+    const diffAmountStyle = {
+      color: item.diffAmount >= 0 ? "green" : "red",
+    }
+
+    return {
+      children: (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <div>
+            {item.createdAt}&nbsp;
+            {"( "}
+            <Link
+              to={`/res/content/${params.docsId}/${title}?rev=${item.number}`}
+              state={{ revId: item.id }}
+            >
+              보기
+            </Link>
+            {" | "}
+            <Link
+              to={`/res/raw/${title}?rev=${item.number}`}
+              state={{ revId: item.id, docsId: params.docsId }}
+            >
+              RAW
+            </Link>
+            {" | "}
+            <Link to="#" onClick={(e) => showConfirm(e, item.id, item.number)}>
+              이 리비전으로 되돌리기
+            </Link>
+            {" ) "}
+            <Radio.Group
+              onChange={({ target }) => onSelectRevision(item, target.value)}
+              value={
+                selectedRevision.oldRev === item.id
+                  ? "oldRev"
+                  : selectedRevision.rev === item.id
+                    ? "rev"
+                    : null
+              }
+            >
+              <Radio value="oldRev" disabled={isOldRevDisabled(item)}></Radio>
+              <Radio value="rev" disabled={isRevDisabled(item)}></Radio>
+            </Radio.Group>
+            {item.originNumber != null && (
+              <em>(r{item.originNumber}으로 되돌림)</em>
+            )}
+            {<strong>r{item.number}</strong>}&nbsp;
+            ({<span style={diffAmountStyle}>{item.diffAmount}</span>})&nbsp;
+            <Link to="#">{item.user.nickname}</Link>..
+            {item.comment != null ? `(${item.comment})` : ""}
+          </div>
         </div>
-      </div>
-    ),
-  }));
+      ),
+    }
+  });
 
   const onClickDiff = (e) => {
     navigate(
-      `/res/diff/${params.title}?oldrev=${selectedRevision.oldRevNum}&rev=${selectedRevision.revNum}`,
-      { state: { oldRev: selectedRevision.oldRev, rev: selectedRevision.rev } }
+      `/res/diff/${title}?oldrev=${selectedRevision.oldRevNum}&rev=${selectedRevision.revNum}`,
+      { state: { oldRev: selectedRevision.oldRev, rev: selectedRevision.rev, title: title } }
     );
   };
 
@@ -152,7 +164,7 @@ const History = () => {
     <div>
       <div className={styles.contentTitle}>
         <h1 className={styles.title}>
-          {params.title}{" "}
+          {title}{" "}
           <small style={{ fontWeight: "normal" }}>(문서 역사)</small>
         </h1>
         <div className={styles.nav}>

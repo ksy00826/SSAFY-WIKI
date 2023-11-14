@@ -1,7 +1,7 @@
 import "./App.css";
 
 import React from "react";
-import { Layout } from "antd";
+import { Layout, FloatButton } from "antd";
 import { BrowserRouter } from "react-router-dom";
 import AppRouter from "./AppRouter";
 import Navbar from "./components/Common/Navbar";
@@ -9,6 +9,7 @@ import MyFooter from "./components/Common/Footer";
 import ScrollToTop from "components/Common/ScrollToTop";
 
 import { notification } from "antd";
+import ScrollToDown from "components/Common/ScrollToDown";
 
 // Notification 초기화
 notification.config({
@@ -34,7 +35,11 @@ function App() {
             minHeight: "100vh",
           }}
         >
-          <ScrollToTop />
+          <FloatButton.Group>
+            <ScrollToTop />
+            <ScrollToDown />
+          </FloatButton.Group>
+
           <Header className="App-header">
             <Navbar />
           </Header>

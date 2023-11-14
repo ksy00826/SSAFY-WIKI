@@ -47,7 +47,8 @@ const Content = () => {
 
   // 처음 랜더링시 내용 가져오기
   React.useEffect(() => {
-    //console.log("state", state);
+    console.log("state", state);
+    console.log("location", location);
     if (state == null) {
       getDocsContent(params.docsId)
         .then((response) => {
@@ -92,7 +93,7 @@ const Content = () => {
         })
         .catch((err) => {
           //console.log(err.response.data.message);
-          setTitle(params.title);
+          setTitle(params.title + (params.subtitle !== undefined ? '/' + params.subtitle : ''));
           setErrMsg(err.response.data.message);
         });
     } else {
