@@ -22,9 +22,13 @@ const UserPage = () => {
           <Route path="/redirect" element={<RedirectSearch />} />
           <Route path="/list" element={<ListPage />} />
           <Route path="/history/:docsId/:title" element={<History />} />
+          <Route path="/history/:docsId/:title/:subtitle" element={<History />} />
           <Route path="/edit/:docsId/:title" element={<Edit />} />
+          <Route path="/edit/:docsId/:title/:subtitle" element={<Edit />} />
           <Route path="/auth/:docsId/:title" element={<Authority />} />
+          <Route path="/auth/:docsId/:title/:subtitle" element={<Authority />} />
           <Route path="/content/:docsId/:title" element={<Contents />} />
+          <Route path="/content/:docsId/:title/:subtitle" element={<Contents />} />
           <Route path="/diff/*" element={<Diff />} />
           <Route path="/raw/:title" element={<Raw />} />
         </Routes>
