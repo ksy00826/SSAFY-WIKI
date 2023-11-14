@@ -94,25 +94,51 @@ public class UserController {
     @GetMapping("/admin")
     public ResponseEntity<Boolean> isAdmin(@AuthenticationPrincipal User user) {
 //        System.out.println("유저 확인요~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-        if(user == null) user = new GuestUser();
+        if (user == null) user = new GuestUser();
         return new ResponseEntity<>(Role.ROLE_ADMIN.equals(user.getRole()), HttpStatus.OK);
     }
-    
+
     @GetMapping("/info/contribute-docs")
     public ResponseEntity<int[][]> contributeDocsWithDate(
-            @AuthenticationPrincipal User user, @RequestParam LocalDateTime startDate){
+            @AuthenticationPrincipal User user, @RequestParam LocalDateTime startDate) {
 
         int[][] revisions = revisionService.getUserContributeDocs(user, startDate);
         return new ResponseEntity(revisions, HttpStatus.OK);
     }
+
     @GetMapping("/info/day-contribute-docs")
     public ResponseEntity<List<RevisionDto.UserContribute>> contributeDocsWithOneDate(
-            @AuthenticationPrincipal User user, @RequestParam LocalDateTime date){
+            @AuthenticationPrincipal User user, @RequestParam LocalDateTime date) {
 
         List<RevisionDto.UserContribute> revisions = revisionService.getUserContributeDocsWithDate(user, date);
         return new ResponseEntity(revisions, HttpStatus.OK);
     }
 
+    @GetMapping("/info/contribute-docs/{userId}")
+    public ResponseEntity<int[][]> contributeDocsWithDate(
+            @RequestParam LocalDateTime startDate, @PathVariable("userId") Long userId) {
+
+        int[][] revisions = revisionService.getUserContributeDocs(userId, startDate);
+        return new ResponseEntity(revisions, HttpStatus.OK);
+    }
+
+    @GetMapping("/info/day-contribute-docs/{userId}")
+    public ResponseEntity<List<RevisionDto.UserContribute>> contributeDocsWithOneDate(
+            @RequestParam LocalDateTime date, @PathVariable("userId") Long userId) {
+
+        List<RevisionDto.UserContribute> revisions = revisionService.getUserContributeDocsWithDate(userId, date);
+        return new ResponseEntity(revisions, HttpStatus.OK);
+    }
+
+    @GetMapping("/info/{id}")
+    public ResponseEntity<?> getUserInfo(@PathVariable("id") Long userId) {
+        User user = userService.getUserInfo(userId);
+
+        if (user.equals(null)) {
+            return ResponseEntity.ok("false");
+        }
+        return ResponseEntity.ok(userMapper.toInfo(user));
+    }
 
     @Operation(summary = "내 그룹 목록", description = "유저가 프라이빗 권한을 가지고있는 문서 목록을 반환합니다.")
     @GetMapping("/myauth")
