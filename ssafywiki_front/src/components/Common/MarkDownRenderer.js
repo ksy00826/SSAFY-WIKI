@@ -2,7 +2,7 @@ import MDX from "@mdx-js/runtime";
 import { Link } from "react-router-dom";
 import style from "./Component.module.css";
 import { getSearchDoc } from "utils/DocsApi";
-import { useState, useEffect } from "react";
+import { useState, useEffect, createContext, useContext, useRef } from "react";
 const MoveDocs = ({ children, docs }) => {
   const [url, setUrl] = useState("");
 
@@ -77,16 +77,70 @@ const LinkTo = ({ children, link }) => {
   );
 };
 
+const TableOfContentsContext = createContext();
+
+const TableOfContentsProvider = ({ children }) => {
+  const [toc, setToc] = useState([]);
+  const headingIdCounter = useRef(0);
+
+  return (
+    <TableOfContentsContext.Provider value={{ toc, setToc, headingIdCounter  }}>
+      {children}
+    </TableOfContentsContext.Provider>
+  );
+};
+
+const Subheading = ({ children }) => {
+  const { setToc, headingIdCounter } = useContext(TableOfContentsContext);
+  const [id, setId] = useState('');
+
+  useEffect(() => {
+    const newId = `heading-${headingIdCounter.current++}`;
+    setId(newId);
+    setToc((prev) => [...prev, { id: newId, title: children }]);
+    return () => setToc((prev) => prev.filter((item) => item.id !== newId));
+  }, [children]);
+  return <h1 id={id}>{children}</h1>;
+};
+
+const TableOfContents = () => {
+  const { toc } = useContext(TableOfContentsContext);
+
+  const handleClick = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView();
+    } else {
+      console.error("Element not found:", id);
+    }
+  };
+
+  return (
+    <ol className={style.index}>
+      <p style={{margin:0, fontSize:"1.5rem"}}>목차</p>
+      {toc.map((item) => (
+        <li key={item.id} onClick={() => handleClick(item.id)}>
+          {item.title}
+        </li>
+      ))}
+    </ol>
+  );
+};
+
 const components = {
   MoveDocs,
   Note,
   LinkTo,
+  h1: Subheading,
 };
 
 const MarkdownRenderer = ({ content }) => {
   return (
     <div>
-      <MDX components={components}>{content}</MDX>
+      <TableOfContentsProvider>
+        <TableOfContents />
+        <MDX components={components}>{content}</MDX>
+      </TableOfContentsProvider>
     </div>
   );
 };
