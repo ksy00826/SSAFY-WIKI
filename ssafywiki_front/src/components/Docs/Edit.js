@@ -116,7 +116,7 @@ const Edit = () => {
     <div>
       <div className={styles.contentTitle}>
         <h1 className={styles.title}>
-          {params.title}{" "}
+          {title}{" "}
           <small style={{ fontWeight: "normal" }}>(문서 수정)</small>
         </h1>
       </div>

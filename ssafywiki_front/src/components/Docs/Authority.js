@@ -18,6 +18,7 @@ const Authority = () => {
   const [users, setUsers] = React.useState([]);
   const [info, setInfo] = React.useState();
   const [errMsg, setErrMsg] = React.useState("");
+  const [title, setTitle] = React.useState();
 
   const invite = (value) => {
     //console.log(value);
@@ -27,6 +28,7 @@ const Authority = () => {
   React.useEffect(() => {
     // 첫 랜더링시
     setErrMsg("");
+    setTitle(params.title + (params.subtitle !== undefined ? '/' + params.subtitle : ''));
     getAuth(params.docsId)
       .then((response) => {
         //console.log(response);
@@ -83,7 +85,7 @@ const Authority = () => {
           openNotification(
             "success",
             "권한 수정 완료",
-            `${params.title}문서 권한이 수정되었습니다.`
+            `${title}문서 권한이 수정되었습니다.`
           );
           return response;
         })
@@ -138,7 +140,7 @@ const Authority = () => {
     <div>
       <div className={styles.contentTitle}>
         <h1 className={styles.title}>
-          {params.title}{" "}
+          {title}{" "}
           <small style={{ fontWeight: "normal" }}>(문서 권한)</small>
         </h1>
         <div className={styles.nav}>
