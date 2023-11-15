@@ -151,16 +151,22 @@ const TableOfContents = () => {
   );
 };
 
+const img = (src) => {
+  return <img src={src.src} style={{ maxWidth:" 800px" }}/>
+}
+
+
 const components = {
   MoveDocs,
   Note,
   LinkTo,
   h1: Subheading,
+  img
 };
 
 const MarkdownRenderer = ({ content }) => {
   return (
-    <div>
+    <div style={{overflow:"hidden"}}>
       <TableOfContentsProvider>
         <TableOfContents />
         <MDX components={components}>{content}</MDX>
