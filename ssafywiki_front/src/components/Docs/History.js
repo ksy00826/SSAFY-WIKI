@@ -145,7 +145,7 @@ const History = () => {
             )}
             {<strong>r{item.number}</strong>}&nbsp;
             ({<span style={diffAmountStyle}>{item.diffAmount}</span>})&nbsp;
-            <Link to={`/userpage/${item.user.nickname}`}
+            <Link to={`/author/${item.user.nickname}`}
               state={{ userId: item.user.id }}
             >
               {item.user.nickname}
