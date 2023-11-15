@@ -177,38 +177,6 @@ const OtherUserLawnGraph = (props) => {
     overflowY: "hidden",
   };
 
-  // const ScrollStyleComponent = styled.nav`
-  //   display: flex;
-  //   overflow: auto;
-  //   height: 45px;
-  //   &::-webkit-scrollbar {
-  //     width: 8px;
-  //     height: 8px;
-  //     border-radius: 6px;
-  //     background: rgba(255, 255, 255, 0.4);
-  //   }
-  //   &::-webkit-scrollbar-thumb {
-  //     background: rgba(0, 0, 0, 0.3);
-  //     border-radius: 6px;
-  //   }
-  // `;
-  // const ScrollStyleRow = styled(Row)`
-  //   display: flex;
-  //   flex-wrap: nowrap;
-  //   overflow-x: auto;
-  //   overflow-y: hidden;
-  //   &::-webkit-scrollbar {
-  //     width: 8px;
-  //     height: 8px;
-  //     border-radius: 6px;
-  //     background: rgba(255, 255, 255, 0.4);
-  //   }
-  //   &::-webkit-scrollbar-thumb {
-  //     background: rgba(0, 0, 0, 0.3);
-  //     border-radius: 6px;
-  //   }
-  // `;
-
   return (
     <>
       <Card loading={loading} style={cardStyle}>
