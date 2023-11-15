@@ -65,13 +65,13 @@ public class DiscussionService {
 
         // Redis 에서 해당 채팅방의 메시지 100개 가져오기
         redisTemplateMessage.setValueSerializer(new Jackson2JsonRedisSerializer<>(DiscussionDto.class));
-        List<DiscussionDto> redisMessageList = redisTemplateMessage.opsForList().range(docsId.toString(), 0, 99);
+        List<DiscussionDto> redisMessageList = redisTemplateMessage.opsForList().range(docsId.toString(), -10000, -1);
 
-        // 4. Redis 에서 가져온 메시지가 없다면, DB 에서 메시지 100개 가져오기
+        // 4. Redis 에서 가져온 메시지가 없다면, DB 에서 메시지 1000개 가져오기
         if (redisMessageList == null || redisMessageList.isEmpty()) {
             // 5.
-            List<Discussion> dbMessageList = discussionRepository.findTop100ByDocumentIdOrderByCreatedAtAsc(docsId);
-
+            List<Discussion> dbMessageList = discussionRepository.findAllByDocumentIdOrderByCreatedAtAsc(docsId);
+            log.info(dbMessageList.toString());
             for (Discussion discussion : dbMessageList) {
                 DiscussionDto discussionDto = discussionMapper.toDto(discussion);
                 messageList.add(discussionDto);
