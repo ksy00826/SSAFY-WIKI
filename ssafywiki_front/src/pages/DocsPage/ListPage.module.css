@@ -1,6 +1,6 @@
 .search {
-    text-align: start;
-    margin: 2rem 2rem 1rem 2rem
+  text-align: start;
+  margin: 2rem 2rem 1rem 2rem;
 }
 
 .searchBox {
@@ -9,7 +9,7 @@
   cursor: pointer;
   width: 95%;
   text-align: start;
-  overflow: hidden;    /* 컨테이너를 넘치는 내용 숨기기 */
+  overflow: hidden; /* 컨테이너를 넘치는 내용 숨기기 */
   text-overflow: ellipsis; /* 텍스트가 오버플로될 때 말줄임표로 표시 */
 }
 
@@ -22,30 +22,34 @@
 }
 
 .border {
-    background:#F2F2F2;
-    height:1px;
-    border:0;
-    margin-top: 1rem;
+  background: #f2f2f2;
+  height: 1px;
+  border: 0;
+  margin-top: 1rem;
 }
 
 .result {
-    text-align: start;
-    padding: 1rem 0 0 2rem;
+  text-align: start;
+  padding: 1rem 0 0 2rem;
 }
 
 .createBox {
-    border: 1px solid;
-    width: 94%;
-    padding: 0.5rem 2rem 0.5rem 2rem;
-    border-radius: 0.5rem;
-    border-color: #81DAF5;
-    background-color: #E0F2F7;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color:#58ACFA;
-    margin : 0.5rem 2rem 0.5rem 2rem;
+  border: 1px solid;
+  width: 94%;
+  padding: 0.5rem 2rem 0.5rem 2rem;
+  border-radius: 0.5rem;
+  border-color: #81daf5;
+  background-color: #e0f2f7;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #58acfa;
+  margin: 0.5rem 2rem 0.5rem 2rem;
 }
 .content {
-    overflow: hidden;
+  overflow: hidden;
+}
+
+.table {
+  margin: 1.5rem;
 }
