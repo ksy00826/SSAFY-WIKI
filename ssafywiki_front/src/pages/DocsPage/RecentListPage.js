@@ -1,5 +1,4 @@
 import styles from "./ListPage.module.css";
-import { FileOutlined } from "@ant-design/icons";
 import { getRecentDocsList } from "utils/DocsApi";
 import { Pagination, Table } from "antd";
 import { useState, useEffect } from "react";
