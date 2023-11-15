@@ -12,6 +12,7 @@ import RedirectSearch from "components/Docs/RedirectSearch";
 import ListPage from "./ListPage";
 import Sidebar from "components/Docs/Sidebar";
 import styles from "./DocsPage.module.css";
+import RecentListPage from "./RecentListPage"
 const { Sider, Content } = Layout;
 
 const UserPage = () => {
@@ -31,6 +32,7 @@ const UserPage = () => {
           <Route path="/content/:docsId/:title/:subtitle" element={<Contents />} />
           <Route path="/diff/*" element={<Diff />} />
           <Route path="/raw/:title" element={<Raw />} />
+          <Route path="/recentlist" element={<RecentListPage/>}/>
         </Routes>
       </Content>
 
