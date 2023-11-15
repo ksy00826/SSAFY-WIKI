@@ -1,5 +1,5 @@
 import MDX from "@mdx-js/runtime";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import style from "./Component.module.css";
 import { getSearchDoc } from "utils/DocsApi";
 import { useState, useEffect, createContext, useContext, useRef } from "react";
@@ -82,9 +82,16 @@ const TableOfContentsContext = createContext();
 const TableOfContentsProvider = ({ children }) => {
   const [toc, setToc] = useState([]);
   const headingIdCounter = useRef(0);
+  const location = useLocation();
+
+  useEffect(() => {
+    // 경로가 변경될 때마다 headingIdCounter를 초기화
+    headingIdCounter.current = 0;
+
+  }, [location]); // location이 변경될 때마다 useEffect를 실행
 
   return (
-    <TableOfContentsContext.Provider value={{ toc, setToc, headingIdCounter  }}>
+    <TableOfContentsContext.Provider value={{ toc, setToc, headingIdCounter }}>
       {children}
     </TableOfContentsContext.Provider>
   );
@@ -92,15 +99,30 @@ const TableOfContentsProvider = ({ children }) => {
 
 const Subheading = ({ children }) => {
   const { setToc, headingIdCounter } = useContext(TableOfContentsContext);
-  const [id, setId] = useState('');
+  const [id, setId] = useState(0);
 
   useEffect(() => {
-    const newId = `heading-${headingIdCounter.current++}`;
+    const newId = ++headingIdCounter.current;
     setId(newId);
     setToc((prev) => [...prev, { id: newId, title: children }]);
     return () => setToc((prev) => prev.filter((item) => item.id !== newId));
   }, [children]);
-  return <h1 id={id}>{children}</h1>;
+  return (
+    <h1 id={id}>
+      <a
+        onClick={() =>
+          window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: "smooth", // 부드러운 스크롤 효과를 위한 설정
+          })
+        }
+      >
+        {id}.
+      </a>{" "}
+      {children}
+    </h1>
+  );
 };
 
 const TableOfContents = () => {
@@ -119,7 +141,7 @@ const TableOfContents = () => {
 
   return (
     <ol className={style.index}>
-      <p style={{margin:0, fontSize:"1.5rem"}}>목차</p>
+      <p style={{ margin: 0, fontSize: "1.5rem" }}>목차</p>
       {toc.map((item) => (
         <li key={item.id} onClick={() => handleClick(item.id)}>
           {item.title}
@@ -140,7 +162,7 @@ const MarkdownRenderer = ({ content }) => {
   return (
     <div>
       <TableOfContentsProvider>
-      <TableOfContents />
+        <TableOfContents />
         <MDX components={components}>{content}</MDX>
       </TableOfContentsProvider>
     </div>
