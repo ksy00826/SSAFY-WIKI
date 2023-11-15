@@ -41,9 +41,9 @@ const OtherUserPage = () => {
         });
     }, [state.userId]);
 
-    React.useEffect(()=>{
+    React.useEffect(() => {
         console.log(userId);
-    },[userId])
+    }, [userId])
 
     const handleUserDocs = () => {
         const keyword = userDocs;
@@ -68,13 +68,14 @@ const OtherUserPage = () => {
                     `/res/content/${newSearched[0].value}/${newSearched[0].label}`
                 );
             } else {
-                showModal();
+                Modal.info({
+                    title: "문서가 없습니다.",
+                    onOk() {},
+                })
             }
         });
     };
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
+    
     return (
         <Layout
             style={{
@@ -129,11 +130,6 @@ const OtherUserPage = () => {
                     }}
                 ></Footer>
             </Layout>
-            <Modal
-                title="문서가 없습니다"
-                open={isModalOpen}
-            >
-            </Modal>
         </Layout>
     );
 };
