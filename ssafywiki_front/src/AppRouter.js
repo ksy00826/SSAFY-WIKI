@@ -22,7 +22,7 @@ const AppRouter = () => {
         element={<Navigate to="/res/content/1/싸피위키:대문" />}
       />
       <Route path="/res/*" element={<DocsPage />} />
-      <Route path="/userpage/:nickname" element={<OtherUserPage/>}/>
+      <Route path="/author/:nickname" element={<OtherUserPage/>}/>
 
       <Route element={<PrivateRoute />}>
         <Route path="/wrt" element={<WritePage />} />
