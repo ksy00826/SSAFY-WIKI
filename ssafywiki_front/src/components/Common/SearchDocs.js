@@ -51,6 +51,7 @@ const App = () => {
   };
   const onSearch = (keyword) => {
     //console.log("onSearch", keyword);
+    if (keyword === "" ) return;
     getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
       // //console.log(output);
