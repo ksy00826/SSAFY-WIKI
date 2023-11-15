@@ -85,9 +85,12 @@ export const subscribeRecentDocs = async () => {
   }
 };
 
-export const getRecentDocsList = async () => {
+export const getRecentDocsList = async (page) => {
   try {
-    const response = await axiosInstance.get("/api/docs/recent");
+    if (page == null) {
+      page = 0;
+    }
+    const response = await axiosInstance.get(`/api/docs/recent?page=${page}`);
     return response.data;
   } catch (error) {
     throw error;
