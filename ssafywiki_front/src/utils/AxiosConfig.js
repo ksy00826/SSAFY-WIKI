@@ -62,7 +62,14 @@ export const axiosGptInstance = axios.create({
     'Authorization': 'Bearer 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', 
   },
 });
-
+export const axiosGptCheckInstance = axios.create({
+  baseURL: "https://api.openai.com/v1/threads",
+  headers: {
+    'Content-Type': 'application/json', 
+    'OpenAI-Beta': 'assistants=v1',
+    'Authorization': 'Bearer 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', 
+  },
+});
 export const axiosGptGetInstance = axios.create({
   baseURL: "https://api.openai.com/v1/threads",
   headers: {

@@ -59,8 +59,7 @@ const WritePage = () => {
 
       while (!isComplete) {
         result = await getGptgetResponse(thread_id);
-        console.log(result.data[0]);
-        if (result.data[0].role === "assistant") {
+        if (result.data[0].role === "assistant" && result.data[0].content[0].text.value !== "") {
           isComplete = true;
           console.log("결과:", result.data[0].content[0].text.value);
           setGpted(
@@ -68,8 +67,7 @@ const WritePage = () => {
           );
           return gpted;
         } else {
-          console.log("처리 중, 잠시 후 재요청...");
-          await delay(3000); // 5초 대기 후 재요청
+          await delay(3000); // 3초 대기 후 재요청
         }
       }
     } catch (error) {

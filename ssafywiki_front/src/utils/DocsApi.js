@@ -4,6 +4,7 @@ import {
   axiosElasticInstance,
   axiosGptInstance,
   axiosGptGetInstance,
+  axiosGptCheckInstance,
 } from "./AxiosConfig";
 
 export const getDocsContent = async (id) => {
@@ -176,6 +177,16 @@ export const getGptResponse = async (content) => {
     const response = await axiosGptInstance.post("", data);
     console.log(response.data.thread_id);
     return response.data.thread_id;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getGptCheckResponse = async (thread_id,message_id) => {
+  try {
+    const response = await axiosGptCheckInstance.get(`/${thread_id}/messages/${message_id}`);
+    console.log(response);
+    return response.data;
   } catch (error) {
     throw error;
   }
