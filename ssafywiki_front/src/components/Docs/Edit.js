@@ -1,5 +1,5 @@
-import React from "react";
-import { Card, Alert, Input, Modal } from "antd";
+import React, { Component } from "react";
+import { Card, Alert, Input, Modal, FloatButton, Form } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
 import { getUpdateContent } from "utils/DocsApi";
 
@@ -8,9 +8,12 @@ import ImageUpload from "components/Write/ImageUpload";
 import DocsNav from "./DocsNav";
 
 import { openNotification } from "App";
-import { updateDocs } from "utils/DocsApi";
+import { updateDocs, getSearchDoc } from "utils/DocsApi";
 
 import styles from "./Content.module.css";
+import MarkdownRenderer from "components/Common/MarkDownRenderer";
+import { FormOutlined, MenuOutlined } from '@ant-design/icons';
+import { createDocs } from "utils/DocsApi";
 
 const { TextArea } = Input;
 const Edit = () => {
@@ -31,6 +34,126 @@ const Edit = () => {
   const [conflict, setConflict] = React.useState(false);
   const [topRevId, setTopRevId] = React.useState();
   const { error } = Modal;
+
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [subDocumentTitle, setSubDocumentTitle] = React.useState("");
+  const [subcontent, setSubcontent] = React.useState();
+  const [isSubtitleModalOpen, setIsSubtitleModalOpen] = React.useState(false);
+  const [isSubcontentModalOpen, setIsSubcontentModalOpen] = React.useState(false);
+  const [form] = Form.useForm();
+  const [documentExists, setDocumentExists] = React.useState(false);
+  const [valid, setValid] = React.useState(true);
+
+
+  const getSubtitle = () => {
+    setIsSubtitleModalOpen(true);
+    form.setFieldsValue({ subtitle: title + '/' });
+  }
+
+  const handleSubtitleOk = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        getSearchDoc(values.subtitle).then((data) => {
+          var output = data.data.hits.hits;
+          // console.log("output", output);
+          var seq = 0;
+          var newSearched = output.map(function (element) {
+            seq = seq + 1;
+            return {
+              label: element._source.docs_title,
+              value: element._source.docs_id,
+              isDeleted: element._source.docs_is_deleted,
+            };
+          });
+          // console.log(newSearched[0].label === keyword);
+          // console.log(newSearched[0].isDeleted == false);
+
+          let targetTitle = "";
+          let targetDocsId = -1;
+          newSearched.forEach((doc) => {
+            if (doc.label === values.subtitle && doc.isDeleted === false) {
+              targetTitle = doc.label;
+              targetDocsId = doc.isDeleted;
+              return;
+            }
+          });
+
+          if (targetTitle != "" && targetDocsId != -1) {
+            // 이미 있는 문서입니다....
+            setDocumentExists(true);
+          } else {
+            setDocumentExists(false);
+            setSubDocumentTitle(values.subtitle);
+            setIsSubtitleModalOpen(false);
+            form.resetFields();
+            setIsSubcontentModalOpen(true);
+          }
+        })
+
+      })
+      .catch((info) => {
+        console.log('Validate Failed:', info);
+      });
+  }
+
+  const handleSubtitleCancel = () => {
+    setIsSubtitleModalOpen(false);
+    form.resetFields();
+  }
+
+  const handleOk = () => {
+    if (valid) {
+      createDocs({
+        title: subDocumentTitle,
+        content: subcontent,
+        categories: [],
+        readAuth: 1,
+        writeAuth: 1,
+      }).then((result) => {
+        openNotification(
+          "success",
+          "문서작성 완료",
+          `${result.title}문서가 생성되었습니다.`
+        );
+
+        // content 내에서 선택된 텍스트의 위치 찾기
+        const startIndex = content.indexOf(subcontent);
+        if (startIndex === -1) {
+          // 선택된 텍스트가 content 내에 없는 경우
+          console.error('선택된 텍스트가 문서 내에 존재하지 않습니다.');
+          return;
+        }
+
+        // 새로운 치환할 텍스트 (예: '새로운 텍스트')
+        const newText = `자세한 내용은 <MoveDocs docs="${subDocumentTitle}">${subDocumentTitle}</MoveDocs> 문서를 참고하십시오.`;
+
+        // content 내에서 텍스트 치환
+        const newContent = content.substring(0, startIndex) + newText + content.substring(startIndex + subcontent.length);
+        setContent(newContent);
+      }).catch((err) => {
+        openNotification(
+          "error",
+          "문서작성 실패",
+          ""
+        );
+      }).finally(setIsModalOpen(false));
+    }
+  };
+
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
+  const buttonSubcontent = () => {
+    const selectedText = window.getSelection().toString();
+    setSubcontent(selectedText);
+    console.log(selectedText);
+    setIsSubcontentModalOpen(false);
+    setIsModalOpen(true);
+  };
+
 
   // 처음 랜더링시 내용과 권한 가져오기
   React.useEffect(() => {
@@ -112,6 +235,33 @@ const Edit = () => {
     }
   };
 
+  class ErrorBoundary extends Component {
+    constructor(props) {
+      super(props);
+      this.state = { hasError: false, error: null };
+    }
+
+    static getDerivedStateFromError(error) {
+      // 다음 렌더링에서 fallback UI를 표시하기 위한 상태 업데이트
+      return { hasError: true, error };
+    }
+
+    render() {
+      if (this.state.hasError) {
+        // 여기서 에러 UI를 커스터마이징 할 수 있습니다.
+        setValid(false);
+        return (
+          <p>
+            문서에 문법 오류가 있습니다. `&lt;` 또는 `&gt;` 사용시 오류가 발생
+            할 수 있습니다. 문법을 수정해주세요.
+          </p>
+        );
+      }
+      setValid(true);
+      return this.props.children;
+    }
+  }
+
   return (
     <div>
       <div className={styles.contentTitle}>
@@ -160,6 +310,85 @@ const Edit = () => {
 
         {!disabled ? <ImageUpload /> : <></>}
       </Card>
+
+      {!disabled ? (<FloatButton.Group
+        trigger="click"
+        style={{
+          right: 90,
+        }}
+        icon={<MenuOutlined />}
+        tooltip={<div>메뉴</div>}
+      >
+        <FloatButton icon={<FormOutlined />} tooltip={<div>하위문서 작성</div>} onClick={getSubtitle} />
+      </FloatButton.Group>
+      ) : (
+        <></>
+      )}
+
+      <Modal
+        title="하위문서 제목 입력"
+        open={isSubtitleModalOpen}
+        onOk={handleSubtitleOk}
+        onCancel={handleSubtitleCancel}
+        okText="확인"
+        cancelText="취소"
+        destroyOnClose
+      >
+        <Form form={form} layout="vertical" name="form_in_modal"
+          initialValues={{
+            subtitle: { title }
+          }}>
+          <Form.Item
+            name="subtitle"
+            label="하위문서 제목"
+            rules={[
+              {
+                required: true,
+                message: '하위문서 제목을 입력해주세요!',
+              },
+              () => ({
+                validator(_, value) {
+                  if (!value || !documentExists) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(new Error('이미 존재하는 문서입니다.'));
+                },
+              }),
+            ]}
+          >
+            <Input />
+          </Form.Item>
+        </Form>
+      </Modal>
+
+      <Modal
+        width={1000}
+        title="하위문서 내용선택"
+        open={isSubcontentModalOpen}
+        okButtonProps={{ onClick: buttonSubcontent }}
+        onCancel={() => setIsSubcontentModalOpen(false)}
+        okText="확인"
+        cancelText="취소"
+      >
+        <div>하위문서로 작성할 부분을 드래그하고 확인을 눌러주세요.</div><br />
+        <TextArea
+          rows={4}
+          // defaultValue={content}
+          value={content}
+          autoSize={{
+            minRows: 12,
+          }}
+          readOnly={true}
+        />
+      </Modal>
+
+
+      <Modal title="하위문서" width={1000} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <div>하위문서가 아래처럼 저장됩니다.</div>
+        <ErrorBoundary>
+          <MarkdownRenderer content={subcontent}></MarkdownRenderer>
+        </ErrorBoundary>
+      </Modal>
     </div>
   );
 };
