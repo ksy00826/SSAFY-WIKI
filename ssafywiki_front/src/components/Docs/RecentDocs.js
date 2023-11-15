@@ -91,6 +91,8 @@ const RecentDocs = () => {
           </Link>
         </div>
       ))}
+      <Divider style={{ margin: "0" }} />
+      <p><Link to={`/res/recentlist`}>전체보기</Link></p>
     </div>
   );
 };
