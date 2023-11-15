@@ -57,7 +57,7 @@ const RecentListPage = () => {
     <div>
       <h1 className={styles.search}>전체 문서</h1>
       <hr className={styles.border} />
-      <Table columns={columns} dataSource={docsList} className={styles.table} />
+      <Table columns={columns} dataSource={docsList} className={styles.table} pagination={false}/>
       <Pagination
         defaultCurrent={1}
         total={totalPages * 10} // 가정: 각 페이지에 10개의 문서가 있음
