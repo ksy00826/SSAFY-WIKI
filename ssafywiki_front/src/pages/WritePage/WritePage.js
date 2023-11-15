@@ -7,7 +7,12 @@ import ImageUpload from "components/Write/ImageUpload";
 import CategorySelect from "components/Write/CategorySelect";
 import WriteRedirect from "components/Write/WriteRedirect";
 
-import { createDocs, createRedirectDocs, getGptResponse } from "utils/DocsApi";
+import {
+  createDocs,
+  createRedirectDocs,
+  getGptResponse,
+  getGptgetResponse,
+} from "utils/DocsApi";
 import { openNotification } from "App";
 const { Search, TextArea } = Input;
 const { Header, Content, Footer, Sider } = Layout;
@@ -43,14 +48,32 @@ const WritePage = () => {
   React.useEffect(() => {
     //console.log(writeAuth);
   }, [writeAuth]);
-
-  const gptSearch = (data) => {
+  const delay = (time) => new Promise(resolve => setTimeout(resolve, time));
+  const gptSearch = async (data) => {
     console.log("converty", data);
     setGpted("기다려 주세요!");
-    getGptResponse(data).then((result) => {
-      console.log(result.choices[0].message.content);
-      setGpted(result.choices[0].message.content);
-    });
+    try {
+      const thread_id = await getGptResponse(data);
+      let result;
+      let isComplete = false;
+
+      while (!isComplete) {
+          
+          result = await getGptgetResponse(thread_id);
+          console.log(result.data[0]);
+          if (result.data[0].role === "assistant") {
+              isComplete = true;
+              console.log("결과:", result.data[0].content[0].text.value);
+              setGpted(result.data[0].content[0].text.value.substring(19).slice(0,-3));
+              return gpted;
+          } else {
+              console.log("처리 중, 잠시 후 재요청...");
+              await delay(3000); // 5초 대기 후 재요청
+          }
+      }
+  } catch (error) {
+      console.error('에러 발생:', error);
+  }
   };
 
   const create = () => {
@@ -145,19 +168,23 @@ const WritePage = () => {
         )}
       </Content>
       <Typography.Title level={5}>싸피위키 문법 교정기</Typography.Title>
-        <Search
-          count={{
-            show: true,
-            max: 200,
-          }}
-          placeholder="싸피위키 문체로 바꿔보세요!"
-          onSearch={gptSearch}
-          style={{ width: "300px" }}
-        />
-        <TextArea value={gpted} style={{width:"300px"}} autoSize={{
+      <Search
+        count={{
+          show: true,
+          max: 200,
+        }}
+        placeholder="싸피위키 문체로 바꿔보세요!"
+        onSearch={gptSearch}
+        style={{ width: "300px" }}
+      />
+      <TextArea
+        value={gpted}
+        style={{ width: "300px" }}
+        autoSize={{
           minRows: 3,
           maxRows: 6,
-        }}/>
+        }}
+      />
     </Layout>
   );
 };
