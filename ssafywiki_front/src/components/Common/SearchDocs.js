@@ -56,12 +56,13 @@ const App = () => {
       // //console.log(output);
       var seq = 0;
       var newSearched = output.map(function (element) {
+        if (element._source.docs_is_deleted) return null;
         seq = seq + 1;
         return {
           label: element._source.docs_title,
           value: element._source.docs_id,
         };
-      });
+      }).filter((opt) => opt != null);
       if (newSearched.length > 0 && newSearched[0].label === keyword) {
         getDocsContent(newSearched[0].value).then((response) => {
           //리다이렉트 문서인지 검사
