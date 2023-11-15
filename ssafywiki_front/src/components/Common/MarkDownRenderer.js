@@ -121,7 +121,9 @@ const Subheading = ({ children }) => {
         {id}.
       </a>{" "}
       {children}
+    <hr/> 
     </h1>
+    
   );
 };
 
