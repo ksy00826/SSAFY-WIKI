@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import { Card, Alert, Input, Modal, FloatButton, Form } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
 import { getUpdateContent } from "utils/DocsApi";
@@ -42,6 +42,7 @@ const Edit = () => {
   const [isSubcontentModalOpen, setIsSubcontentModalOpen] = React.useState(false);
   const [form] = Form.useForm();
   const [documentExists, setDocumentExists] = React.useState(false);
+  const [valid, setValid] = React.useState(true);
 
 
   const getSubtitle = () => {
@@ -80,7 +81,7 @@ const Edit = () => {
 
           if (targetTitle != "" && targetDocsId != -1) {
             // 이미 있는 문서입니다....
-            setDocumentExists(true);            
+            setDocumentExists(true);
           } else {
             setDocumentExists(false);
             setSubDocumentTitle(values.subtitle);
@@ -102,27 +103,42 @@ const Edit = () => {
   }
 
   const handleOk = () => {
-    createDocs({
-      title: subDocumentTitle,
-      content: subcontent,
-      categories: [],
-      readAuth: 1,
-      writeAuth: 1,
-    }).then((result) => {
-      //완료
-      //console.log(result);
-      openNotification(
-        "success",
-        "문서작성 완료",
-        `${result.title}문서가 생성되었습니다.`
-      );
-    }).catch((err) => {
-      openNotification(
-        "error",
-        "문서작성 실패",
-        ""
-      );
-    }).finally(setIsModalOpen(false));
+    if (valid) {
+      createDocs({
+        title: subDocumentTitle,
+        content: subcontent,
+        categories: [],
+        readAuth: 1,
+        writeAuth: 1,
+      }).then((result) => {
+        openNotification(
+          "success",
+          "문서작성 완료",
+          `${result.title}문서가 생성되었습니다.`
+        );
+
+        // content 내에서 선택된 텍스트의 위치 찾기
+        const startIndex = content.indexOf(subcontent);
+        if (startIndex === -1) {
+          // 선택된 텍스트가 content 내에 없는 경우
+          console.error('선택된 텍스트가 문서 내에 존재하지 않습니다.');
+          return;
+        }
+
+        // 새로운 치환할 텍스트 (예: '새로운 텍스트')
+        const newText = `자세한 내용은 <MoveDocs docs="${subDocumentTitle}">${subDocumentTitle}</MoveDocs> 문서를 참고하십시오.`;
+
+        // content 내에서 텍스트 치환
+        const newContent = content.substring(0, startIndex) + newText + content.substring(startIndex + subcontent.length);
+        setContent(newContent);
+      }).catch((err) => {
+        openNotification(
+          "error",
+          "문서작성 실패",
+          ""
+        );
+      }).finally(setIsModalOpen(false));
+    }
   };
 
 
@@ -218,6 +234,33 @@ const Edit = () => {
         });
     }
   };
+
+  class ErrorBoundary extends Component {
+    constructor(props) {
+      super(props);
+      this.state = { hasError: false, error: null };
+    }
+
+    static getDerivedStateFromError(error) {
+      // 다음 렌더링에서 fallback UI를 표시하기 위한 상태 업데이트
+      return { hasError: true, error };
+    }
+
+    render() {
+      if (this.state.hasError) {
+        // 여기서 에러 UI를 커스터마이징 할 수 있습니다.
+        setValid(false);
+        return (
+          <p>
+            문서에 문법 오류가 있습니다. `&lt;` 또는 `&gt;` 사용시 오류가 발생
+            할 수 있습니다. 문법을 수정해주세요.
+          </p>
+        );
+      }
+      setValid(true);
+      return this.props.children;
+    }
+  }
 
   return (
     <div>
@@ -341,7 +384,10 @@ const Edit = () => {
 
 
       <Modal title="하위문서" width={1000} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <MarkdownRenderer content={subcontent}></MarkdownRenderer>
+        <div>하위문서가 아래처럼 저장됩니다.</div>
+        <ErrorBoundary>
+          <MarkdownRenderer content={subcontent}></MarkdownRenderer>
+        </ErrorBoundary>
       </Modal>
     </div>
   );
