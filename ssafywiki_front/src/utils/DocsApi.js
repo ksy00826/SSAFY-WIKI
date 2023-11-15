@@ -3,6 +3,7 @@ import {
   axiosInstanceWithLogin,
   axiosElasticInstance,
   axiosGptInstance,
+  axiosGptGetInstance,
 } from "./AxiosConfig";
 
 export const getDocsContent = async (id) => {
@@ -160,26 +161,30 @@ export const getDocsList = async (idList) => {
     throw error;
   }
 };
-
 export const getGptResponse = async (content) => {
-  console.log("GET GPT RESPONSE");
+  console.log(content);
   let data = JSON.stringify({
-    model: "gpt-4",
-    messages: [
-      {
-        role: "system",
-        content:
-          "위키 사이트에서 사용될꺼야. 욕설을 필터링해줘. 문체를 간결체, 건조체처럼 바꾸어줘.",
-      },
-      {
-        role: "user",
-        content: `${content}`,
-      },
-    ],
+    assistant_id: "asst_Kj9ojlXSGCEuv2X4l28L3LUu",
+    thread: {
+      messages: [
+        { role: "user", content: `${content}` },
+      ],
+    },
   });
-  console.log(data);
+
   try {
     const response = await axiosGptInstance.post("", data);
+    console.log(response.data.thread_id);
+    return response.data.thread_id;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const getGptgetResponse = async (thread_id) => {
+  try {
+    const response = await axiosGptGetInstance.get(`/${thread_id}/messages`);
+    console.log(response);
     return response.data;
   } catch (error) {
     throw error;
