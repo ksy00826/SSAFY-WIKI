@@ -3,6 +3,7 @@ package com.bdos.ssafywiki.revision.service;
 import com.bdos.ssafywiki.diff.MergeDto;
 import com.bdos.ssafywiki.diff.MyDiffUtils;
 import com.bdos.ssafywiki.document.entity.Document;
+import com.bdos.ssafywiki.document.repository.DocumentRepository;
 import com.bdos.ssafywiki.exception.BusinessLogicException;
 import com.bdos.ssafywiki.exception.ExceptionCode;
 import com.bdos.ssafywiki.revision.dto.RevisionDto;
@@ -40,6 +41,7 @@ public class RevisionService {
     private final ContentRepository contentRepository;
     private final UserRepository userRepository;
     private final MyDiffUtils myDiffUtils;
+    private final DocumentRepository documentRepository;
     private final RevisionMapper revisionMapper;
 
     public Page<Revision> getHistory(long docsId, Pageable pageable) {
@@ -104,6 +106,9 @@ public class RevisionService {
                 .build();
 
         revisionRepository.save(newRev);
+
+        document.setModifiedAt(LocalDateTime.now());
+        documentRepository.save(document);
     }
 
     public List<AbstractDelta<String>> diff(long revId, long oldRevId) {
