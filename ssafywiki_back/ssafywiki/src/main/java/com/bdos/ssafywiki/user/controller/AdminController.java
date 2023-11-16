@@ -6,6 +6,7 @@ import com.bdos.ssafywiki.user.dto.AdminDto;
 import com.bdos.ssafywiki.user.entity.User;
 import com.bdos.ssafywiki.user.enums.Role;
 import com.bdos.ssafywiki.user.service.AdminService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,6 +43,7 @@ public class AdminController {
         return "accessDenied";
     }
 
+    @Operation(summary = "신고 목록 불러오기")
     @GetMapping("/docs-report")
     public ResponseEntity getDocsReport(
             @AuthenticationPrincipal User user,
@@ -52,7 +54,7 @@ public class AdminController {
 
         return new ResponseEntity(reportMapper.toDtoPage(documentReportPage), HttpStatus.OK);
     }
-
+    @Operation(summary = "신고된 문서 삭제")
     @PostMapping("/docs-report")
     public ResponseEntity<Long> deleteDocs(
             @AuthenticationPrincipal User user,
@@ -63,6 +65,7 @@ public class AdminController {
         return new ResponseEntity<>(documentReport.getId(), HttpStatus.OK);
     }
 
+    @Operation(summary = "신고 반려")
     @DeleteMapping("/docs-report/{reportId}")
     public ResponseEntity<Long> rejectReport(
             @AuthenticationPrincipal User user,
