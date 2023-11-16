@@ -143,6 +143,9 @@ public class DocumentService {
         } else {  // private 문서
             if (!checkReadAuth(document.getReadAuth(), user.getRole(), user.getId()))
                 throw new BusinessLogicException(ExceptionCode.REQUIRED_PRIVATE);
+            else{
+                result = true;
+            }
         }
 
         // 권한이 없으면 error
