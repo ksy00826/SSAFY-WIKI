@@ -89,15 +89,13 @@ const MyPage = () => {
       newSearched.forEach((doc) => {
         if (doc.label === keyword && doc.isDeleted === false) {
           targetTitle = doc.label;
-          targetDocsId = doc.isDeleted;
+          targetDocsId = doc.value;
           return;
         }
       });
 
       if (targetTitle != "" && targetDocsId != -1) {
-        navigate(
-          `/res/content/${newSearched[0].value}/${newSearched[0].label}`
-        );
+        navigate(`/res/content/${targetDocsId}/${targetTitle}`);
       } else {
         // navigate(`/res/list?title=${keyword}`);
         showModal();
