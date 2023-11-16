@@ -66,21 +66,21 @@ public class RevisionService {
 
     @Transactional
     public void revertVersion(User user, long revId) {
-        if(user == null) user = new GuestUser();
+        if (user == null) user = new GuestUser();
 
         Revision revokeRev = revisionRepository.findById(revId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.REVISION_NOT_FOUND));
         Document document = revokeRev.getDocument();
 
         // user 쓰기 권한 있는지 확인
         boolean result = false;
-        if(document.getWriteAuth() < 4){
+        if (document.getWriteAuth() < 4) {
             result = user.getRole().havePrivilege(Privilege.getOptionLv('W', document.getWriteAuth()));
-        }else{
+        } else {
             result = checkWriteAuth(document.getReadAuth(), user.getRole(), user.getId());
         }
 
         // 권한이 없으면 error
-        if(!result)  throw new BusinessLogicException(ExceptionCode.DOCUMENT_NO_ACCESS);
+        if (!result) throw new BusinessLogicException(ExceptionCode.DOCUMENT_NO_ACCESS);
 
 
         Revision topRev = revisionRepository.findTop1ByDocumentOrderByIdDesc(document);
@@ -108,6 +108,9 @@ public class RevisionService {
         revisionRepository.save(newRev);
 
         document.setModifiedAt(LocalDateTime.now());
+        if ("".equals(oldText) && !"".equals(text)) document.setDeleted(false);
+        if ("".equals(text)) document.setDeleted(true);
+
         documentRepository.save(document);
     }
 
@@ -132,7 +135,7 @@ public class RevisionService {
 
         String text = """
                 최초의 문서
-                
+                                
                 2
                 """;
 
@@ -159,9 +162,6 @@ public class RevisionService {
     }
 
 
-
-
-
     private boolean checkWriteAuth(Long readAuth, Role role, Long id) {
         // 권한테이블에서 권한있는지 체크
 
@@ -173,8 +173,8 @@ public class RevisionService {
 
         //시작 날짜부터 1씩 증가하면서 i, j++
         int[][] arr = new int[23][7];
-        for (int i = 0; i < 23; i++){
-            for (int j = 0; j < 7; j++){
+        for (int i = 0; i < 23; i++) {
+            for (int j = 0; j < 7; j++) {
                 List<Revision> revisionList = revisionRepository.findByUserWithDate(user.getId(), startDate, startDate.plusDays(1L));
                 arr[i][j] = revisionList.size();
                 startDate = startDate.plusDays(1L);
@@ -192,14 +192,14 @@ public class RevisionService {
         List<Revision> updateDocs = revisionRepository.findByDocsUserWithDate(user.getId(), date, date.plusDays(1L));
 
         //수정한 문서에 대해 수정한 시간, 수정한 버전 ID, 수정 코멘트를 조회
-        for (Revision revision : updateDocs){
+        for (Revision revision : updateDocs) {
             List<RevisionDto.ContributeDetail> revisionInfo = new ArrayList<>();
             List<Revision> revisionList = revisionRepository.findRevisionInfoByUserAndDateAndDocs(revision.getDocument(), user);
-            for (Revision rev : revisionList){
+            for (Revision rev : revisionList) {
                 RevisionDto.ContributeDetail contributeDetail = RevisionDto.ContributeDetail.builder()
                         .createdAt(rev.getCreatedAt())
                         .revisionId(rev.getId())
-                        .revisionComment((rev.getComment() == null)? "" : rev.getComment().getContent())
+                        .revisionComment((rev.getComment() == null) ? "" : rev.getComment().getContent())
                         .build();
                 revisionInfo.add(contributeDetail);
             }
@@ -216,11 +216,11 @@ public class RevisionService {
 
     public int[][] getUserContributeDocs(Long userId, LocalDateTime startDate) {
 //        List<Revision> revisionList = revisionRepository.findByUserWithStartDate(user.getId(), startDate);
-        User user = userRepository.findById(userId).orElseThrow(()->new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+        User user = userRepository.findById(userId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
         //시작 날짜부터 1씩 증가하면서 i, j++
         int[][] arr = new int[23][7];
-        for (int i = 0; i < 23; i++){
-            for (int j = 0; j < 7; j++){
+        for (int i = 0; i < 23; i++) {
+            for (int j = 0; j < 7; j++) {
                 List<Revision> revisionList = revisionRepository.findByUserWithDate(user.getId(), startDate, startDate.plusDays(1L));
                 arr[i][j] = revisionList.size();
                 startDate = startDate.plusDays(1L);
@@ -231,7 +231,7 @@ public class RevisionService {
     }
 
     public List<RevisionDto.UserContribute> getUserContributeDocsWithDate(Long userId, LocalDateTime date) {
-        User user = userRepository.findById(userId).orElseThrow(()->new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
+        User user = userRepository.findById(userId).orElseThrow(() -> new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
         //결과값
         List<RevisionDto.UserContribute> result = new ArrayList<>();
 
@@ -239,10 +239,10 @@ public class RevisionService {
         List<Revision> updateDocs = revisionRepository.findByDocsUserWithDate(user.getId(), date, date.plusDays(1L));
 
         //수정한 문서에 대해 수정한 시간, 수정한 버전 ID, 수정 코멘트를 조회
-        for (Revision revision : updateDocs){
+        for (Revision revision : updateDocs) {
             List<RevisionDto.ContributeDetail> revisionInfo = new ArrayList<>();
             List<Revision> revisionList = revisionRepository.findRevisionInfoByUserAndDateAndDocs(revision.getDocument(), user);
-            for (Revision rev : revisionList){
+            for (Revision rev : revisionList) {
                 RevisionDto.ContributeDetail contributeDetail = RevisionDto.ContributeDetail.builder()
                         .createdAt(rev.getCreatedAt())
                         .revisionId(rev.getId())
