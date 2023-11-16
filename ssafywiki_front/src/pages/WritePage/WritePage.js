@@ -48,32 +48,7 @@ const WritePage = () => {
   React.useEffect(() => {
     //console.log(writeAuth);
   }, [writeAuth]);
-  const delay = (time) => new Promise((resolve) => setTimeout(resolve, time));
-  const gptSearch = async (data) => {
-    console.log("converty", data);
-    setGpted("기다려 주세요!");
-    try {
-      const thread_id = await getGptResponse(data);
-      let result;
-      let isComplete = false;
-
-      while (!isComplete) {
-        result = await getGptgetResponse(thread_id);
-        if (result.data[0].role === "assistant" && result.data[0].content[0].text.value !== "") {
-          isComplete = true;
-          console.log("결과:", result.data[0].content[0].text.value);
-          setGpted(
-            result.data[0].content[0].text.value.substring(19).slice(0, -3)
-          );
-          return gpted;
-        } else {
-          await delay(3000); // 3초 대기 후 재요청
-        }
-      }
-    } catch (error) {
-      console.error("에러 발생:", error);
-    }
-  };
+  
 
   const create = () => {
     // axios로 등록 데이터 넣어줘야함
@@ -161,7 +136,7 @@ const WritePage = () => {
               <b>이미지 링크</b>
             </Divider>
             <ImageUpload />
-            <Typography.Title level={5}>싸피위키 문법 교정기</Typography.Title>
+            {/* <Typography.Title level={5}>싸피위키 문법 교정기</Typography.Title>
             <Search
               count={{
                 show: true,
@@ -178,7 +153,7 @@ const WritePage = () => {
                 minRows: 3,
                 maxRows: 6,
               }}
-            />
+            /> */}
           </div>
         ) : (
           <></>
