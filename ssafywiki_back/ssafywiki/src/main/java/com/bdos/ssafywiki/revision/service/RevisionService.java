@@ -2,6 +2,7 @@ package com.bdos.ssafywiki.revision.service;
 
 import com.bdos.ssafywiki.diff.MergeDto;
 import com.bdos.ssafywiki.diff.MyDiffUtils;
+import com.bdos.ssafywiki.docs_auth.repository.UserDocsAuthRepository;
 import com.bdos.ssafywiki.document.entity.Document;
 import com.bdos.ssafywiki.document.repository.DocumentRepository;
 import com.bdos.ssafywiki.exception.BusinessLogicException;
@@ -43,6 +44,7 @@ public class RevisionService {
     private final MyDiffUtils myDiffUtils;
     private final DocumentRepository documentRepository;
     private final RevisionMapper revisionMapper;
+    private final UserDocsAuthRepository userDocsAuthRepository;
 
     public Page<Revision> getHistory(long docsId, Pageable pageable) {
 
@@ -76,7 +78,13 @@ public class RevisionService {
         if (document.getWriteAuth() < 4) {
             result = user.getRole().havePrivilege(Privilege.getOptionLv('W', document.getWriteAuth()));
         } else {
-            result = checkWriteAuth(document.getReadAuth(), user.getRole(), user.getId());
+            if (user.getId().equals(document.getUser().getId())) {
+                // private 문서 작성자와 읽기 요청 유저와 같으면
+                result = true;
+            } else {
+                // 권한 테이블 조회
+                result = checkWriteAuth(document.getWriteAuth(), user.getRole(), user.getId());
+            }
         }
 
         // 권한이 없으면 error
@@ -162,10 +170,11 @@ public class RevisionService {
     }
 
 
-    private boolean checkWriteAuth(Long readAuth, Role role, Long id) {
-        // 권한테이블에서 권한있는지 체크
+    private boolean checkWriteAuth(Long writeAuth, Role role, Long id) {
+        if (role == Role.ROLE_ADMIN) return true;
 
-        return true;
+        // 권한테이블에서 권한있는지 체크
+        return userDocsAuthRepository.findByDocsAuthIdAndUserId(writeAuth, id).isPresent();
     }
 
     public int[][] getUserContributeDocs(User user, LocalDateTime startDate) {
