@@ -141,7 +141,7 @@ public class DocumentService {
         if (document.getReadAuth() < 4) {
             result = user.getRole().havePrivilege(Privilege.getOptionLv('R', document.getReadAuth()));
         } else {  // private 문서
-            if (!checkReadAuth(document.getReadAuth(), user.getRole(), user.getId()))
+            if (!checkReadAuth(document.getReadAuth(), document.getUser().getId(), user.getRole(), user.getId()))
                 throw new BusinessLogicException(ExceptionCode.REQUIRED_PRIVATE);
             else{
                 result = true;
@@ -171,8 +171,8 @@ public class DocumentService {
         return response;
     }
 
-    private boolean checkReadAuth(Long readAuth, Role role, Long id) {
-        if (role == Role.ROLE_ADMIN) return true;
+    private boolean checkReadAuth(Long readAuth, Long authorId, Role role, Long id) {
+        if (role == Role.ROLE_ADMIN || authorId == id) return true;
 
         // 권한테이블에서 권한있는지 체크
         return userDocsAuthRepository.findByDocsAuthIdAndUserId(readAuth, id).isPresent();
@@ -191,12 +191,12 @@ public class DocumentService {
         if (document.getReadAuth() < 4) {
             canRead = user.getRole().havePrivilege(Privilege.getOptionLv('R', document.getReadAuth()));
         } else {  // private 문서
-            canRead = checkReadAuth(document.getReadAuth(), user.getRole(), user.getId());
+            canRead = checkReadAuth(document.getReadAuth(), document.getUser().getId(), user.getRole(), user.getId());
         }
         if (document.getWriteAuth() < 4) {
             canUpdate = user.getRole().havePrivilege(Privilege.getOptionLv('W', document.getWriteAuth()));
         } else {  // private 문서
-            canUpdate = checkReadAuth(document.getWriteAuth(), user.getRole(), user.getId());
+            canUpdate = checkReadAuth(document.getWriteAuth(), document.getUser().getId(), user.getRole(), user.getId());
         }
 
         // Read 권한이 없으면 error
