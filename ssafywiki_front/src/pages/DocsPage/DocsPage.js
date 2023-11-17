@@ -32,6 +32,7 @@ const UserPage = () => {
           <Route path="/content/:docsId/:title/:subtitle" element={<Contents />} />
           <Route path="/diff/*" element={<Diff />} />
           <Route path="/raw/:title" element={<Raw />} />
+          <Route path="/raw/:title/:subtitle" element={<Raw />} />
           <Route path="/recentlist" element={<RecentListPage/>}/>
         </Routes>
       </Content>
