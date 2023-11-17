@@ -63,6 +63,45 @@ SSAFY-WIKI에서는 많은 SSAFY인들이 자신이 겪었던 SSAFY 생활들, �
 - 랜덤문서
 - 스트릭
 
+# 서비스 화면
+
+### 메인페이지
+![](./img/메인페이지.png)
+### 문서작성
+![](./img/문서-작성-페이지로-이동.gif)
+![](./img/gpt 첨삭.gif)
+![](./img/문서-작성-후-등록.gif)
+
+### 충돌 관리
+![](./img/병합-충돌.gif)
+
+### 검색
+![](./img/검색.png)
+
+### 권한관리
+![](./img/문서 권한 탭.gif)
+![](./img/읽기-권한-없음.gif)
+![](./img/쓰기-권한-없음.gif)
+
+### 최근 수정된 문서
+![](./img/최근 수정된 문서.png)
+
+### 토론
+![](./img/토론.png)
+
+### 신고
+![](./img/문서 신고.gif)
+
+### 랜덤문서
+![](./img/랜덤문서.gif)
+
+### 이메일 인증
+![](./img/이메일-인증.gif)
+
+### 스트릭
+![](./img/스트릭.gif)
+
+
 # ⚒ 기술스택
 
 ### Frontend
@@ -79,10 +118,10 @@ Intellij, Java(17), SpringBoot(3.1), Gradle, ORM (JPA), Spring Security, java-jw
 
 # 🗒️ERD
 
-![db.png](https://prod-files-secure.s3.us-west-2.amazonaws.com/619759b0-a737-42f4-8425-83a20101d13f/2e3cd6c7-3569-46a1-b1d1-02fedeec8a74/db.png)
+![db.png](./img/db.png)
 
 # API 명세서
 
-![Swagger UI_page-0001.jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/619759b0-a737-42f4-8425-83a20101d13f/3805bcc4-c30e-4466-a99e-3389c5516c06/Swagger_UI_page-0001.jpg)
+![Swagger UI_page-0001.jpg](./img/Swagger UI_page-0001.jpg)
 
-![Swagger UI_page-0002.jpg](https://prod-files-secure.s3.us-west-2.amazonaws.com/619759b0-a737-42f4-8425-83a20101d13f/a7ed082a-a806-42ee-8ba1-74e6c8cffbb2/Swagger_UI_page-0002.jpg)
+![Swagger UI_page-0002.jpg](./img/Swagger UI_page-0002.jpg)
