@@ -40,7 +40,7 @@ export const axiosElasticInstance = axios.create({
   headers: {
     Accept: "application/json, text/plain, */*",
     "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6",
-    Authorization: "Basic ZWxhc3RpYzprd29uNTE0OGs=",
+    Authorization: "Basic dGVzdF9pbmRleF91c2VyOnNzYWZ5d2lraWUyMDI=",
     "Content-Type": "application/json;charset=UTF-8",
   },
   
