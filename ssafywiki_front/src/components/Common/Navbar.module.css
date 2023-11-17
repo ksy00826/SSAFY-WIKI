@@ -1,0 +1,58 @@
+
+.NavBox {
+  display: flex;
+  justify-content: space-between;
+  background-color: #424242;
+  max-width: 1200px;
+  min-width: 800px;
+  margin: 0 auto;
+}
+
+.NavLogo {
+  height: 40px;
+  cursor: pointer;
+}
+.NavLogoBox {
+  display: flex;
+  align-items: center;
+  margin: 0 10px 0 10px;
+}
+
+.IconBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.NavSearch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 3rem;
+}
+
+.NavUser {
+  background-color: #424242;
+  color: white;
+}
+
+.ComponentBox {
+  display: flex;
+  justify-content: flex-end;
+}
+.label {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 60px;
+}
+
+.labelText {
+  color: #424242;
+}
+
+.docs {
+  font-size: 1.1rem;
+  text-align: start;
+}

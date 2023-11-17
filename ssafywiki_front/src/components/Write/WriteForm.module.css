@@ -1,0 +1,16 @@
+.Box {
+    position: relative;
+}
+.TabBox {
+    position: absolute;
+    top: 11%;
+    right: 0%;
+}
+
+.info {
+    color: gray;
+    font-size: 11px;
+    position: absolute;
+    top: 30%;
+    left: 18%;
+}
