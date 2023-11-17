@@ -1,0 +1,32 @@
+.searchBox {
+  display: flex;
+}
+.search {
+  min-width: 400px;
+  height: 40px;
+  border-radius: 0 0 0 0;
+  border: 1px solid;
+  border-color: gray;
+  font-size: 1rem;
+  padding-left: 1rem;
+}
+.Button {
+  display: inline;
+  cursor: pointer;
+  font-size: 1.5rem;
+  background-color: white;
+  color: black;
+  height: 40px;
+  width: 40px;
+  border-color: gray;
+  vertical-align: middle;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid;
+  border-color: gray;
+}
+.Button:hover {
+  border-color: #0097ff;
+}

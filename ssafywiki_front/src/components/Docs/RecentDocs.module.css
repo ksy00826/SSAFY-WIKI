@@ -1,0 +1,22 @@
+.RecentTitle {
+    margin: 0.5rem 0.3rem;
+    text-decoration: none;
+    color: black;
+    display: flex;
+    justify-content: space-between;
+}
+
+.RecentBox {
+    margin: 10px 0 0 0;
+}
+
+.Title {
+    white-space: nowrap;
+    overflow: hidden; 
+    text-overflow: ellipsis;
+}
+.Time {
+    font-size: 0.6rem;
+    align-self: flex-end
+
+}
