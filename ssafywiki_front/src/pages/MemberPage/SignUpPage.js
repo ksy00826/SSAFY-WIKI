@@ -48,7 +48,8 @@ const SignUp = () => {
     createDocsWithoutLogin(
       {
         title: info.username + (` (${info.number})` || ""),
-        content: `# ${info.username}
+        content: `
+        # ${info.username}
 
         ### 생일
         00 . 00 . 00
