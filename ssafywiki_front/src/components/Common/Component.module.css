@@ -70,3 +70,23 @@
    color: #1677ff;
    cursor: pointer;
 }
+
+.mdxTable {
+  border: solid 1px;
+  border-color: gray;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.mdxTableHeader {
+  border: solid 1px;
+  border-color: gray;
+  padding: 0.4rem 0.8rem 0.4rem 0.8rem;
+  background-color: #E6E6E6;
+}
+
+.mdxTableComp {
+  border: solid 1px;
+  border-color: gray;
+  padding: 0.4rem 0.8rem 0.4rem 0.8rem;
+}
