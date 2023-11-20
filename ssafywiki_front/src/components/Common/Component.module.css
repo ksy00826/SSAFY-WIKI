@@ -11,6 +11,7 @@
 
 .noteContainer {
   position: relative;
+  overflow: visible;
 }
 
 .tooltip {
@@ -30,12 +31,12 @@
 }
 
 .toolText {
-    display: inline-block;
-    background-color: white;
-    border: 1px solid;
-    border-color: #E6E6E6;
-    border-radius: 0.2rem;
-    padding: 0.4rem;
+  display: inline-block;
+  background-color: white;
+  border: 1px solid;
+  border-color: #e6e6e6;
+  border-radius: 0.2rem;
+  padding: 0.4rem;
 }
 
 .noteContainer:hover .tooltip {
@@ -55,11 +56,11 @@
 }
 
 .Center {
-    text-align: center;
+  text-align: center;
 }
 
 .index {
-  padding: .5rem .5rem .5rem 1.5rem;
+  padding: 0.5rem 0.5rem 0.5rem 1.5rem;
   border: 1px solid;
   width: 300px;
   border-radius: 4px;

@@ -2,13 +2,30 @@ import React, { useState } from "react";
 import AWS from "aws-sdk";
 import { getToken } from "utils/Authenticate";
 import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { message, Upload, Card, Row, Col, Space, Button, Tooltip } from "antd";
+import {
+  message,
+  Upload,
+  Card,
+  Row,
+  Col,
+  Space,
+  Button,
+  Tooltip,
+  Typography,
+  Input,
+} from "antd";
 import { openNotification } from "App";
 import styles from "./ImageUpload.module.css";
+import {
+  createDocs,
+  createRedirectDocs,
+  getGptResponse,
+  getGptgetResponse,
+} from "utils/DocsApi";
 
+const { Search, TextArea } = Input;
 const S3_BUCKET_NAME = "ssafywiki-s3"; // S3 버킷 이름
 const S3_REGION = "ap-northeast-2"; // S3 버킷의 AWS 지역
-
 AWS.config.update({
   accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY,
   secretAccessKey: process.env.REACT_APP_AWS_SECRET_KEY,
@@ -38,6 +55,37 @@ const beforeUpload = (file) => {
 function FileUpload() {
   const [imageUrl, setImageUrl] = useState();
   const [loading, setLoading] = useState(false);
+  const [gpted, setGpted] = React.useState("");
+
+  const delay = (time) => new Promise((resolve) => setTimeout(resolve, time));
+  const gptSearch = async (data) => {
+    console.log("converty", data);
+    setGpted("기다려 주세요!");
+    try {
+      const thread_id = await getGptResponse(data);
+      let result;
+      let isComplete = false;
+
+      while (!isComplete) {
+        result = await getGptgetResponse(thread_id);
+        if (
+          result.data[0].role === "assistant" &&
+          result.data[0].content[0].text.value !== ""
+        ) {
+          isComplete = true;
+          console.log("결과:", result.data[0].content[0].text.value);
+          setGpted(
+            result.data[0].content[0].text.value.substring(19).slice(0, -3)
+          );
+          return gpted;
+        } else {
+          await delay(3000); // 3초 대기 후 재요청
+        }
+      }
+    } catch (error) {
+      console.error("에러 발생:", error);
+    }
+  };
 
   const handleChange = (info) => {
     //console.log(info);
@@ -93,7 +141,7 @@ function FileUpload() {
   const copyToClipboard = () => {
     //console.log("click");
     const textArea = document.createElement("textarea");
-    textArea.value = `<img src="${imageUrl}" style={{ maxWidth:"900px" }}/>`
+    textArea.value = `<img src="${imageUrl}" style={{ maxWidth:"900px" }}/>`;
     document.body.appendChild(textArea);
     textArea.select();
     document.execCommand("copy");
@@ -144,6 +192,24 @@ function FileUpload() {
           </Tooltip>
         </div>
       </div>
+      <Typography.Title level={5}>싸피위키 문법 교정기</Typography.Title>
+        <Search
+          count={{
+            show: true,
+            max: 200,
+          }}
+          placeholder="싸피위키 문체로 바꿔보세요!"
+          onSearch={gptSearch}
+          style={{ width: "300px" }}
+        />
+        <TextArea
+          value={gpted}
+          style={{ width: "1000px" }}
+          autoSize={{
+            minRows: 3,
+            maxRows: 6,
+          }}
+        />
     </div>
   );
 }

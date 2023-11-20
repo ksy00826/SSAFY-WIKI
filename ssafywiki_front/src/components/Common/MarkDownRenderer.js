@@ -87,7 +87,6 @@ const TableOfContentsProvider = ({ children }) => {
   useEffect(() => {
     // 경로가 변경될 때마다 headingIdCounter를 초기화
     headingIdCounter.current = 0;
-
   }, [location]); // location이 변경될 때마다 useEffect를 실행
 
   return (
@@ -121,9 +120,8 @@ const Subheading = ({ children }) => {
         {id}.
       </a>{" "}
       {children}
-    <hr/> 
+      <hr />
     </h1>
-    
   );
 };
 
@@ -154,9 +152,8 @@ const TableOfContents = () => {
 };
 
 const img = (src) => {
-  return <img src={src.src} style={{ maxWidth:" 800px" }}/>
-}
-
+  return <img src={src.src} style={{ maxWidth: " 800px" }} />;
+};
 
 const components = {
   MoveDocs,
@@ -167,12 +164,11 @@ const components = {
   table: props => <table {...props} className={style.mdxTable} />,
   th: props => <th {...props} className={style.mdxTableHeader} />,
   td: props => <td {...props} className={style.mdxTableComp} />,
-
 };
 
 const MarkdownRenderer = ({ content }) => {
   return (
-    <div style={{overflow:"hidden"}}>
+    <div style={{ overflow: "visible" }}>
       <TableOfContentsProvider>
         <TableOfContents />
         <MDX components={components}>{content}</MDX>
