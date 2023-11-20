@@ -11,11 +11,13 @@ const MoveDocs = ({ children, docs }) => {
       .then((response) => {
         const output = response.data.hits.hits;
         const newSearched = output.map((element) => {
+          
+          if (element._source.docs_is_deleted) return null;
           return {
             label: element._source.docs_title,
             value: element._source.docs_id,
           };
-        });
+        }).filter((opt) => opt != null);
         if (newSearched.length > 0 && newSearched[0].label === keyword) {
           setUrl(
             `/res/content/${newSearched[0].value}/${newSearched[0].label}`
