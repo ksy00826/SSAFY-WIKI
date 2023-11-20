@@ -161,6 +161,9 @@ const components = {
   LinkTo,
   h1: Subheading,
   img,
+  table: props => <table {...props} className={style.mdxTable} />,
+  th: props => <th {...props} className={style.mdxTableHeader} />,
+  td: props => <td {...props} className={style.mdxTableComp} />,
 };
 
 const MarkdownRenderer = ({ content }) => {
