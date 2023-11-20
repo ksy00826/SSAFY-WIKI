@@ -49,7 +49,7 @@ const MyPage = () => {
     createDocs({
       title:
         info.name + (` (${info.number == null ? "PRO" : info.number})` || ""),
-      content: `# ${info.name}<br/>### 생일<br/>### MBTI<br/>### 최근 취미<br/># 마이 Github<br/>[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${githubId}&layout=compact)](https://github.com/anuraghazra/github-readme-stats)<br/>[![${githubId}'s github stats](https://github-readme-stats.vercel.app/api?username=${githubId}&show_icons=true&theme=default)](https://github.com/${githubId}/)<br/>[![Solved.ac Profile](http://mazassumnida.wtf/api/generate_badge?boj=${githubId})](https://solved.ac/profile/${githubId})<br/># 프로젝트 <br/>|프로젝트|역할|담당기술|<br/>|------|---|---|<br/>| 프로젝트|역할  | 담당기술|<br/># 최근 관심사<br/># 논란`,
+      content: `# ${info.name}\n### 생일\n### MBTI\n### 최근 취미\n# 마이 Github\n[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${githubId}&layout=compact)](https://github.com/anuraghazra/github-readme-stats)\n[![${githubId}'s github stats](https://github-readme-stats.vercel.app/api?username=${githubId}&show_icons=true&theme=default)](https://github.com/${githubId}/)\n[![Solved.ac Profile](http://mazassumnida.wtf/api/generate_badge?boj=${githubId})](https://solved.ac/profile/${githubId})\n# 프로젝트 \n|프로젝트|역할|담당기술|\n|------|---|---|\n| 프로젝트|역할  | 담당기술|\n# 최근 관심사\n# 논란`,
       categories: [info.roll],
       readAuth: 1,
       writeAuth: 2,
