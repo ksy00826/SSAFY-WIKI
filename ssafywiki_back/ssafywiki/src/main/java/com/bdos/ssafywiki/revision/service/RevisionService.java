@@ -203,7 +203,7 @@ public class RevisionService {
         //수정한 문서에 대해 수정한 시간, 수정한 버전 ID, 수정 코멘트를 조회
         for (Revision revision : updateDocs) {
             List<RevisionDto.ContributeDetail> revisionInfo = new ArrayList<>();
-            List<Revision> revisionList = revisionRepository.findRevisionInfoByUserAndDateAndDocs(revision.getDocument(), user);
+            List<Revision> revisionList = revisionRepository.findRevisionInfoByUserAndDateAndDocs(revision.getDocument(), user, date, date.plusDays(1L));
             for (Revision rev : revisionList) {
                 RevisionDto.ContributeDetail contributeDetail = RevisionDto.ContributeDetail.builder()
                         .createdAt(rev.getCreatedAt())
@@ -250,7 +250,7 @@ public class RevisionService {
         //수정한 문서에 대해 수정한 시간, 수정한 버전 ID, 수정 코멘트를 조회
         for (Revision revision : updateDocs) {
             List<RevisionDto.ContributeDetail> revisionInfo = new ArrayList<>();
-            List<Revision> revisionList = revisionRepository.findRevisionInfoByUserAndDateAndDocs(revision.getDocument(), user);
+            List<Revision> revisionList = revisionRepository.findRevisionInfoByUserAndDateAndDocs(revision.getDocument(), user, date, date.plusDays(1L));
             for (Revision rev : revisionList) {
                 RevisionDto.ContributeDetail contributeDetail = RevisionDto.ContributeDetail.builder()
                         .createdAt(rev.getCreatedAt())
