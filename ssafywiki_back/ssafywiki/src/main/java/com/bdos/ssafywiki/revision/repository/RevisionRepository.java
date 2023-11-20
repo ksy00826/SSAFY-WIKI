@@ -33,6 +33,6 @@ public interface RevisionRepository extends JpaRepository<Revision, Long> {
     @Query(value = "SELECT r FROM Revision r JOIN FETCH r.document WHERE r.user.id = :userId AND r.createdAt >= :startDate AND r.createdAt < :endDate GROUP BY r.document")
     List<Revision> findByDocsUserWithDate(Long userId, LocalDateTime startDate, LocalDateTime endDate);
 
-    @Query(value = "SELECT r FROM Revision r WHERE r.user = :user AND r.document = :document")
-    List<Revision> findRevisionInfoByUserAndDateAndDocs(Document document, User user);
+    @Query(value = "SELECT r FROM Revision r WHERE r.user = :user AND r.document = :document AND r.createdAt >= :startDate AND r.createdAt < :endDate")
+    List<Revision> findRevisionInfoByUserAndDateAndDocs(Document document, User user, LocalDateTime startDate, LocalDateTime endDate);
 }
