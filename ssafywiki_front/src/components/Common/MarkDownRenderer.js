@@ -97,13 +97,20 @@ const TableOfContentsProvider = ({ children }) => {
 };
 
 const Subheading = ({ children }) => {
-  const { setToc, headingIdCounter } = useContext(TableOfContentsContext);
+  const { toc, setToc, headingIdCounter } = useContext(TableOfContentsContext);
   const [id, setId] = useState(0);
 
   useEffect(() => {
+    // 언마운트 시 실행되는 로직
+    return () => {
+      headingIdCounter.current = 0;
+    };
+  }, []);
+
+  useEffect(() => {
     const newId = ++headingIdCounter.current;
-    setId(newId);
     setToc((prev) => [...prev, { id: newId, title: children }]);
+    setId(newId);
     return () => setToc((prev) => prev.filter((item) => item.id !== newId));
   }, [children]);
   return (
