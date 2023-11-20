@@ -48,29 +48,7 @@ const SignUp = () => {
     createDocsWithoutLogin(
       {
         title: info.username + (` (${info.number})` || ""),
-        content: `
-# ${info.username}
-
-### 생일
-00 . 00 . 00
-        
-### MBTI
-        
-### 최근 취미
-        
-# 마이 Github
-[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${github}&layout=compact)](https://github.com/anuraghazra/github-readme-stats)
-[![${github}'s github stats](https://github-readme-stats.vercel.app/api?username=${github}&show_icons=true&theme=default)](https://github.com/${github}/)
-[![Solved.ac Profile](http://mazassumnida.wtf/api/generate_badge?boj=${github})](https://solved.ac/profile/${github})
-        
-# 프로젝트 
-|프로젝트|역할|담당기술|
-|------|---|---|
-| 프로젝트|역할  | 담당기술|
-
-# 최근 관심사
-
-# 논란`,
+        content: `# ${info.username}<br/>### 생일<br/>### MBTI<br/>### 최근 취미<br/># 마이 Github<br/>[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${github}&layout=compact)](https://github.com/anuraghazra/github-readme-stats)<br/>[![${github}'s github stats](https://github-readme-stats.vercel.app/api?username=${github}&show_icons=true&theme=default)](https://github.com/${github}/)<br/>[![Solved.ac Profile](http://mazassumnida.wtf/api/generate_badge?boj=${github})](https://solved.ac/profile/${github})<br/># 프로젝트 <br/>|프로젝트|역할|담당기술|<br/>|------|---|---|<br/>| 프로젝트|역할  | 담당기술|<br/># 최근 관심사<br/># 논란`,
         categories: [info.roll],
         readAuth: 1,
         writeAuth: 2,
