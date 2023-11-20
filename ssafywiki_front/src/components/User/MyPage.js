@@ -50,28 +50,28 @@ const MyPage = () => {
       title:
         info.name + (` (${info.number == null ? "PRO" : info.number})` || ""),
       content: `
-      # ${info.name}
+# ${info.name}
 
-      ### 생일
-      00 . 00 . 00
-      
-      ### MBTI
-      
-      ### 최근 취미
-      
-      # 마이 Github
-      [![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${githubId}&layout=compact)](https://github.com/anuraghazra/github-readme-stats)
-      [![${githubId}'s github stats](https://github-readme-stats.vercel.app/api?username=${githubId}&show_icons=true&theme=default)](https://github.com/${githubId}/)
-      [![Solved.ac Profile](http://mazassumnida.wtf/api/generate_badge?boj=${githubId})](https://solved.ac/profile/${githubId})
-      
-      # 프로젝트 
-      |프로젝트|역할|담당기술|
-      |------|---|---|
-      | 프로젝트|역할  | 담당기술|
-      
-      # 최근 관심사
-      
-      # 논란`,
+### 생일
+00 . 00 . 00
+        
+### MBTI
+        
+### 최근 취미
+        
+# 마이 Github
+[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=${githubId}&layout=compact)](https://github.com/anuraghazra/github-readme-stats)
+[![${githubId}'s github stats](https://github-readme-stats.vercel.app/api?username=${githubId}&show_icons=true&theme=default)](https://github.com/${githubId}/)
+[![Solved.ac Profile](http://mazassumnida.wtf/api/generate_badge?boj=${githubId})](https://solved.ac/profile/${githubId})
+        
+# 프로젝트 
+|프로젝트|역할|담당기술|
+|------|---|---|
+| 프로젝트|역할  | 담당기술|
+
+# 최근 관심사
+
+# 논란`,
       categories: [info.roll],
       readAuth: 1,
       writeAuth: 2,
