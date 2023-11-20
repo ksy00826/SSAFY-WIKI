@@ -11,11 +11,13 @@ const MoveDocs = ({ children, docs }) => {
       .then((response) => {
         const output = response.data.hits.hits;
         const newSearched = output.map((element) => {
+          
+          if (element._source.docs_is_deleted) return null;
           return {
             label: element._source.docs_title,
             value: element._source.docs_id,
           };
-        });
+        }).filter((opt) => opt != null);
         if (newSearched.length > 0 && newSearched[0].label === keyword) {
           setUrl(
             `/res/content/${newSearched[0].value}/${newSearched[0].label}`
@@ -97,13 +99,20 @@ const TableOfContentsProvider = ({ children }) => {
 };
 
 const Subheading = ({ children }) => {
-  const { setToc, headingIdCounter } = useContext(TableOfContentsContext);
+  const { toc, setToc, headingIdCounter } = useContext(TableOfContentsContext);
   const [id, setId] = useState(0);
 
   useEffect(() => {
+    // 언마운트 시 실행되는 로직
+    return () => {
+      headingIdCounter.current = 0;
+    };
+  }, []);
+
+  useEffect(() => {
     const newId = ++headingIdCounter.current;
-    setId(newId);
     setToc((prev) => [...prev, { id: newId, title: children }]);
+    setId(newId);
     return () => setToc((prev) => prev.filter((item) => item.id !== newId));
   }, [children]);
   return (
@@ -161,6 +170,9 @@ const components = {
   LinkTo,
   h1: Subheading,
   img,
+  table: props => <table {...props} className={style.mdxTable} />,
+  th: props => <th {...props} className={style.mdxTableHeader} />,
+  td: props => <td {...props} className={style.mdxTableComp} />,
 };
 
 const MarkdownRenderer = ({ content }) => {
