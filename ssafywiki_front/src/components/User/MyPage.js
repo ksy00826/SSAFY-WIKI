@@ -49,7 +49,8 @@ const MyPage = () => {
     createDocs({
       title:
         info.name + (` (${info.number == null ? "PRO" : info.number})` || ""),
-      content: `# ${info.name}
+      content: `
+      # ${info.name}
 
       ### 생일
       00 . 00 . 00
