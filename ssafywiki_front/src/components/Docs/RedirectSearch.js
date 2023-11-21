@@ -10,14 +10,13 @@ const RedirectSearch = () => {
     getSearchDoc(keyword).then((data) => {
       var output = data.data.hits.hits;
       //console.log(output);
-      var seq = 0;
       var newSearched = output.map(function (element) {
-        seq = seq + 1;
+        if (element._source.docs_is_deleted) return null;
         return {
           label: element._source.docs_title,
           value: element._source.docs_id,
         };
-      });
+      }).filter((opt) => opt != null);
       if (newSearched.length > 0 && newSearched[0].label === keyword) {
         if (preId != null && preTitle != null) {
           navigate(
