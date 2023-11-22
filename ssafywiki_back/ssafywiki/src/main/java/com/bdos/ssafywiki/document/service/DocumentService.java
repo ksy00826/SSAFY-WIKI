@@ -318,7 +318,7 @@ public class DocumentService {
         Sort sort = Sort.by("ModifiedAt").descending();
         PageRequest pageRequest = PageRequest.of(page, 10, sort);
 
-        Page<Document> dbDocumentList = documentRepository.findAllBy(pageRequest);
+        Page<Document> dbDocumentList = documentRepository.findAllByDeletedFalse(pageRequest);
         Page<DocumentDto.Recent> recentsDocsList = dbDocumentList.map(documentMapper::documentToRecent);
         return recentsDocsList;
     }
