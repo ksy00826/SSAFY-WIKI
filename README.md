@@ -155,11 +155,11 @@ Elasticsearch를 활용한 자동완성 검색 기능을 제공합니다.
 
 ### Frontend
 
-![image-1.png](./image-1.png)
+![image-1.png](./img/image-1.png)
 
 ### Backend
 
-![image.png](./image.png)
+![image.png](./img/image.png)
 
 
 # 설계 문서
@@ -169,8 +169,8 @@ Elasticsearch를 활용한 자동완성 검색 기능을 제공합니다.
 
 ## 요구사항 명세서
 
-![image-3.png](./image-3.png)
-![image-4.png](./image-4.png)
+![image-3.png](./img/image-3.png)
+![image-4.png](./img/image-4.png)
 
 ## API 명세서
 
@@ -182,17 +182,17 @@ Elasticsearch를 활용한 자동완성 검색 기능을 제공합니다.
 ## 협업 : Notion
 |노션을 활용한 협업 진행|멤버 정보|
 |---|---|
-|![image-5.png](./image-5.png)|![image-7.png](./image-7.png)|
+|![image-5.png](./img/image-5.png)|![image-7.png](./img/image-7.png)|
 |개인 일정을 공유하고 프로젝트 일정을 맞춰나갔습니다.|팀원 정보입니다.|
 
 |기술 스택 학습 및 공유|주간 회고록 작성|
 |---|---|
-|![image-6.png](./image-6.png)|![image-8.png](./image-8.png)|
+|![image-6.png](./img/image-6.png)|![image-8.png](./img/image-8.png)|
 |프로젝트에서 사용하는 기술 스택을 학습하고 노선을 활용하여 정보를 공유하였습니다.|매 주마다 개인별, 팀별 회고록을 작성하며 주차별로 발전해나가는 기록을 남길 수 있었습니다.|
 
 |JIRA를 활용한 일정관리|Git convention & 일관된 커밋 메시지|
 |---|---|
-|![image-9.png](./image-9.png)|![image-10.png](./image-10.png)|
+|![image-9.png](./img/image-9.png)|![image-10.png](./img/image-10.png)|
 |JIRA를 활용하여 매주 목표를 정하고 스프린트를 작성하여 프로젝트 전체 일정을 관리하였습니다.|Git 브랜치 전략과 commit convention을 정하고, 해당 컨벤션을 바탕으로 일관된 커밋 메시지를 작성했습니다.|
 
 
@@ -200,7 +200,7 @@ Elasticsearch를 활용한 자동완성 검색 기능을 제공합니다.
 
 |**[김광표](https://github.com/Pangpyo)**|**[권선근](https://github.com/kss4037)**|**[김승연](https://github.com/ksy00826)**|**[조현덕](https://github.com/gusejr4547)**|**[최영은](https://github.com/YoungEun-Choi930)**|
 |:--------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------:|
-|![image-18.png](./image-18.png)|![image-19.png](./image-19.png)|![image-20.png](./image-20.png)|![image-21.png](./image-21.png)|![image-22.png](./image-22.png)|
+|![image-18.png](./img/image-18.png)|![image-19.png](./img/image-19.png)|![image-20.png](./img/image-20.png)|![image-21.png](./img/image-21.png)|![image-22.png](./img/image-22.png)|
 |Fullstack|Fullstack|Fullstack|Fullstack|Fullstack|
 |팀장|UCC|서기|부팀장|발표|
 
