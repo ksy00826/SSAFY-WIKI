@@ -15,4 +15,6 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
 
     @Query("SELECT COUNT(d) FROM Document d")
     Long getAllDocsCnt();
+
+    Page<Document> findAllByDeletedFalse(PageRequest pageRequest);
 }
