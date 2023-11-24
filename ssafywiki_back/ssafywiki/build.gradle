@@ -1,0 +1,82 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.1.5'
+	id 'io.spring.dependency-management' version '1.1.3'
+}
+
+group = 'com.bdos'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	compileOnly 'org.projectlombok:lombok'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.mysql:mysql-connector-j'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// https://mvnrepository.com/artifact/com.querydsl/querydsl-jpa
+	implementation group: 'com.querydsl', name: 'querydsl-jpa', version: '5.0.0'
+
+	// Swagger
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+	// WebSocket
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.webjars:stomp-websocket:2.3.3-1'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+
+	// Mapper
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+	// https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api
+	implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+
+
+	// spring boot security
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security
+	testImplementation 'org.springframework.security:spring-security-test'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// JWT Token
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+	// email 발송
+	// https://mvnrepository.com/artifact/javax.mail/mail
+//	implementation group: 'javax.mail', name: 'mail', version: '1.4.7'
+
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '3.1.5'
+
+	implementation 'javax.xml.bind:jaxb-api:2.3.0'
+
+//	// https://mvnrepository.com/artifact/com.googlecode.java-diff-utils/diffutils
+//	implementation group: 'com.googlecode.java-diff-utils', name: 'diffutils', version: '1.3.0'
+
+	// https://mvnrepository.com/artifact/io.github.java-diff-utils/java-diff-utils
+	implementation "io.github.java-diff-utils:java-diff-utils:4.12"
+
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
