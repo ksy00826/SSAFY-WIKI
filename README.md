@@ -184,9 +184,9 @@ Elasticsearch를 활용한 자동완성 검색 기능을 제공합니다.
 
 ## API 명세서
 
-![Swagger UI_page-0001.jpg](./img/Swagger UI_page-0001.jpg)
+<img src="./img/Swagger UI_page-0001.jpg" width="1000">
 
-![Swagger UI_page-0002.jpg](./img/Swagger UI_page-0002.jpg)
+<img src="./img/Swagger UI_page-0002.jpg" width="1000">
 
 
 ## 협업 : Notion
